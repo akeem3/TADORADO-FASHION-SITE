@@ -36,7 +36,7 @@ export default function Navbar() {
         </div>
         <nav className="flex-grow">
           <ul className="flex justify-center space-x-8">
-            {["Home", "Services", "collections", "About", "Contact"].map(
+            {["Home", "Services", "Collections", "About", "Contact"].map(
               (item) => {
                 const href = item === "Home" ? "/" : `/${item.toLowerCase()}`;
                 return (
