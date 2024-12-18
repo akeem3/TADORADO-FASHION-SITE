@@ -3,10 +3,10 @@ import Link from "next/link";
 export default function Navbar() {
   return (
     <header className="flex items-center justify-between p-4 bg-[#f5efe7]">
-      <div className="writing-vertical-lr transform leading-none text-[#5d4037] text-xl font-semibold space-y-1">
+      <Link href="/" className="writing-vertical-lr transform leading-none text-[#5d4037] text-xl font-semibold space-y-1">
         <div>Tadorado</div>
         <div>Tailoring</div>
-      </div>
+      </Link>
       <nav className="flex-grow">
         <ul className="flex justify-center space-x-8">
           <li>
