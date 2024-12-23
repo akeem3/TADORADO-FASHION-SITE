@@ -1,7 +1,10 @@
 import React from 'react'
+import Container from '../Components/Container'
 
 export default function Collections() {
   return (
-    <div>Collections Page</div>
+    <Container>
+      <div>Collection Page</div>
+    </Container>
   )
 }

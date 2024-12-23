@@ -1,7 +1,10 @@
-import React from 'react'
+import React from "react";
+import Container from "../Components/Container";
 
 export default function Contact() {
   return (
-    <div>Contact Page</div>
-  )
+    <Container>
+      <div>Contact Page</div>
+    </Container>
+  );
 }

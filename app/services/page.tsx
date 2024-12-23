@@ -1,9 +1,12 @@
-import React from 'react'
+import React from "react";
+import Container from "../Components/Container";
 
 function Services() {
   return (
-    <div>Service Page</div>
-  )
+    <Container>
+      <div>Service Page</div>
+    </Container>
+  );
 }
 
-export default Services
+export default Services;
