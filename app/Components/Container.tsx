@@ -7,7 +7,6 @@ const Container: React.FC<ContainerProps> = ({ children }) => {
     <div
       className="
     min-h-screen
-    bg-[#f5efe7]
     max-w-[1920px]
     mx-auto
     xl:px-20
