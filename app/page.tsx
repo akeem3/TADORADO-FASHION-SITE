@@ -28,7 +28,7 @@ const Home = () => {
             alt="Traditional Fashion"
             width={600}
             height={800}
-            className="object-contain scale-110 lg:scale-120"
+            className="object-contain scale-110 lg:scale-120 z-[-10]"
             priority
           />
         </div>
