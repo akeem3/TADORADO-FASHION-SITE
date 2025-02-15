@@ -35,8 +35,8 @@ const Home = () => {
         </div>
 
         {/* About Section */}
-        <div className="bg-[#1F1F1D] w-full">
-          <div className="text-white py-10">
+        <div className="bg-[#1F1F1D] w-full ">
+          <div className="text-white py-10 flex-1 max-w-2xl ">
             <h2 className="text-4xl font-bold mb-4">About Section</h2>
             <p>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut blandit
