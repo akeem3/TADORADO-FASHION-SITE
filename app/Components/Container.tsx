@@ -9,9 +9,6 @@ const Container: React.FC<ContainerProps> = ({ children }) => {
     min-h-screen
     max-w-[1920px]
     mx-auto
-    xl:px-20
-    md:px-2
-    px-4
     "
     >
       {children}
