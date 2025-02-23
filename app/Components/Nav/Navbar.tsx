@@ -7,7 +7,7 @@ export default function Navbar() {
       
       <div className="">
         <Image
-          src="https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/Tadorado%20Logo%20SVG.svg?alt=media&token=c8e277a7-321e-4e75-81f7-d7f8c28cb86a"
+          src="https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/Tado%20logo%20Final.png?alt=media&token=2cac7d0f-db1e-4a38-88c0-58b79a4eb5c7"
           alt=""
           width={40}
           height={40}
