@@ -7,34 +7,34 @@ const Home = () => {
   return (
     <Container>
       {/* Banner Section */}
-      <div className="flex flex-col lg:flex-row items-center justify-between px-8 lg:px-16 pb-10 lg:pb-20 relative">
-        {/* Text Section */}
+      <div className="flex flex-col lg:flex-row items-center justify-center lg:justify-start gap-4 lg:gap-8 px-4 lg:px-8 pb-8 lg:pb-16 relative">
+        {/* Text */}
         <div className="flex-1 max-w-2xl text-center lg:text-left">
-          <h1 className="text-4xl lg:text-7xl font-bold text-[#46332E] mb-6 leading-tight">
+          <h1 className="text-5xl lg:text-8xl font-bold text-[#46332E] mb-4 lg:mb-6 leading-snug">
             BOLD STYLE <br /> EVERY DAY
           </h1>
-          <p className="text-[#46332E] text-base lg:text-lg leading-relaxed mb-6 max-w-xl">
+          <p className="text-[#46332E] text-lg lg:text-xl leading-relaxed mb-4 lg:mb-6 max-w-xl">
             Lorem ipsum is simply dummy text of the printing and typesetting
             industry. Lorem Ipsum has been the industry&apos;s standard dummy
             text.
           </p>
-          <Button variant="default">Contact</Button>
+          <Button variant="default" className="px-6 py-3 text-lg lg:text-xl">
+            Contact
+          </Button>
         </div>
 
-        {/* Image Section */}
+        {/* Image */}
         <div className="flex-1 flex justify-center lg:justify-end lg:mt-0 relative">
           <Image
             src="https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/fghdfhdhx.png?alt=media&token=8b763577-41c5-43d3-a6d1-f1123d938e76"
             alt="Traditional Fashion"
-            width={700}
-            height={900}
-            className="object-contain relative z-10"
+            width={1000}
+            height={1200}
+            className="object-contain relative z-10 max-w-full lg:max-w-none"
             priority
           />
         </div>
       </div>
-
-
 
       {/* About Section */}
       <div className="bg-[#1F1F1D] w-full py-4 px-8 lg:px-16 relative">
@@ -79,8 +79,6 @@ const Home = () => {
           </div>
         </div>
       </div>
-
-
 
       {/* Categories Section */}
       <div>
