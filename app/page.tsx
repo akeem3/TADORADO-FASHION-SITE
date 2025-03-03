@@ -45,7 +45,7 @@ const Home = () => {
             alt="Traditional Fashion"
             width={900}
             height={1100}
-            className="object-contain w-full max-w-[600px] lg:max-w-[800px] h-auto"
+            className="object-contain w-full max-w-[800px] lg:max-w-[1000px] h-auto"
             priority
           />
         </motion.div>
