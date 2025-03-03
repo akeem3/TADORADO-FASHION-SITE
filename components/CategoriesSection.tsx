@@ -58,7 +58,7 @@ export default function CategoriesSection() {
             viewport={{ once: true, margin: "-100px" }}
           >
             <Link
-              href="/categories"
+              href="/collections"
               className="hidden sm:flex items-center text-[#46332E] hover:text-[#46332E]/80 transition-colors"
             >
               View all
@@ -99,7 +99,7 @@ export default function CategoriesSection() {
           viewport={{ once: true, margin: "-50px" }}
         >
           <Link
-            href="/categories"
+            href="/collections"
             className="inline-flex items-center text-[#46332E] hover:text-[#46332E]/80 transition-colors"
           >
             View all
