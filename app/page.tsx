@@ -1,18 +1,18 @@
-"use client"
-import Image from "next/image"
-import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import Container from "./Components/Container"
-import CategoriesSection from "@/components/CategoriesSection"
+"use client";
+import Image from "next/image";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import Container from "./Components/Container";
+import CategoriesSection from "@/components/CategoriesSection";
 
 const Home = () => {
   return (
     <Container>
       {/* Banner Section */}
-      <section className="min-h-screen flex flex-col lg:flex-row items-center justify-between px-4 sm:px-6 lg:px-16 py-12 lg:py-0">
+      <section className="min-h-[calc(100vh-4rem)] flex flex-col lg:flex-row items-center justify-between px-4 sm:px-6 lg:px-16 pt-8 pb-12 lg:py-0">
         {/* Text */}
         <motion.div
-          className="flex-1 max-w-2xl text-center lg:text-left mb-12 lg:mb-0"
+          className="flex-1 max-w-2xl text-center lg:text-left mb-8 lg:mb-0 mt-4 lg:mt-0"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -21,8 +21,9 @@ const Home = () => {
             BOLD STYLE <br /> EVERY DAY
           </h1>
           <p className="text-[#46332E] text-base sm:text-lg lg:text-xl leading-relaxed mb-6 lg:mb-8 max-w-xl mx-auto lg:mx-0">
-            Elevate your wardrobe with our unique blend of traditional craftsmanship and modern design. Experience
-            fashion that speaks to your individuality and stands the test of time.
+            Elevate your wardrobe with our unique blend of traditional
+            craftsmanship and modern design. Experience fashion that speaks to
+            your individuality and stands the test of time.
           </p>
           <Button
             variant="default"
@@ -45,7 +46,7 @@ const Home = () => {
             alt="Traditional Fashion"
             width={900}
             height={1100}
-            className="object-contain w-full max-w-[800px] lg:max-w-[1000px] h-auto"
+            className="object-contain w-full max-w-[600px] lg:max-w-[800px] h-auto"
             priority
           />
         </motion.div>
@@ -80,20 +81,24 @@ const Home = () => {
             transition={{ duration: 0.6, delay: 0.3 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-center lg:text-left">ABOUT TADORADO</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-center lg:text-left">
+              ABOUT TADORADO
+            </h2>
             <p className="text-base sm:text-lg leading-relaxed mb-6 text-center lg:text-left">
-              At Tadorado, we believe in the power of fashion to express individuality and cultural heritage. Our
-              designs are a harmonious blend of tradition and modernity, creating timeless pieces that resonate with the
-              contemporary spirit.
+              At Tadorado, we believe in the power of fashion to express
+              individuality and cultural heritage. Our designs are a harmonious
+              blend of tradition and modernity, creating timeless pieces that
+              resonate with the contemporary spirit.
             </p>
             <p className="text-base sm:text-lg leading-relaxed mb-6 text-center lg:text-left">
-              Each garment is a testament to our commitment to quality craftsmanship and sustainable practices. We
-              source the finest materials and work with skilled artisans to bring our vision to life, ensuring that
-              every piece tells a unique story.
+              Each garment is a testament to our commitment to quality
+              craftsmanship and sustainable practices. We source the finest
+              materials and work with skilled artisans to bring our vision to
+              life, ensuring that every piece tells a unique story.
             </p>
             <p className="text-base sm:text-lg leading-relaxed mb-8 text-center lg:text-left">
-              Experience fashion that not only looks good but feels good too. Join us in our journey to redefine style,
-              one stitch at a time.
+              Experience fashion that not only looks good but feels good too.
+              Join us in our journey to redefine style, one stitch at a time.
             </p>
             <div className="text-center lg:text-left">
               <Button
@@ -128,8 +133,7 @@ const Home = () => {
       {/* Categories Section */}
       <CategoriesSection />
     </Container>
-  )
-}
+  );
+};
 
-export default Home
-
+export default Home;
