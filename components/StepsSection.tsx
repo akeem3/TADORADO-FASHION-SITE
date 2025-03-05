@@ -85,7 +85,7 @@ export default function StepsSection() {
           transition={{ duration: 0.6, delay: 0.6 }}
           viewport={{ once: true }}
         >
-          <Button size="lg" className="bg-[#8D6E63] hover:bg-[#8D6E63]/90 text-white px-8 py-6 rounded-2xl text-lg">
+          <Button size="lg" className="bg-transparent hover:bg-white text-white hover:text-[#1F1F1D] border-2 border-white px-8 py-6 rounded-2xl text-lg transition-all duration-300 ease-in-out transform hover:scale-105">
             Get Started
           </Button>
         </motion.div>

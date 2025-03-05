@@ -1,16 +1,14 @@
-"use client"
-import Image from "next/image"
-import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { ShoppingBag } from "lucide-react"
-import Container from "./Components/Container"
-import CategoriesSection from "@/components/CategoriesSection"
-import StepsSection from "@/components/StepsSection"
-import TestimonialsSection from "@/components/TestimonialsSection"
-import ContactSection from "@/components/ContactSection"
-import Link from "next/link"
-
-
+"use client";
+import Image from "next/image";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { ShoppingBag } from "lucide-react";
+import Container from "./Components/Container";
+import CategoriesSection from "@/components/CategoriesSection";
+import StepsSection from "@/components/StepsSection";
+import TestimonialsSection from "@/components/TestimonialsSection";
+import ContactSection from "@/components/ContactSection";
+import Link from "next/link";
 
 const Home = () => {
   return (
@@ -29,17 +27,18 @@ const Home = () => {
               BOLD STYLE <br /> EVERY DAY
             </h1>
             <p className="text-[#46332E] text-base sm:text-lg lg:text-xl leading-relaxed mb-6 lg:mb-8 max-w-xl mx-auto lg:mx-0">
-              Elevate your wardrobe with our unique blend of traditional craftsmanship and modern design. Experience
-              fashion that speaks to your individuality and stands the test of time.
+              Elevate your wardrobe with our unique blend of traditional
+              craftsmanship and modern design. Experience fashion that speaks to
+              your individuality and stands the test of time.
             </p>
-            <Link href="/cart">
+            <Link href="/collections">
               <Button
                 variant="default"
                 size="lg"
                 className="bg-[#46332E] hover:bg-[#46332E]/90 text-white px-8 py-6 rounded-2xl text-lg transition-all duration-300 ease-in-out transform hover:scale-105"
               >
                 <ShoppingBag className="w-6 h-6 mr-2" />
-                View Cart
+                View Collection
               </Button>
             </Link>
           </motion.div>
@@ -63,7 +62,7 @@ const Home = () => {
         </section>
 
         {/* About Section */}
-        <section className="bg-[#1F1F1D] w-full px-4 sm:px-8 lg:px-16 py-16 lg:py-24 relative">
+        <section className=" bg-[#1F1F1D] w-full px-4 sm:px-8 lg:px-16 py-10 lg:py-16 relative">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             {/* Left Image */}
             <motion.div
@@ -73,6 +72,7 @@ const Home = () => {
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
+              {/* Image */}
               <Image
                 src="https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/The%20besties.jpg?alt=media&token=6e218dd5-f398-410e-a4f05ff40b51"
                 alt="fashion"
@@ -91,20 +91,24 @@ const Home = () => {
               transition={{ duration: 0.6, delay: 0.3 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-center lg:text-left">ABOUT TADORADO</h2>
+              <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-center lg:text-left">
+                ABOUT TADORADO
+              </h2>
               <p className="text-base sm:text-lg leading-relaxed mb-6 text-center lg:text-left">
-                At Tadorado, we believe in the power of fashion to express individuality and cultural heritage. Our
-                designs are a harmonious blend of tradition and modernity, creating timeless pieces that resonate with
-                the contemporary spirit.
+                At Tadorado, we believe in the power of fashion to express
+                individuality and cultural heritage. Our designs are a
+                harmonious blend of tradition and modernity, creating timeless
+                pieces that resonate with the contemporary spirit.
               </p>
               <p className="text-base sm:text-lg leading-relaxed mb-6 text-center lg:text-left">
-                Each garment is a testament to our commitment to quality craftsmanship and sustainable practices. We
-                source the finest materials and work with skilled artisans to bring our vision to life, ensuring that
-                every piece tells a unique story.
+                Each garment is a testament to our commitment to quality
+                craftsmanship and sustainable practices. We source the finest
+                materials and work with skilled artisans to bring our vision to
+                life, ensuring that every piece tells a unique story.
               </p>
               <p className="text-base sm:text-lg leading-relaxed mb-8 text-center lg:text-left">
-                Experience fashion that not only looks good but feels good too. Join us in our journey to redefine
-                style, one stitch at a time.
+                Experience fashion that not only looks good but feels good too.
+                Join us in our journey to redefine style, one stitch at a time.
               </p>
               <div className="text-center lg:text-left">
                 <Button
@@ -136,23 +140,23 @@ const Home = () => {
           </div>
         </section>
 
+        {/* Categories Section */}
+        <CategoriesSection />
+
         {/* Steps Section */}
         <StepsSection />
 
-        {/* Categories Section */}
-        <CategoriesSection />
 
         {/* Testimonials Section */}
         <TestimonialsSection />
 
+
+
         {/* Contact Section */}
         <ContactSection />
       </Container>
-
-
     </>
-  )
-}
+  );
+};
 
-export default Home
-
+export default Home;
