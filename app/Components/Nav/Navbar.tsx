@@ -78,7 +78,10 @@ export default function Navbar() {
               className="p-2 mr-2 text-[#5d4037] hover:text-[#8d6e63] transition-colors duration-200 rounded-full hover:bg-[#f5f5f5] relative"
               aria-label="Shopping cart"
             >
-              <ShoppingBag size={20} />
+              <Link href={"/cart"}>
+                <ShoppingBag size={20} />
+              </Link>
+
               <span className="absolute top-0 right-0 flex items-center justify-center w-4 h-4 text-xs text-white bg-[#8d6e63] rounded-full">
                 0
               </span>
