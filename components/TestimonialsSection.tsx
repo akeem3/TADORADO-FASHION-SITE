@@ -11,19 +11,19 @@ const testimonials = [
     name: "Sarah Johnson",
     rating: 5,
     text: "The attention to detail in my custom dress was exceptional. The fit is perfect and the quality is outstanding.",
-    image: "/placeholder.svg?height=80&width=80",
+    image: "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/review%20imag.jpeg?alt=media&token=dc174a1f-59ca-4d48-a96d-9fa925e746cb",
   },
   {
-    name: "Michael Chen",
+    name: "Michael Obi",
     rating: 5,
     text: "Incredible craftsmanship and service. My suit fits better than anything I've ever worn before.",
-    image: "/placeholder.svg?height=80&width=80",
+    image: "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/male%20portrait.jpeg?alt=media&token=8d00f901-daaf-427f-9905-937c8ec979cd",
   },
   {
     name: "Aisha Patel",
     rating: 4,
     text: "Beautiful traditional wear with a modern twist. The team really understood my vision.",
-    image: "/placeholder.svg?height=80&width=80",
+    image: "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/mulim%20female.jpeg?alt=media&token=7b767731-7f89-4902-9c27-3228cf8757e0",
   },
 ];
 

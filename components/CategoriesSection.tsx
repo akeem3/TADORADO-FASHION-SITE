@@ -1,24 +1,27 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import Link from "next/link"
-import { ArrowRight } from "lucide-react"
-import { motion } from "framer-motion"
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
 
 const categories = [
   {
     name: "Female Outfit",
-    image: "/placeholder.svg?height=400&width=300",
+    image:
+      "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/download%20(4).jpg?alt=media&token=eebb77a1-7744-408b-8923-ddb6d1b78958",
   },
   {
     name: "Male Outfit",
-    image: "/placeholder.svg?height=400&width=300",
+    image:
+      "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/male%20outfit.jpeg?alt=media&token=a808db44-ba9f-4e9c-9372-2a65a466caa6",
   },
   {
     name: "Kid's Outfit",
-    image: "/placeholder.svg?height=400&width=300",
+    image:
+      "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/kids%20ankara.jpeg?alt=media&token=bddd7dbf-b599-4d73-9f02-ddbdcca83f95",
   },
-]
+];
 
 export default function CategoriesSection() {
   return (
@@ -48,7 +51,8 @@ export default function CategoriesSection() {
               transition={{ duration: 0.6, delay: 0.4 }}
               viewport={{ once: true, margin: "-100px" }}
             >
-              Lorem ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been theLorem
+              Lorem ipsum is simply dummy text of the printing and typesetting
+              industry. Lorem Ipsum has been theLorem
             </motion.p>
           </motion.div>
           <motion.div
@@ -81,11 +85,13 @@ export default function CategoriesSection() {
                 src={category.image || "/placeholder.svg"}
                 alt={category.name}
                 width={400}
-                height={500}
-                className="w-full h-80 object-cover"
+                height={600}
+                className="w-full object-cover"
               />
               <div className="p-6">
-                <h3 className="text-xl font-semibold text-[#46332E]">{category.name}</h3>
+                <h3 className="text-xl font-semibold text-[#46332E]">
+                  {category.name}
+                </h3>
               </div>
             </motion.div>
           ))}
@@ -108,6 +114,5 @@ export default function CategoriesSection() {
         </motion.div>
       </div>
     </section>
-  )
+  );
 }
-
