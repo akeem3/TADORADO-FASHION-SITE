@@ -10,16 +10,19 @@ const categories = [
     name: "Female Outfit",
     image:
       "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/download%20(4).jpg?alt=media&token=eebb77a1-7744-408b-8923-ddb6d1b78958",
+    link: "/collections?tab=female",
   },
   {
     name: "Male Outfit",
     image:
       "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/male%20outfit.jpeg?alt=media&token=a808db44-ba9f-4e9c-9372-2a65a466caa6",
+    link: "/collections?tab=male",
   },
   {
     name: "Kid's Outfit",
     image:
       "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/kids%20ankara.jpeg?alt=media&token=bddd7dbf-b599-4d73-9f02-ddbdcca83f95",
+    link: "/collections?tab=male&ageGroup=children",
   },
 ];
 
@@ -75,24 +78,27 @@ export default function CategoriesSection() {
           {categories.map((category, index) => (
             <motion.div
               key={category.name}
-              className="bg-white rounded-2xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl"
+              className="bg-white rounded-2xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl cursor-pointer"
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.2 }}
               viewport={{ once: true, margin: "-50px" }}
             >
-              <Image
-                src={category.image || "/placeholder.svg"}
-                alt={category.name}
-                width={400}
-                height={600}
-                className="w-full object-cover"
-              />
-              <div className="p-6">
-                <h3 className="text-xl font-semibold text-[#46332E]">
-                  {category.name}
-                </h3>
-              </div>
+              <Link href={category.link} className="block h-full">
+                <Image
+                  src={category.image || "/placeholder.svg"}
+                  alt={category.name}
+                  width={400}
+                  height={600}
+                  className="w-full object-cover"
+                />
+                <div className="p-6 flex justify-between items-center">
+                  <h3 className="text-xl font-semibold text-[#46332E]">
+                    {category.name}
+                  </h3>
+                  <ArrowRight className="h-5 w-5 text-[#46332E] opacity-70" />
+                </div>
+              </Link>
             </motion.div>
           ))}
         </div>
