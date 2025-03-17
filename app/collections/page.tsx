@@ -184,7 +184,7 @@ export default function CollectionsPage() {
           src="/placeholder.svg?height=800&width=1600"
           alt="Collections"
           fill
-          className="object-cover opacity-60"
+          className="object-cover opacity-50"
           priority
         />
         <div className="relative z-20 h-full flex flex-col justify-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -448,10 +448,10 @@ function ProductCard({ product }: { product: Product }) {
           {/* Product Badges */}
           <div className="absolute top-3 left-3 flex flex-col gap-2">
             {product.isNew && (
-              <Badge className="bg-[#46332E] hover:bg-[#46332E]/90">New</Badge>
+              <Badge className="bg-[#46332E] hover:bg-[#46332E]/90 text-white rounded-2xl">New</Badge>
             )}
             {product.salePrice && (
-              <Badge className="bg-red-600 hover:bg-red-700">Sale</Badge>
+              <Badge className="bg-red-600 hover:bg-red-700 rounded-2xl text-white">Sale</Badge>
             )}
           </div>
 
