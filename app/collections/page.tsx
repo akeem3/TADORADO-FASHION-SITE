@@ -1,26 +1,31 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Image from "next/image"
-import Link from "next/link"
-import { motion } from "framer-motion"
-import { Filter, ChevronDown } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
-import Container from "@/app/Components/Container"
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { Filter, Heart, Eye, ShoppingBag, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import Container from "@/app/Components/Container";
 
 // Define the product types
 type Product = {
-  id: number
-  name: string
-  category: "male" | "female"
-  subCategory: string
-  ageGroup: "adult" | "children" | "baby"
-  price: number
-  image: string
-}
+  id: number;
+  name: string;
+  category: "male" | "female";
+  subCategory: string;
+  ageGroup: "adult" | "children" | "baby";
+  price: number;
+  salePrice?: number;
+  isNew?: boolean;
+  isFeatured?: boolean;
+  image: string;
+  hoverImage?: string;
+};
 
-// Sample product data
+// Sample product data with enhanced properties
 const products: Product[] = [
   {
     id: 1,
@@ -29,7 +34,10 @@ const products: Product[] = [
     subCategory: "senator",
     ageGroup: "adult",
     price: 250,
+    isNew: true,
+    isFeatured: true,
     image: "/placeholder.svg?height=400&width=300",
+    hoverImage: "/placeholder.svg?height=400&width=300",
   },
   {
     id: 2,
@@ -38,7 +46,9 @@ const products: Product[] = [
     subCategory: "ankara",
     ageGroup: "adult",
     price: 180,
+    salePrice: 150,
     image: "/placeholder.svg?height=400&width=300",
+    hoverImage: "/placeholder.svg?height=400&width=300",
   },
   {
     id: 3,
@@ -47,7 +57,9 @@ const products: Product[] = [
     subCategory: "owanbe",
     ageGroup: "adult",
     price: 320,
+    isFeatured: true,
     image: "/placeholder.svg?height=400&width=300",
+    hoverImage: "/placeholder.svg?height=400&width=300",
   },
   {
     id: 4,
@@ -56,7 +68,9 @@ const products: Product[] = [
     subCategory: "corset",
     ageGroup: "adult",
     price: 280,
+    isNew: true,
     image: "/placeholder.svg?height=400&width=300",
+    hoverImage: "/placeholder.svg?height=400&width=300",
   },
   {
     id: 5,
@@ -66,6 +80,7 @@ const products: Product[] = [
     ageGroup: "children",
     price: 120,
     image: "/placeholder.svg?height=400&width=300",
+    hoverImage: "/placeholder.svg?height=400&width=300",
   },
   {
     id: 6,
@@ -74,9 +89,32 @@ const products: Product[] = [
     subCategory: "senator",
     ageGroup: "baby",
     price: 90,
+    salePrice: 75,
     image: "/placeholder.svg?height=400&width=300",
+    hoverImage: "/placeholder.svg?height=400&width=300",
   },
-]
+  {
+    id: 7,
+    name: "Elegant Iro and Buba",
+    category: "female",
+    subCategory: "iro",
+    ageGroup: "adult",
+    price: 220,
+    isFeatured: true,
+    image: "/placeholder.svg?height=400&width=300",
+    hoverImage: "/placeholder.svg?height=400&width=300",
+  },
+  {
+    id: 8,
+    name: "Corporate Shirt & Trousers",
+    category: "male",
+    subCategory: "corporate",
+    ageGroup: "adult",
+    price: 190,
+    image: "/placeholder.svg?height=400&width=300",
+    hoverImage: "/placeholder.svg?height=400&width=300",
+  },
+];
 
 // Category definitions
 const maleCategories = {
@@ -84,7 +122,7 @@ const maleCategories = {
   ankara: "Ankara",
   corporate: "Corporate",
   vintage: "Vintage",
-}
+};
 
 const femaleCategories = {
   owanbe: "Owanbe Classical",
@@ -98,311 +136,583 @@ const femaleCategories = {
   vintage: "Vintage",
   boubou: "Boubou dress",
   baby: "Baby Gown",
-}
+};
 
 export default function CollectionsPage() {
-  const [activeTab, setActiveTab] = useState("male")
-  const [maleAgeGroup, setMaleAgeGroup] = useState("all")
-  const [femaleAgeGroup, setFemaleAgeGroup] = useState("all")
-  const [maleSubCategory, setMaleSubCategory] = useState("all")
-  const [femaleSubCategory, setFemaleSubCategory] = useState("all")
-  const [showFilters, setShowFilters] = useState(false)
+  const [activeTab, setActiveTab] = useState("male");
+  const [maleAgeGroup, setMaleAgeGroup] = useState("all");
+  const [femaleAgeGroup, setFemaleAgeGroup] = useState("all");
+  const [maleSubCategory, setMaleSubCategory] = useState("all");
+  const [femaleSubCategory, setFemaleSubCategory] = useState("all");
+  // const [showFilters, setShowFilters] = useState(false);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+
+  // Get featured products on component mount
+  useEffect(() => {
+    setFeaturedProducts(products.filter((product) => product.isFeatured));
+  }, []);
 
   // Filter products based on active filters
   const filteredMaleProducts = products.filter((product) => {
-    if (product.category !== "male") return false
-    if (maleAgeGroup !== "all" && product.ageGroup !== maleAgeGroup) return false
-    if (maleSubCategory !== "all" && product.subCategory !== maleSubCategory) return false
-    return true
-  })
+    if (product.category !== "male") return false;
+    if (maleAgeGroup !== "all" && product.ageGroup !== maleAgeGroup)
+      return false;
+    if (maleSubCategory !== "all" && product.subCategory !== maleSubCategory)
+      return false;
+    return true;
+  });
 
   const filteredFemaleProducts = products.filter((product) => {
-    if (product.category !== "female") return false
-    if (femaleAgeGroup !== "all" && product.ageGroup !== femaleAgeGroup) return false
-    if (femaleSubCategory !== "all" && product.subCategory !== femaleSubCategory) return false
-    return true
-  })
+    if (product.category !== "female") return false;
+    if (femaleAgeGroup !== "all" && product.ageGroup !== femaleAgeGroup)
+      return false;
+    if (
+      femaleSubCategory !== "all" &&
+      product.subCategory !== femaleSubCategory
+    )
+      return false;
+    return true;
+  });
 
   return (
-    <Container>
-      {/* Header Section */}
-      <section className="py-12 lg:py-16">
-        <motion.div
-          className="text-center max-w-3xl mx-auto px-4 sm:px-6"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <h1 className="text-4xl md:text-5xl font-bold text-[#46332E] mb-6">Our Collections</h1>
-          <p className="text-lg text-[#46332E]/80 mb-8">
-            Discover our diverse range of traditional and modern outfits, crafted with precision and care to celebrate
-            your unique style and cultural heritage.
-          </p>
-        </motion.div>
-      </section>
-
-      {/* Collections Section */}
-      <section className="pb-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="w-full max-w-md mx-auto grid grid-cols-2 mb-8 bg-[#F5F3F0]">
-              <TabsTrigger
-                value="male"
-                className="text-lg py-3 data-[state=active]:bg-[#46332E] data-[state=active]:text-white"
-              >
-                Male Outfits
-              </TabsTrigger>
-              <TabsTrigger
-                value="female"
-                className="text-lg py-3 data-[state=active]:bg-[#46332E] data-[state=active]:text-white"
-              >
-                Female Outfits
-              </TabsTrigger>
-            </TabsList>
-
-            {/* Male Tab Content */}
-            <TabsContent value="male" className="animate-in fade-in-50 duration-300">
-              {/* Mobile Filters Toggle */}
-              <div className="flex justify-between items-center mb-6 md:hidden">
-                <h2 className="text-xl font-semibold text-[#46332E]">Male Outfits</h2>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowFilters(!showFilters)}
-                  className="flex items-center gap-2"
-                >
-                  <Filter size={16} />
-                  Filters
-                  <ChevronDown size={16} className={`transition-transform ${showFilters ? "rotate-180" : ""}`} />
-                </Button>
-              </div>
-
-              {/* Filters */}
-              <div className={`md:flex gap-6 mb-8 ${showFilters ? "block" : "hidden md:flex"}`}>
-                {/* Age Group Filter */}
-                <div className="mb-4 md:mb-0">
-                  <h3 className="text-sm font-medium text-[#46332E] mb-2">Age Group</h3>
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      variant={maleAgeGroup === "all" ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setMaleAgeGroup("all")}
-                      className={maleAgeGroup === "all" ? "bg-[#46332E]" : ""}
-                    >
-                      All
-                    </Button>
-                    {["adult", "children", "baby"].map((age) => (
-                      <Button
-                        key={age}
-                        variant={maleAgeGroup === age ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setMaleAgeGroup(age as "adult" | "children" | "baby")}
-                        className={maleAgeGroup === age ? "bg-[#46332E]" : ""}
-                      >
-                        {age.charAt(0).toUpperCase() + age.slice(1)}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Style Filter */}
-                <div>
-                  <h3 className="text-sm font-medium text-[#46332E] mb-2">Style</h3>
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      variant={maleSubCategory === "all" ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setMaleSubCategory("all")}
-                      className={maleSubCategory === "all" ? "bg-[#46332E]" : ""}
-                    >
-                      All
-                    </Button>
-                    {Object.entries(maleCategories).map(([key, label]) => (
-                      <Button
-                        key={key}
-                        variant={maleSubCategory === key ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setMaleSubCategory(key)}
-                        className={maleSubCategory === key ? "bg-[#46332E]" : ""}
-                      >
-                        {label}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Products Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-8">
-                {filteredMaleProducts.length > 0 ? (
-                  filteredMaleProducts.map((product) => (
-                    <motion.div
-                      key={product.id}
-                      className="group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.4 }}
-                    >
-                      <Link href={`/collections/${product.id}`}>
-                        <div className="relative aspect-[3/4] overflow-hidden">
-                          <Image
-                            src={product.image || "/placeholder.svg"}
-                            alt={product.name}
-                            fill
-                            className="object-cover transition-transform duration-500 group-hover:scale-105"
-                          />
-                        </div>
-                        <div className="p-4">
-                          <h3 className="text-lg font-semibold text-[#46332E] mb-1">{product.name}</h3>
-                          <p className="text-[#46332E]/70 text-sm mb-2">
-                            {maleCategories[product.subCategory as keyof typeof maleCategories]}
-                          </p>
-                          <p className="font-bold text-[#46332E]">${product.price}</p>
-                        </div>
-                      </Link>
-                    </motion.div>
-                  ))
-                ) : (
-                  <div className="col-span-full text-center py-12">
-                    <p className="text-lg text-[#46332E]/70">No products found matching your filters.</p>
-                    <Button
-                      variant="outline"
-                      className="mt-4"
-                      onClick={() => {
-                        setMaleAgeGroup("all")
-                        setMaleSubCategory("all")
-                      }}
-                    >
-                      Clear Filters
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </TabsContent>
-
-            {/* Female Tab Content */}
-            <TabsContent value="female" className="animate-in fade-in-50 duration-300">
-              {/* Mobile Filters Toggle */}
-              <div className="flex justify-between items-center mb-6 md:hidden">
-                <h2 className="text-xl font-semibold text-[#46332E]">Female Outfits</h2>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowFilters(!showFilters)}
-                  className="flex items-center gap-2"
-                >
-                  <Filter size={16} />
-                  Filters
-                  <ChevronDown size={16} className={`transition-transform ${showFilters ? "rotate-180" : ""}`} />
-                </Button>
-              </div>
-
-              {/* Filters */}
-              <div className={`md:flex gap-6 mb-8 ${showFilters ? "block" : "hidden md:flex"}`}>
-                {/* Age Group Filter */}
-                <div className="mb-4 md:mb-0">
-                  <h3 className="text-sm font-medium text-[#46332E] mb-2">Age Group</h3>
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      variant={femaleAgeGroup === "all" ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setFemaleAgeGroup("all")}
-                      className={femaleAgeGroup === "all" ? "bg-[#46332E]" : ""}
-                    >
-                      All
-                    </Button>
-                    {["adult", "children"].map((age) => (
-                      <Button
-                        key={age}
-                        variant={femaleAgeGroup === age ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setFemaleAgeGroup(age as "adult" | "children")}
-                        className={femaleAgeGroup === age ? "bg-[#46332E]" : ""}
-                      >
-                        {age.charAt(0).toUpperCase() + age.slice(1)}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Style Filter */}
-                <div>
-                  <h3 className="text-sm font-medium text-[#46332E] mb-2">Style</h3>
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      variant={femaleSubCategory === "all" ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setFemaleSubCategory("all")}
-                      className={femaleSubCategory === "all" ? "bg-[#46332E]" : ""}
-                    >
-                      All
-                    </Button>
-                    {Object.entries(femaleCategories).map(([key, label]) => (
-                      <Button
-                        key={key}
-                        variant={femaleSubCategory === key ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setFemaleSubCategory(key)}
-                        className={femaleSubCategory === key ? "bg-[#46332E]" : ""}
-                      >
-                        {label}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Products Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-8">
-                {filteredFemaleProducts.length > 0 ? (
-                  filteredFemaleProducts.map((product) => (
-                    <motion.div
-                      key={product.id}
-                      className="group bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-all duration-300"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.4 }}
-                    >
-                      <Link href={`/collections/${product.id}`}>
-                        <div className="relative aspect-[3/4] overflow-hidden">
-                          <Image
-                            src={product.image || "/placeholder.svg"}
-                            alt={product.name}
-                            fill
-                            className="object-cover transition-transform duration-500 group-hover:scale-105"
-                          />
-                        </div>
-                        <div className="p-4">
-                          <h3 className="text-lg font-semibold text-[#46332E] mb-1">{product.name}</h3>
-                          <p className="text-[#46332E]/70 text-sm mb-2">
-                            {femaleCategories[product.subCategory as keyof typeof femaleCategories]}
-                          </p>
-                          <p className="font-bold text-[#46332E]">${product.price}</p>
-                        </div>
-                      </Link>
-                    </motion.div>
-                  ))
-                ) : (
-                  <div className="col-span-full text-center py-12">
-                    <p className="text-lg text-[#46332E]/70">No products found matching your filters.</p>
-                    <Button
-                      variant="outline"
-                      className="mt-4"
-                      onClick={() => {
-                        setFemaleAgeGroup("all")
-                        setFemaleSubCategory("all")
-                      }}
-                    >
-                      Clear Filters
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </TabsContent>
-          </Tabs>
+    <>
+      {/* Hero Banner */}
+      <div className="relative h-[40vh] md:h-[50vh] bg-[#1F1F1D] overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#1F1F1D]/80 to-transparent z-10"></div>
+        <Image
+          src="/placeholder.svg?height=800&width=1600"
+          alt="Collections"
+          fill
+          className="object-cover opacity-60"
+          priority
+        />
+        <div className="relative z-20 h-full flex flex-col justify-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="max-w-2xl"
+          >
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
+              Our Collections
+            </h1>
+            <p className="text-lg text-gray-200 max-w-xl">
+              Discover our diverse range of traditional and modern outfits,
+              crafted with precision and care to celebrate your unique style and
+              cultural heritage.
+            </p>
+          </motion.div>
         </div>
-      </section>
-    </Container>
-  )
+      </div>
+
+      <Container>
+        {/* Featured Collections */}
+        {featuredProducts.length > 0 && (
+          <section className="py-16">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6">
+              <div className="flex justify-between items-center mb-8">
+                <h2 className="text-2xl md:text-3xl font-bold text-[#46332E]">
+                  Featured Collections
+                </h2>
+                <Link
+                  href="#all-collections"
+                  className="text-[#46332E] hover:text-[#46332E]/80 font-medium"
+                >
+                  View All
+                </Link>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {featuredProducts.map((product) => (
+                  <ProductCard
+                    key={`featured-${product.id}`}
+                    product={product}
+                  />
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* All Collections */}
+        <section id="all-collections" className="pb-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+            <Tabs
+              value={activeTab}
+              onValueChange={setActiveTab}
+              className="w-full"
+            >
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+                <TabsList className="w-full max-w-md grid grid-cols-2 bg-[#F5F3F0] rounded-xl p-1">
+                  <TabsTrigger
+                    value="male"
+                    className="text-base md:text-lg py-3 rounded-lg data-[state=active]:bg-[#46332E] data-[state=active]:text-white"
+                  >
+                    Male Outfits
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="female"
+                    className="text-base md:text-lg py-3 rounded-lg data-[state=active]:bg-[#46332E] data-[state=active]:text-white"
+                  >
+                    Female Outfits
+                  </TabsTrigger>
+                </TabsList>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowMobileFilters(true)}
+                  className="mt-4 md:mt-0 md:ml-4 flex items-center gap-2 lg:hidden"
+                >
+                  <Filter size={16} />
+                  Filters
+                </Button>
+              </div>
+
+              {/* Mobile Filters Drawer */}
+              {showMobileFilters && (
+                <div className="fixed inset-0 bg-black/50 z-50 lg:hidden">
+                  <div className="absolute right-0 top-0 h-full w-[80%] max-w-md bg-white p-6 overflow-y-auto">
+                    <div className="flex justify-between items-center mb-6">
+                      <h3 className="text-xl font-semibold text-[#46332E]">
+                        Filters
+                      </h3>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setShowMobileFilters(false)}
+                      >
+                        <X size={24} />
+                      </Button>
+                    </div>
+
+                    {activeTab === "male" ? (
+                      <MobileFilters
+                        ageGroup={maleAgeGroup}
+                        setAgeGroup={setMaleAgeGroup}
+                        subCategory={maleSubCategory}
+                        setSubCategory={setMaleSubCategory}
+                        categories={maleCategories}
+                        ageGroups={["adult", "children", "baby"]}
+                      />
+                    ) : (
+                      <MobileFilters
+                        ageGroup={femaleAgeGroup}
+                        setAgeGroup={setFemaleAgeGroup}
+                        subCategory={femaleSubCategory}
+                        setSubCategory={setFemaleSubCategory}
+                        categories={femaleCategories}
+                        ageGroups={["adult", "children"]}
+                      />
+                    )}
+
+                    <div className="mt-8">
+                      <Button
+                        className="w-full bg-[#46332E] hover:bg-[#46332E]/90"
+                        onClick={() => setShowMobileFilters(false)}
+                      >
+                        Apply Filters
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex flex-col lg:flex-row gap-8">
+                {/* Desktop Filters Sidebar */}
+                <div className="hidden lg:block w-64 flex-shrink-0">
+                  <div className="sticky top-24 bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+                    <h3 className="font-semibold text-[#46332E] mb-4">
+                      Filters
+                    </h3>
+
+                    {activeTab === "male" ? (
+                      <DesktopFilters
+                        ageGroup={maleAgeGroup}
+                        setAgeGroup={setMaleAgeGroup}
+                        subCategory={maleSubCategory}
+                        setSubCategory={setMaleSubCategory}
+                        categories={maleCategories}
+                        ageGroups={["adult", "children", "baby"]}
+                      />
+                    ) : (
+                      <DesktopFilters
+                        ageGroup={femaleAgeGroup}
+                        setAgeGroup={setFemaleAgeGroup}
+                        subCategory={femaleSubCategory}
+                        setSubCategory={setFemaleSubCategory}
+                        categories={femaleCategories}
+                        ageGroups={["adult", "children"]}
+                      />
+                    )}
+                  </div>
+                </div>
+
+                {/* Products Content */}
+                <div className="flex-1">
+                  <TabsContent
+                    value="male"
+                    className="animate-in fade-in-50 duration-300"
+                  >
+                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                      {filteredMaleProducts.length > 0 ? (
+                        filteredMaleProducts.map((product) => (
+                          <ProductCard key={product.id} product={product} />
+                        ))
+                      ) : (
+                        <div className="col-span-full text-center py-12">
+                          <p className="text-lg text-[#46332E]/70">
+                            No products found matching your filters.
+                          </p>
+                          <Button
+                            variant="outline"
+                            className="mt-4"
+                            onClick={() => {
+                              setMaleAgeGroup("all");
+                              setMaleSubCategory("all");
+                            }}
+                          >
+                            Clear Filters
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent
+                    value="female"
+                    className="animate-in fade-in-50 duration-300"
+                  >
+                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                      {filteredFemaleProducts.length > 0 ? (
+                        filteredFemaleProducts.map((product) => (
+                          <ProductCard key={product.id} product={product} />
+                        ))
+                      ) : (
+                        <div className="col-span-full text-center py-12">
+                          <p className="text-lg text-[#46332E]/70">
+                            No products found matching your filters.
+                          </p>
+                          <Button
+                            variant="outline"
+                            className="mt-4"
+                            onClick={() => {
+                              setFemaleAgeGroup("all");
+                              setFemaleSubCategory("all");
+                            }}
+                          >
+                            Clear Filters
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </TabsContent>
+                </div>
+              </div>
+            </Tabs>
+          </div>
+        </section>
+      </Container>
+    </>
+  );
 }
 
+// Product Card Component
+function ProductCard({ product }: { product: Product }) {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <motion.div
+      className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <Link href={`/collections/${product.id}`}>
+        <div className="relative aspect-[3/4] overflow-hidden">
+          {/* Product Image */}
+          <Image
+            src={
+              isHovered && product.hoverImage
+                ? product.hoverImage
+                : product.image
+            }
+            alt={product.name}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+
+          {/* Product Badges */}
+          <div className="absolute top-3 left-3 flex flex-col gap-2">
+            {product.isNew && (
+              <Badge className="bg-[#46332E] hover:bg-[#46332E]/90">New</Badge>
+            )}
+            {product.salePrice && (
+              <Badge className="bg-red-600 hover:bg-red-700">Sale</Badge>
+            )}
+          </div>
+
+          {/* Quick Actions */}
+          <div className="absolute right-3 top-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <Button
+              variant="secondary"
+              size="icon"
+              className="h-9 w-9 rounded-full bg-white shadow-md"
+            >
+              <Heart size={18} className="text-[#46332E]" />
+            </Button>
+            <Button
+              variant="secondary"
+              size="icon"
+              className="h-9 w-9 rounded-full bg-white shadow-md"
+            >
+              <Eye size={18} className="text-[#46332E]" />
+            </Button>
+          </div>
+
+          {/* Add to Cart Button */}
+          <div className="absolute bottom-0 left-0 right-0 bg-[#46332E] text-white py-3 px-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex items-center justify-center gap-2">
+            <ShoppingBag size={18} />
+            <span>Add to Cart</span>
+          </div>
+        </div>
+      </Link>
+
+      <div className="p-4">
+        <Link href={`/collections/${product.id}`}>
+          <h3 className="text-lg font-semibold text-[#46332E] mb-1 hover:text-[#46332E]/80 transition-colors">
+            {product.name}
+          </h3>
+        </Link>
+        <p className="text-[#46332E]/70 text-sm mb-2">
+          {product.category === "male"
+            ? maleCategories[product.subCategory as keyof typeof maleCategories]
+            : femaleCategories[
+                product.subCategory as keyof typeof femaleCategories
+              ]}
+        </p>
+        <div className="flex items-center gap-2">
+          {product.salePrice ? (
+            <>
+              <p className="font-bold text-[#46332E]">${product.salePrice}</p>
+              <p className="text-[#46332E]/60 line-through text-sm">
+                ${product.price}
+              </p>
+            </>
+          ) : (
+            <p className="font-bold text-[#46332E]">${product.price}</p>
+          )}
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+// Mobile Filters Component
+function MobileFilters({
+  ageGroup,
+  setAgeGroup,
+  subCategory,
+  setSubCategory,
+  categories,
+  ageGroups,
+}: {
+  ageGroup: string;
+  setAgeGroup: (value: string) => void;
+  subCategory: string;
+  setSubCategory: (value: string) => void;
+  categories: Record<string, string>;
+  ageGroups: string[];
+}) {
+  return (
+    <div className="space-y-6">
+      {/* Age Group Filter */}
+      <div>
+        <h3 className="font-medium text-[#46332E] mb-3">Age Group</h3>
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center">
+            <input
+              type="radio"
+              id="age-all-mobile"
+              name="age-group-mobile"
+              checked={ageGroup === "all"}
+              onChange={() => setAgeGroup("all")}
+              className="h-4 w-4 text-[#46332E] focus:ring-[#46332E]"
+            />
+            <label htmlFor="age-all-mobile" className="ml-2 text-[#46332E]">
+              All
+            </label>
+          </div>
+
+          {ageGroups.map((age) => (
+            <div key={age} className="flex items-center">
+              <input
+                type="radio"
+                id={`age-${age}-mobile`}
+                name="age-group-mobile"
+                checked={ageGroup === age}
+                onChange={() => setAgeGroup(age)}
+                className="h-4 w-4 text-[#46332E] focus:ring-[#46332E]"
+              />
+              <label
+                htmlFor={`age-${age}-mobile`}
+                className="ml-2 text-[#46332E]"
+              >
+                {age.charAt(0).toUpperCase() + age.slice(1)}
+              </label>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Style Filter */}
+      <div>
+        <h3 className="font-medium text-[#46332E] mb-3">Style</h3>
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center">
+            <input
+              type="radio"
+              id="style-all-mobile"
+              name="style-mobile"
+              checked={subCategory === "all"}
+              onChange={() => setSubCategory("all")}
+              className="h-4 w-4 text-[#46332E] focus:ring-[#46332E]"
+            />
+            <label htmlFor="style-all-mobile" className="ml-2 text-[#46332E]">
+              All
+            </label>
+          </div>
+
+          {Object.entries(categories).map(([key, label]) => (
+            <div key={key} className="flex items-center">
+              <input
+                type="radio"
+                id={`style-${key}-mobile`}
+                name="style-mobile"
+                checked={subCategory === key}
+                onChange={() => setSubCategory(key)}
+                className="h-4 w-4 text-[#46332E] focus:ring-[#46332E]"
+              />
+              <label
+                htmlFor={`style-${key}-mobile`}
+                className="ml-2 text-[#46332E]"
+              >
+                {label}
+              </label>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Desktop Filters Component
+function DesktopFilters({
+  ageGroup,
+  setAgeGroup,
+  subCategory,
+  setSubCategory,
+  categories,
+  ageGroups,
+}: {
+  ageGroup: string;
+  setAgeGroup: (value: string) => void;
+  subCategory: string;
+  setSubCategory: (value: string) => void;
+  categories: Record<string, string>;
+  ageGroups: string[];
+}) {
+  return (
+    <div className="space-y-6">
+      {/* Age Group Filter */}
+      <div>
+        <h4 className="font-medium text-[#46332E] mb-3">Age Group</h4>
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center">
+            <input
+              type="radio"
+              id="age-all"
+              name="age-group"
+              checked={ageGroup === "all"}
+              onChange={() => setAgeGroup("all")}
+              className="h-4 w-4 text-[#46332E] focus:ring-[#46332E]"
+            />
+            <label htmlFor="age-all" className="ml-2 text-[#46332E]">
+              All
+            </label>
+          </div>
+
+          {ageGroups.map((age) => (
+            <div key={age} className="flex items-center">
+              <input
+                type="radio"
+                id={`age-${age}`}
+                name="age-group"
+                checked={ageGroup === age}
+                onChange={() => setAgeGroup(age)}
+                className="h-4 w-4 text-[#46332E] focus:ring-[#46332E]"
+              />
+              <label htmlFor={`age-${age}`} className="ml-2 text-[#46332E]">
+                {age.charAt(0).toUpperCase() + age.slice(1)}
+              </label>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Style Filter */}
+      <div>
+        <h4 className="font-medium text-[#46332E] mb-3">Style</h4>
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center">
+            <input
+              type="radio"
+              id="style-all"
+              name="style"
+              checked={subCategory === "all"}
+              onChange={() => setSubCategory("all")}
+              className="h-4 w-4 text-[#46332E] focus:ring-[#46332E]"
+            />
+            <label htmlFor="style-all" className="ml-2 text-[#46332E]">
+              All
+            </label>
+          </div>
+
+          {Object.entries(categories).map(([key, label]) => (
+            <div key={key} className="flex items-center">
+              <input
+                type="radio"
+                id={`style-${key}`}
+                name="style"
+                checked={subCategory === key}
+                onChange={() => setSubCategory(key)}
+                className="h-4 w-4 text-[#46332E] focus:ring-[#46332E]"
+              />
+              <label htmlFor={`style-${key}`} className="ml-2 text-[#46332E]">
+                {label}
+              </label>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="pt-4 border-t border-gray-200">
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full"
+          onClick={() => {
+            setAgeGroup("all");
+            setSubCategory("all");
+          }}
+        >
+          Clear All
+        </Button>
+      </div>
+    </div>
+  );
+}
