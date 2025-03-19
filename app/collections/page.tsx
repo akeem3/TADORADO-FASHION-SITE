@@ -34,7 +34,7 @@ const products: Product[] = [
     category: "male",
     subCategory: "senator",
     ageGroup: "adult",
-    price: 250,
+    price: 50,
     isNew: true,
     isFeatured: true,
     image:
@@ -48,8 +48,8 @@ const products: Product[] = [
     category: "male",
     subCategory: "ankara",
     ageGroup: "adult",
-    price: 180,
-    salePrice: 150,
+    price: 80,
+    salePrice: 50,
     image:
       "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/ankara%20shirt%20and%20trousers%20men.jpg?alt=media&token=e1af5267-98de-468c-8f82-a0c6fabaeb3d",
     hoverImage:
@@ -61,7 +61,7 @@ const products: Product[] = [
     category: "female",
     subCategory: "owanbe",
     ageGroup: "adult",
-    price: 320,
+    price: 20,
     isFeatured: true,
     image:
       "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/Owambe%20gown.png?alt=media&token=c141d5fc-caaa-46c2-b733-5f15bc30bf93",
@@ -74,7 +74,7 @@ const products: Product[] = [
     category: "female",
     subCategory: "corset",
     ageGroup: "adult",
-    price: 280,
+    price: 80,
     isNew: true,
     image:
       "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/corset%20dress.jpg?alt=media&token=824940a7-4951-4ddc-ab6e-57119a830b18",
@@ -87,7 +87,7 @@ const products: Product[] = [
     category: "male",
     subCategory: "ankara",
     ageGroup: "children",
-    price: 120,
+    price: 20,
     image:
       "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/male%20children%20ankara%20set.jpg?alt=media&token=2d3c4f81-d1ba-4458-92d2-2963c573cf87",
     hoverImage:
@@ -110,7 +110,7 @@ const products: Product[] = [
     category: "female",
     subCategory: "iro",
     ageGroup: "adult",
-    price: 220,
+    price: 20,
     isFeatured: true,
     image:
       "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/iro%20and%20buba.jpg?alt=media&token=0565a811-03e8-4d42-8d2f-55dd6c5c59f8",
@@ -123,7 +123,7 @@ const products: Product[] = [
     category: "male",
     subCategory: "corporate",
     ageGroup: "adult",
-    price: 190,
+    price: 90,
     image: "/placeholder.svg?height=400&width=300",
     hoverImage: "/placeholder.svg?height=400&width=300",
   },
