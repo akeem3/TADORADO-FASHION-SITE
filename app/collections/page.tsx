@@ -76,8 +76,10 @@ const products: Product[] = [
     ageGroup: "adult",
     price: 280,
     isNew: true,
-    image: "/placeholder.svg?height=400&width=300",
-    hoverImage: "/placeholder.svg?height=400&width=300",
+    image:
+      "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/corset%20dress.jpg?alt=media&token=824940a7-4951-4ddc-ab6e-57119a830b18",
+    hoverImage:
+      "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/corset%20dress.jpg?alt=media&token=824940a7-4951-4ddc-ab6e-57119a830b18",
   },
   {
     id: 5,
