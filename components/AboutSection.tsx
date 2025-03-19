@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 export default function AboutSection() {
   return (
-    <section className="bg-[#1F1F1D] w-full relative py-16 lg:py-24 overflow-hidden">
+    <section className="bg-[#1F1F1D] w-full relative py-16 lg:py-16 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           {/* Left Side with Main Image */}
