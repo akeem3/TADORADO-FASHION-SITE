@@ -106,8 +106,10 @@ const products: Product[] = [
     ageGroup: "adult",
     price: 220,
     isFeatured: true,
-    image: "/placeholder.svg?height=400&width=300",
-    hoverImage: "/placeholder.svg?height=400&width=300",
+    image:
+      "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/iro%20and%20buba.jpg?alt=media&token=0565a811-03e8-4d42-8d2f-55dd6c5c59f8",
+    hoverImage:
+      "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/iro%20and%20buba.jpg?alt=media&token=0565a811-03e8-4d42-8d2f-55dd6c5c59f8",
   },
   {
     id: 8,
@@ -182,7 +184,6 @@ export default function CollectionsPage() {
 
   return (
     <div>
- 
       {/* Banner Section */}
       <Banner
         title="OUR COLLECTIONS"
