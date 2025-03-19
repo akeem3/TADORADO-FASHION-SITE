@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import Container from "@/app/Components/Container";
+import Banner from "@/components/ui/banner";
 
 // Define the product types
 type Product = {
@@ -36,8 +37,10 @@ const products: Product[] = [
     price: 250,
     isNew: true,
     isFeatured: true,
-    image: "/placeholder.svg?height=400&width=300",
-    hoverImage: "/placeholder.svg?height=400&width=300",
+    image:
+      "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/agbada.jpg?alt=media&token=fb644790-6e97-4820-b75c-088cb559223e",
+    hoverImage:
+      "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/agbada.jpg?alt=media&token=fb644790-6e97-4820-b75c-088cb559223e",
   },
   {
     id: 2,
@@ -58,8 +61,10 @@ const products: Product[] = [
     ageGroup: "adult",
     price: 320,
     isFeatured: true,
-    image: "/placeholder.svg?height=400&width=300",
-    hoverImage: "/placeholder.svg?height=400&width=300",
+    image:
+      "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/Owambe%20gown.png?alt=media&token=c141d5fc-caaa-46c2-b733-5f15bc30bf93",
+    hoverImage:
+      "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/Owambe%20gown.png?alt=media&token=c141d5fc-caaa-46c2-b733-5f15bc30bf93",
   },
   {
     id: 4,
@@ -176,40 +181,19 @@ export default function CollectionsPage() {
   });
 
   return (
-    <>
-      {/* Hero Banner */}
-      <div className="relative h-[40vh] md:h-[50vh] bg-[#1F1F1D] overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-[#1F1F1D]/80 to-transparent z-10"></div>
-        <Image
-          src="/placeholder.svg?height=800&width=1600"
-          alt="Collections"
-          fill
-          className="object-cover opacity-50"
-          priority
-        />
-        <div className="relative z-20 h-full flex flex-col justify-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="max-w-2xl"
-          >
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
-              Our Collections
-            </h1>
-            <p className="text-lg text-gray-200 max-w-xl">
-              Discover our diverse range of traditional and modern outfits,
-              crafted with precision and care to celebrate your unique style and
-              cultural heritage.
-            </p>
-          </motion.div>
-        </div>
-      </div>
+    <div>
+ 
+      {/* Banner Section */}
+      <Banner
+        title="Our Collections"
+        description="Discover our diverse range of traditional and modern outfits, 
+        crafted with precision and care to celebrate your unique style and cultural heritage"
+      />
 
       <Container>
         {/* Featured Collections */}
         {featuredProducts.length > 0 && (
-          <section className="py-16">
+          <section className="py-16 mb-10">
             <div className="max-w-7xl mx-auto px-4 sm:px-6">
               <div className="flex justify-between items-center mb-8">
                 <h2 className="text-2xl md:text-3xl font-bold text-[#46332E]">
@@ -244,16 +228,16 @@ export default function CollectionsPage() {
               className="w-full"
             >
               <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
-                <TabsList className="w-full max-w-md grid grid-cols-2 bg-[#F5F3F0] rounded-xl p-1">
+                <TabsList className="w-full max-w-md grid grid-cols-2 bg-[#F5F3F0] rounded-xl p-1 mb-3">
                   <TabsTrigger
                     value="male"
-                    className="text-base md:text-lg py-3 rounded-lg data-[state=active]:bg-[#46332E] data-[state=active]:text-white"
+                    className="text-base md:text-lg py-3  data-[state=active]:bg-[#46332E] data-[state=active]:text-white rounded-2xl"
                   >
                     Male Outfits
                   </TabsTrigger>
                   <TabsTrigger
                     value="female"
-                    className="text-base md:text-lg py-3 rounded-lg data-[state=active]:bg-[#46332E] data-[state=active]:text-white"
+                    className="text-base md:text-lg py-3 data-[state=active]:bg-[#46332E] data-[state=active]:text-white rounded-2xl"
                   >
                     Female Outfits
                   </TabsTrigger>
@@ -414,7 +398,7 @@ export default function CollectionsPage() {
           </div>
         </section>
       </Container>
-    </>
+    </div>
   );
 }
 
@@ -448,10 +432,14 @@ function ProductCard({ product }: { product: Product }) {
           {/* Product Badges */}
           <div className="absolute top-3 left-3 flex flex-col gap-2">
             {product.isNew && (
-              <Badge className="bg-[#46332E] hover:bg-[#46332E]/90 text-white rounded-2xl">New</Badge>
+              <Badge className="bg-[#46332E] hover:bg-[#46332E]/90 text-white rounded-2xl">
+                New
+              </Badge>
             )}
             {product.salePrice && (
-              <Badge className="bg-red-600 hover:bg-red-700 rounded-2xl text-white">Sale</Badge>
+              <Badge className="bg-red-600 hover:bg-red-700 rounded-2xl text-white">
+                Sale
+              </Badge>
             )}
           </div>
 
