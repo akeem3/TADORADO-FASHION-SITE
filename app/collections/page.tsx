@@ -185,7 +185,7 @@ export default function CollectionsPage() {
  
       {/* Banner Section */}
       <Banner
-        title="Our Collections"
+        title="OUR COLLECTIONS"
         description="Discover our diverse range of traditional and modern outfits, 
         crafted with precision and care to celebrate your unique style and cultural heritage"
       />

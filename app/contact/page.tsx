@@ -10,7 +10,7 @@ export default function Contact() {
     <Container>
       <div>
         <Banner
-          title="Contact Us"
+          title="CONTACT US"
           description="Reach out to us for custom tailoring, inquiries, and collaborations. We're here to bring your designs to life."
         />
 

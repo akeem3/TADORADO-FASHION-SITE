@@ -108,7 +108,7 @@ export default function Navbar() {
                 {[
                   { name: "Home", href: "/" },
                   { name: "Collections", href: "/collections" },
-                  { name: "Blog", href: "/about" },
+                  // { name: "Blog", href: "/about" },
                   { name: "Contact", href: "/contact" },
                 ].map((item) => (
                   <li key={item.name}>

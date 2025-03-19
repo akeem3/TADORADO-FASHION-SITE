@@ -7,7 +7,7 @@ const cart = () => {
     <Container>
       <div>
         <Banner
-          title="Contact Us"
+          title="YOUR CART"
           description="Reach out to us for custom tailoring, inquiries, and collaborations. We're here to bring your designs to life."
         />
       </div>
