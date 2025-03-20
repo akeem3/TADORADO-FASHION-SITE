@@ -205,7 +205,7 @@ export default function CollectionsPage() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6">
               <div className="flex justify-between items-center mb-8">
                 <h2 className="text-3xl md:text-3xl font-bold text-[#46332E]">
-                  Featured Collections
+                  FEATURED COLLECTION
                 </h2>
                 <Link
                   href="#all-collections"
@@ -231,6 +231,11 @@ export default function CollectionsPage() {
         {/* All Collections */}
         <section id="all-collections" className="pb-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-3xl md:text-3xl font-bold text-[#46332E]">
+                FULL COLLECTION
+              </h2>
+            </div>
             <Tabs
               value={activeTab}
               onValueChange={setActiveTab}
