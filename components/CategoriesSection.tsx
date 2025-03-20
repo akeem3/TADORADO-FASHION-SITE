@@ -28,7 +28,7 @@ const categories = [
 
 export default function CategoriesSection() {
   return (
-    <section className="py-16 lg:py-24 px-4 sm:px-6 lg:px-8 bg-[#F5F3F0]">
+    <section className="py-16 lg:py-24 px-6 sm:px-10 lg:px-16 bg-[#F5F3F0]">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-start mb-12">
           <motion.div
@@ -39,7 +39,7 @@ export default function CategoriesSection() {
             viewport={{ once: true, margin: "-100px" }}
           >
             <motion.h2
-              className="text-3xl sm:text-4xl font-bold text-[#46332E] mb-4"
+              className="text-3xl sm:text-4xl font-extrabold text-[#46332E] mb-4"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
@@ -48,16 +48,17 @@ export default function CategoriesSection() {
               VIEW OUR CATEGORIES
             </motion.h2>
             <motion.p
-              className="text-base text-[#46332E]/80 mb-6"
+              className="text-lg text-[#46332E]/80 mb-6"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
               viewport={{ once: true, margin: "-100px" }}
             >
-              Lorem ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been theLorem
+              Explore a variety of styles crafted to perfection. Find the perfect fit for every occasion.
             </motion.p>
           </motion.div>
+          
+          {/* Updated View All Link */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -66,10 +67,10 @@ export default function CategoriesSection() {
           >
             <Link
               href="/collections"
-              className="hidden sm:flex items-center text-[#46332E] hover:text-[#46332E]/80 transition-colors"
+              className="hidden sm:flex items-center text-[#46332E] text-lg font-bold hover:text-[#46332E]/80 transition-colors"
             >
               View all
-              <ArrowRight className="ml-2 h-5 w-5" />
+              <ArrowRight className="ml-2 h-6 w-6" />
             </Link>
           </motion.div>
         </div>
@@ -96,13 +97,14 @@ export default function CategoriesSection() {
                   <h3 className="text-xl font-semibold text-[#46332E]">
                     {category.name}
                   </h3>
-                  <ArrowRight className="h-5 w-5 text-[#46332E] opacity-70" />
+                  <ArrowRight className="h-6 w-6 text-[#46332E] opacity-80" />
                 </div>
               </Link>
             </motion.div>
           ))}
         </div>
 
+        {/* Mobile View All Link */}
         <motion.div
           className="mt-8 text-center sm:hidden"
           initial={{ opacity: 0, y: 20 }}
@@ -112,10 +114,10 @@ export default function CategoriesSection() {
         >
           <Link
             href="/collections"
-            className="inline-flex items-center text-[#46332E] hover:text-[#46332E]/80 transition-colors"
+            className="inline-flex items-center text-[#46332E] text-lg font-bold hover:text-[#46332E]/80 transition-colors"
           >
             View all
-            <ArrowRight className="ml-2 h-5 w-5" />
+            <ArrowRight className="ml-2 h-6 w-6" />
           </Link>
         </motion.div>
       </div>

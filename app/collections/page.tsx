@@ -10,6 +10,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import Container from "@/app/Components/Container";
 import Banner from "@/components/ui/banner";
+import { ArrowDown } from "lucide-react";
 
 // Define the product types
 type Product = {
@@ -203,14 +204,15 @@ export default function CollectionsPage() {
           <section className="py-16 mb-10">
             <div className="max-w-7xl mx-auto px-4 sm:px-6">
               <div className="flex justify-between items-center mb-8">
-                <h2 className="text-2xl md:text-3xl font-bold text-[#46332E]">
+                <h2 className="text-3xl md:text-3xl font-bold text-[#46332E]">
                   Featured Collections
                 </h2>
                 <Link
                   href="#all-collections"
-                  className="text-[#46332E] hover:text-[#46332E]/80 font-medium"
+                  className="flex flex-row text-[#46332E] text-xl hover:text-[#46332E]/80 font-medium"
                 >
                   View All
+                  <ArrowDown className="h-6 w-6 text-gray-700 ml-2 mt-1 " />
                 </Link>
               </div>
 
