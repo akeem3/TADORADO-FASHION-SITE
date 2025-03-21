@@ -37,7 +37,7 @@ const CartPage = () => {
     <>
       <Banner title="YOUR CART" description="Review your items and proceed to checkout when you're ready." />
       <Container>
-        <div className="py-12">
+        <div className="py-12 max-w-7xl mx-auto">
           <Button variant="outline" className="mb-8" onClick={() => router.back()}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Continue Shopping

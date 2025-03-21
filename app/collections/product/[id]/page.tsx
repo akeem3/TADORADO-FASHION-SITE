@@ -228,7 +228,7 @@ export default function ProductDetailPage() {
                   src={selectedImage || "/placeholder.svg"}
                   alt={product.name}
                   fill
-                  className="object-cover"
+                  className="object-cover transition-transform duration-500"
                   priority
                 />
 
