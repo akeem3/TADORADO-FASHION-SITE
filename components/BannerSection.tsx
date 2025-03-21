@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 
 export default function BannerSection() {
   return (
-    <section className="min-h-[90vh] flex flex-col lg:flex-row items-center justify-between px-4 sm:px-6 lg:px-16 pt-4 pb-12 lg:pb-0">
+    <section className="max-w-7xl mx-auto min-h-[90vh] flex flex-col lg:flex-row items-center justify-between px-4 sm:px-6 lg:px-16 pt-4 pb-12 lg:pb-0">
       {/* Text */}
       <motion.div
         className="flex-1 max-w-2xl text-center lg:text-left mb-8 lg:mb-0"

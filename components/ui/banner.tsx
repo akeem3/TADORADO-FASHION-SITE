@@ -1,19 +1,14 @@
-"use client";
-
-import React from "react";
-import { motion } from "framer-motion";
-import Image from "next/image";
-
-
+"use client"
+import { motion } from "framer-motion"
+import Image from "next/image"
 
 interface BannerProps {
-  title: string;
-  description: string;
+  title: string
+  description: string
 }
 
 export default function Banner({ title, description }: BannerProps) {
   return (
-    
     <div className="relative h-[40vh] md:h-[50vh] bg-[#1F1F1D] overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-r from-[#1F1F1D]/80 to-transparent z-8"></div>
       <Image
@@ -30,12 +25,11 @@ export default function Banner({ title, description }: BannerProps) {
           transition={{ duration: 0.6 }}
           className="max-w-2xl"
         >
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-10">
-            {title}
-          </h1>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-10">{title}</h1>
           <p className="text-lg text-gray-200 max-w-xl">{description}</p>
         </motion.div>
       </div>
     </div>
-  );
+  )
 }
+
