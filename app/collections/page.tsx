@@ -4,13 +4,15 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Filter, Heart, Eye, ShoppingBag, X, ArrowDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Filter, Heart, Eye, X, ArrowDown, ShoppingBag } from "lucide-react";
+import { Button} from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger, TabsContent} from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import Container from "@/app/Components/Container";
 import Banner from "@/components/ui/banner";
 import { useSearchParams } from "next/navigation";
+// import AddToCartButton from "@/components/ui/AddToCartButton";
+
 
 // Define the product types
 type Product = {
@@ -156,6 +158,7 @@ export default function CollectionsPage() {
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab");
   const ageGroupParam = searchParams.get("ageGroup");
+  
 
   const [activeTab, setActiveTab] = useState(
     tabParam === "female" ? "female" : "male"
@@ -500,6 +503,7 @@ function ProductCard({ product }: { product: Product }) {
           <div className="absolute bottom-0 left-0 right-0 bg-[#46332E] text-white py-3 px-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex items-center justify-center gap-2">
             <ShoppingBag size={18} />
             <span>Add to Cart</span>
+            
           </div>
         </div>
       </Link>

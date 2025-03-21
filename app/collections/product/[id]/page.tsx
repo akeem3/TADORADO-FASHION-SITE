@@ -341,7 +341,7 @@ export default function ProductDetailPage() {
                         subCategory: product.subCategory,
                       }}
                       quantity={quantity}
-                      redirectToCart={true}
+                      redirectToCart={false}
                       className="flex-1"
                     />
 
