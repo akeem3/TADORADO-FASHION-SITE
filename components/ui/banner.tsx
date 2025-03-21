@@ -17,7 +17,7 @@ export default function Banner({ title, description }: BannerProps) {
     <div className="relative h-[40vh] md:h-[50vh] bg-[#1F1F1D] overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-r from-[#1F1F1D]/80 to-transparent z-8"></div>
       <Image
-        src="https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/Frame%2022.png?alt=media&token=6e06d797-4d3a-4e6e-875a-1767bb30787f"
+        src="https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/banner-image.png?alt=media&token=2c3279ed-a418-4be3-9ca7-fa42ff72ff8c"
         alt="Banner"
         fill
         className="object-cover"
