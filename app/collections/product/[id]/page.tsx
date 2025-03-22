@@ -3,11 +3,11 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import {  ArrowLeft, Star } from "lucide-react";
+import {ArrowLeft, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Container from "@/app/Components/Container";
-import Banner from "@/components/ui/banner";
+// import Banner from "@/components/ui/banner";
 import AddToCartButton from "@/components/ui/AddToCartButton";
 
 // Define the product types
@@ -383,7 +383,7 @@ export default function ProductDetailPage() {
                   />
 
                   {/* Buy Now Button */}
-                  <Button className="bg-[#46332E] hover:bg-[#2e211b] text-white px-6 py-4 rounded-xl text-lg flex-1">
+                  <Button className="mt-1 bg-[#46332E] hover:bg-[#56453c] text-white  py-4 rounded-2xl text-lg flex-1">
                     Buy Now
                   </Button>
                 </div>
