@@ -5,14 +5,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Filter, Heart, Eye, X, ArrowDown, ShoppingBag } from "lucide-react";
-import { Button} from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger, TabsContent} from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import Container from "@/app/Components/Container";
 import Banner from "@/components/ui/banner";
 import { useSearchParams } from "next/navigation";
 // import AddToCartButton from "@/components/ui/AddToCartButton";
-
 
 // Define the product types
 type Product = {
@@ -158,7 +157,6 @@ export default function CollectionsPage() {
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab");
   const ageGroupParam = searchParams.get("ageGroup");
-  
 
   const [activeTab, setActiveTab] = useState(
     tabParam === "female" ? "female" : "male"
@@ -228,16 +226,26 @@ export default function CollectionsPage() {
                 <h2 className="text-3xl md:text-3xl font-bold text-[#46332E]">
                   FEATURED COLLECTION
                 </h2>
-                <Link
-                  href="#all-collections"
-                  className="flex flex-row text-[#46332E] text-xl hover:text-[#46332E]/80 font-medium"
+                {/* View All Button */}
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6, delay: 0.6 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  className="w-full sm:w-auto text-center sm:text-left"
                 >
-                  View All
-                  <ArrowDown className="h-6 w-6 text-gray-700 ml-2 mt-1 " />
-                </Link>
+                  <Link
+                    href="#all-collections"
+                    className="inline-flex items-center justify-center w-full sm:w-auto px-6 py-3 text-lg sm:text-xl font-semibold text-[#46332E] bg-[#F5F3F0] rounded-xl hover:bg-[#EAE4DF] transition-all duration-300 shadow-md hover:shadow-lg"
+                  >
+                    View All
+                    <ArrowDown className="ml-2 h-6 w-6 text-gray-700" />
+                  </Link>
+                </motion.div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {/* Grid Layout: 2 Columns on Mobile, More on Larger Screens */}
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {featuredProducts.map((product) => (
                   <ProductCard
                     key={`featured-${product.id}`}
@@ -375,7 +383,7 @@ export default function CollectionsPage() {
                     value="male"
                     className="animate-in fade-in-50 duration-300"
                   >
-                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                       {filteredMaleProducts.length > 0 ? (
                         filteredMaleProducts.map((product) => (
                           <ProductCard key={product.id} product={product} />
@@ -404,7 +412,7 @@ export default function CollectionsPage() {
                     value="female"
                     className="animate-in fade-in-50 duration-300"
                   >
-                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                       {filteredFemaleProducts.length > 0 ? (
                         filteredFemaleProducts.map((product) => (
                           <ProductCard key={product.id} product={product} />
@@ -503,7 +511,6 @@ function ProductCard({ product }: { product: Product }) {
           <div className="absolute bottom-0 left-0 right-0 bg-[#46332E] text-white py-3 px-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex items-center justify-center gap-2">
             <ShoppingBag size={18} />
             <span>Add to Cart</span>
-            
           </div>
         </div>
       </Link>
