@@ -1,30 +1,30 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import Image from "next/image"
-import { useParams, useRouter } from "next/navigation"
-import { Heart, ArrowLeft, Star } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import Container from "@/app/Components/Container"
-import Banner from "@/components/ui/banner"
-import AddToCartButton from "@/components/ui/AddToCartButton"
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import { useParams, useRouter } from "next/navigation";
+import {  ArrowLeft, Star } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import Container from "@/app/Components/Container";
+import Banner from "@/components/ui/banner";
+import AddToCartButton from "@/components/ui/AddToCartButton";
 
 // Define the product types
 type Product = {
-  id: number
-  name: string
-  category: "male" | "female"
-  subCategory: string
-  ageGroup: "adult" | "children" | "baby"
-  price: number
-  salePrice?: number
-  isNew?: boolean
-  isFeatured?: boolean
-  image: string
-  hoverImage?: string
-  description?: string
-}
+  id: number;
+  name: string;
+  category: "male" | "female";
+  subCategory: string;
+  ageGroup: "adult" | "children" | "baby";
+  price: number;
+  salePrice?: number;
+  isNew?: boolean;
+  isFeatured?: boolean;
+  image: string;
+  hoverImage?: string;
+  description?: string;
+};
 
 // Sample product data with enhanced properties
 const products: Product[] = [
@@ -143,7 +143,7 @@ const products: Product[] = [
     description:
       "Professional corporate attire tailored for the modern workplace. Combines sharp styling with comfortable fit, ensuring you look polished and feel confident throughout your day.",
   },
-]
+];
 
 // Category definitions
 const maleCategories: Record<string, string> = {
@@ -151,7 +151,7 @@ const maleCategories: Record<string, string> = {
   ankara: "Ankara",
   corporate: "Corporate",
   vintage: "Vintage",
-}
+};
 
 const femaleCategories: Record<string, string> = {
   owanbe: "Owanbe Classical",
@@ -165,31 +165,28 @@ const femaleCategories: Record<string, string> = {
   vintage: "Vintage",
   boubou: "Boubou dress",
   baby: "Baby Gown",
-}
+};
 
 export default function ProductDetailPage() {
-  const params = useParams()
-  const router = useRouter()
-  const [product, setProduct] = useState<Product | null>(null)
-  const [selectedImage, setSelectedImage] = useState<string>("")
-  const [quantity, setQuantity] = useState(1)
-  const [isLoading, setIsLoading] = useState(true)
+  const params = useParams();
+  const router = useRouter();
+  const [product, setProduct] = useState<Product | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string>("");
+  const [quantity, setQuantity] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // In a real app, you would fetch the product from an API
-    // For now, we'll use our sample data
-    const productId = Number(params.id)
-    const foundProduct = products.find((p) => p.id === productId)
+    const productId = Number(params.id);
+    const foundProduct = products.find((p) => p.id === productId);
 
     if (foundProduct) {
-      setProduct(foundProduct)
-      setSelectedImage(foundProduct.image)
-      setIsLoading(false)
+      setProduct(foundProduct);
+      setSelectedImage(foundProduct.image);
+      setIsLoading(false);
     } else {
-      // Product not found, redirect to collections
-      router.push("/collections")
+      router.push("/collections");
     }
-  }, [params.id, router])
+  }, [params.id, router]);
 
   if (isLoading || !product) {
     return (
@@ -198,13 +195,13 @@ export default function ProductDetailPage() {
           <div className="animate-pulse text-[#46332E]">Loading product...</div>
         </div>
       </Container>
-    )
+    );
   }
 
   const categoryLabel =
     product.category === "male"
       ? maleCategories[product.subCategory] || product.subCategory
-      : femaleCategories[product.subCategory] || product.subCategory
+      : femaleCategories[product.subCategory] || product.subCategory;
 
   return (
     <>
@@ -214,48 +211,71 @@ export default function ProductDetailPage() {
       />
 
       <Container>
-        <div className="py-12 max-w-7xl mx-auto">
-          <Button variant="outline" className="mb-8" onClick={() => router.back()}>
+        <div className="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Back Button */}
+          <Button
+            variant="outline"
+            className="mb-8"
+            onClick={() => router.back()}
+          >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Collections
           </Button>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+          {/* Grid Layout for Product */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Product Images */}
             <div className="space-y-4">
-              <div className="relative aspect-square overflow-hidden rounded-xl border">
+              <div className="relative w-full h-[450px] sm:h-[550px] md:h-[600px] lg:h-[700px] overflow-hidden rounded-xl border">
                 <Image
                   src={selectedImage || "/placeholder.svg"}
                   alt={product.name}
                   fill
-                  className="object-cover transition-transform duration-500"
+                  className="object-cover object-center transition-transform duration-500"
                   priority
                 />
 
                 {/* Product Badges */}
                 <div className="absolute top-3 left-3 flex flex-col gap-2">
                   {product.isNew && (
-                    <Badge className="bg-[#46332E] hover:bg-[#46332E]/90 text-white rounded-2xl">New</Badge>
+                    <Badge className="bg-[#46332E] hover:bg-[#46332E]/90 text-white rounded-2xl">
+                      New
+                    </Badge>
                   )}
                   {product.salePrice && (
-                    <Badge className="bg-red-600 hover:bg-red-700 rounded-2xl text-white">Sale</Badge>
+                    <Badge className="bg-red-600 hover:bg-red-700 rounded-2xl text-white">
+                      Sale
+                    </Badge>
                   )}
                 </div>
               </div>
 
               {/* Thumbnail Images */}
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <button
-                  className={`relative aspect-square w-20 rounded-md border overflow-hidden ${selectedImage === product.image ? "ring-2 ring-[#46332E]" : ""}`}
+                  className={`relative w-20 h-20 rounded-md border overflow-hidden ${
+                    selectedImage === product.image
+                      ? "ring-2 ring-[#46332E]"
+                      : ""
+                  }`}
                   onClick={() => setSelectedImage(product.image)}
                   aria-label="View main product image"
                 >
-                  <Image src={product.image || "/placeholder.svg"} alt={product.name} fill className="object-cover" />
+                  <Image
+                    src={product.image || "/placeholder.svg"}
+                    alt={product.name}
+                    fill
+                    className="object-cover"
+                  />
                 </button>
 
                 {product.hoverImage && product.hoverImage !== product.image && (
                   <button
-                    className={`relative aspect-square w-20 rounded-md border overflow-hidden ${selectedImage === product.hoverImage ? "ring-2 ring-[#46332E]" : ""}`}
+                    className={`relative w-20 h-20 rounded-md border overflow-hidden ${
+                      selectedImage === product.hoverImage
+                        ? "ring-2 ring-[#46332E]"
+                        : ""
+                    }`}
                     onClick={() => setSelectedImage(product.hoverImage!)}
                     aria-label="View alternate product image"
                   >
@@ -272,54 +292,79 @@ export default function ProductDetailPage() {
 
             {/* Product Details */}
             <div className="space-y-6">
+              {/* Title & Category */}
               <div>
-                <h1 className="text-3xl font-bold text-[#46332E]">{product.name}</h1>
-                <p className="text-[#46332E]/70 mt-1">{categoryLabel}</p>
+                <h1 className="text-4xl font-bold text-[#46332E]">
+                  {product.name}
+                </h1>
+                <p className="text-[#46332E]/70 mt-1 text-lg">
+                  {categoryLabel}
+                </p>
               </div>
 
               {/* Ratings */}
               <div className="flex items-center gap-1">
                 {[1, 2, 3, 4, 5].map((star) => (
-                  <Star key={star} className="h-5 w-5 text-yellow-400 fill-yellow-400" />
+                  <Star
+                    key={star}
+                    className="h-5 w-5 text-yellow-400 fill-yellow-400"
+                  />
                 ))}
-                <span className="text-sm text-[#46332E]/70 ml-2">(24 reviews)</span>
+                <span className="text-sm text-[#46332E]/70 ml-2">
+                  (24 reviews)
+                </span>
               </div>
 
               {/* Price */}
               <div className="flex items-center gap-3">
                 {product.salePrice ? (
                   <>
-                    <span className="text-2xl font-bold text-[#46332E]">${product.salePrice}</span>
-                    <span className="text-lg text-[#46332E]/60 line-through">${product.price}</span>
+                    <span className="text-3xl font-bold text-[#46332E]">
+                      ${product.salePrice}
+                    </span>
+                    <span className="text-lg text-[#46332E]/60 line-through">
+                      ${product.price}
+                    </span>
                     <Badge className="bg-red-600 text-white ml-2">
-                      {Math.round((1 - product.salePrice / product.price) * 100)}% OFF
+                      {Math.round(
+                        (1 - product.salePrice / product.price) * 100
+                      )}
+                      % OFF
                     </Badge>
                   </>
                 ) : (
-                  <span className="text-2xl font-bold text-[#46332E]">${product.price}</span>
+                  <span className="text-3xl font-bold text-[#46332E]">
+                    ${product.price}
+                  </span>
                 )}
               </div>
 
               {/* Description */}
               <div>
-                <h2 className="text-lg font-semibold text-[#46332E] mb-2">Description</h2>
-                <p className="text-[#46332E]/80 leading-relaxed">
-                  {product.description || "No description available for this product."}
+                <h2 className="text-lg font-semibold text-[#46332E] mb-2">
+                  Description
+                </h2>
+                <p className="text-[#46332E]/80 leading-relaxed text-lg">
+                  {product.description ||
+                    "No description available for this product."}
                 </p>
               </div>
 
-              {/* Quantity and Add to Cart */}
+              {/* Quantity and Buttons */}
               <div className="pt-6 border-t border-gray-200">
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <div className="flex items-center border rounded-md">
+                  {/* Quantity Selector */}
+                  <div className="flex items-center border rounded-md px-3">
                     <button
-                      onClick={() => setQuantity((prev) => Math.max(1, prev - 1))}
+                      onClick={() =>
+                        setQuantity((prev) => Math.max(1, prev - 1))
+                      }
                       className="px-4 py-2 text-[#46332E] hover:bg-gray-100"
                       aria-label="Decrease quantity"
                     >
                       -
                     </button>
-                    <span className="px-4 py-2">{quantity}</span>
+                    <span className="px-4 py-2 text-lg">{quantity}</span>
                     <button
                       onClick={() => setQuantity((prev) => prev + 1)}
                       className="px-4 py-2 text-[#46332E] hover:bg-gray-100"
@@ -329,38 +374,18 @@ export default function ProductDetailPage() {
                     </button>
                   </div>
 
-                  <div className="flex gap-3">
-                    <AddToCartButton
-                      product={{
-                        id: product.id,
-                        name: product.name,
-                        price: product.price,
-                        salePrice: product.salePrice,
-                        image: product.image,
-                        category: product.category,
-                        subCategory: product.subCategory,
-                      }}
-                      quantity={quantity}
-                      redirectToCart={false}
-                      className="flex-1"
-                    />
+                  {/* Add to Cart Button */}
+                  <AddToCartButton
+                    product={product}
+                    quantity={quantity}
+                    redirectToCart={false}
+                    className="flex-1"
+                  />
 
-                    <Button variant="outline" className="p-3" aria-label="Add to wishlist">
-                      <Heart className="h-5 w-5 text-[#46332E]" />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Additional Info */}
-              <div className="pt-6 border-t border-gray-200 space-y-4">
-                <div>
-                  <h3 className="text-sm font-medium text-[#46332E]">Category</h3>
-                  <p className="mt-1 text-sm text-[#46332E]/70">{categoryLabel}</p>
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-[#46332E]">Age Group</h3>
-                  <p className="mt-1 text-sm text-[#46332E]/70 capitalize">{product.ageGroup}</p>
+                  {/* Buy Now Button */}
+                  <Button className="bg-[#46332E] hover:bg-[#2e211b] text-white px-6 py-4 rounded-xl text-lg flex-1">
+                    Buy Now
+                  </Button>
                 </div>
               </div>
             </div>
@@ -368,6 +393,5 @@ export default function ProductDetailPage() {
         </div>
       </Container>
     </>
-  )
+  );
 }
-
