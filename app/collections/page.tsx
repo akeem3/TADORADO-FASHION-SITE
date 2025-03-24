@@ -236,7 +236,7 @@ export default function CollectionsPage() {
                 >
                   <Link
                     href="#all-collections"
-                    className="inline-flex items-center justify-center  sm:w-auto px-4 py-3 text-lg sm:text-lg font-semibold text-[#46332E] bg-[#F5F3F0] rounded-xl hover:bg-[#EAE4DF] transition-all duration-300 shadow-md hover:shadow-lg"
+                    className="inline-flex items-center justify-center  sm:w-auto px-4 py-3 text-lg sm:text-lg font-semibold text-[#46332E] rounded-2xl hover:bg-[#ffffff] transition-all duration-300 hover:shadow-lg border-[#46332E]"
                   >
                     View All
                     <ArrowDown className="ml-2 h-6 w-6 text-gray-700" />
