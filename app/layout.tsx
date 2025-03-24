@@ -24,7 +24,7 @@ export default function RootLayout({
         <link
           rel="icon"
           type="image/png"
-          href="https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/Tado%20logo%20Final.png?alt=media&token=2cac7d0f-db1e-4a38-88c0-58b79a4eb5c7"
+          href="https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/top%20site%20logo%20off.png?alt=media&token=b75c6675-51be-4d17-a7d1-f376dd571a69"
         />
       </head>
       <body className={`${poppins.className} text-slate-700`}>

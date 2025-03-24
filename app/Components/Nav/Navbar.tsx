@@ -23,7 +23,7 @@ export default function Navbar() {
 
   return (
     <header
-      className={`sticky top-0 w-full z-20 transition-all duration-300 ${
+      className={`sticky top-0 w-full z-30 transition-all duration-300 ${
         isScrolled ? "bg-white/95 shadow-sm" : "bg-transparent"
       } backdrop-blur-sm`}
     >
