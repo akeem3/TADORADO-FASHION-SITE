@@ -236,10 +236,12 @@ export default function CollectionsPage() {
                 >
                   <Link
                     href="#all-collections"
-                    className="inline-flex items-center justify-center  sm:w-auto px-4 py-3 text-lg sm:text-lg font-semibold text-[#46332E] rounded-2xl hover:bg-[#ffffff] transition-all duration-300 hover:shadow-lg border-[#46332E]"
+                    className="inline-flex items-center justify-center sm:w-auto px-4 py-3 text-lg sm:text-lg font-semibold 
+                    text-[#46332E] rounded-2xl border-2 border-[#46332E] transition-all duration-300 
+                    hover:scale-105 hover:shadow-lg"
                   >
                     View All
-                    <ArrowDown className="ml-2 h-6 w-6 text-gray-700" />
+                    <ArrowDown className="ml-2 h-6 w-6 text-[#46332E] transition-all duration-300" />
                   </Link>
                 </motion.div>
               </div>
