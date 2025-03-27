@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Filter, Heart, Eye, X, ArrowDown, ShoppingBag } from "lucide-react";
+import { Filter, Heart, Eye, X, ArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -507,12 +507,6 @@ function ProductCard({ product }: { product: Product }) {
             >
               <Eye size={18} className="text-[#46332E]" />
             </Button>
-          </div>
-
-          {/* Add to Cart Button */}
-          <div className="absolute bottom-0 left-0 right-0 bg-[#46332E] text-white py-3 px-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex items-center justify-center gap-2">
-            <ShoppingBag size={18} />
-            <span>Add to Cart</span>
           </div>
         </div>
       </Link>
