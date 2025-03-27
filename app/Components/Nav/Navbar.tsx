@@ -5,11 +5,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu, ShoppingBag, X } from "lucide-react";
+import { useCart } from "@/components/ui/CartContext"; // ✅ Import Cart Context
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
+  const { cartCount } = useCart(); // ✅ Get cart item count
 
   // Handle scroll effect
   useEffect(() => {
@@ -52,7 +54,6 @@ export default function Navbar() {
               {[
                 { name: "Home", href: "/" },
                 { name: "Collections", href: "/collections" },
-                // { name: "Blog", href: "/about" },
                 { name: "Contact", href: "/contact" },
               ].map((item) => (
                 <li key={item.name}>
@@ -79,12 +80,15 @@ export default function Navbar() {
               aria-label="Shopping cart"
             >
               <Link href={"/cart"}>
-                <ShoppingBag size={20} />
+                <ShoppingBag size={24} />
               </Link>
 
-              <span className="absolute top-0 right-0 flex items-center justify-center w-4 h-4 text-xs text-white bg-[#8d6e63] rounded-full">
-                0
-              </span>
+              {/* Show badge only if cartCount > 0 */}
+              {cartCount > 0 && (
+                <span className="absolute top-0 right-0 flex items-center justify-center w-5 h-5 text-xs text-white bg-[#8d6e63] rounded-full">
+                  {cartCount}
+                </span>
+              )}
             </button>
 
             {/* Mobile menu button */}
@@ -108,7 +112,6 @@ export default function Navbar() {
                 {[
                   { name: "Home", href: "/" },
                   { name: "Collections", href: "/collections" },
-                  // { name: "Blog", href: "/about" },
                   { name: "Contact", href: "/contact" },
                 ].map((item) => (
                   <li key={item.name}>
