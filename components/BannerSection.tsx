@@ -32,7 +32,7 @@ export default function BannerSection() {
             className="bg-[#46332E] hover:bg-[#5c433d] text-white px-10 py-6 rounded-xl text-lg transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg"
           >
             <ShoppingBag className="w-6 h-6 mr-2" />
-            View Collection
+            View Shop
           </Button>
         </Link>
       </motion.div>

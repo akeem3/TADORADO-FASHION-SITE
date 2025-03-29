@@ -53,7 +53,7 @@ export default function Navbar() {
             <ul className="flex justify-center space-x-8">
               {[
                 { name: "Home", href: "/" },
-                { name: "Collections", href: "/collections" },
+                { name: "Shop", href: "/collections" },
                 { name: "Contact", href: "/contact" },
               ].map((item) => (
                 <li key={item.name}>
