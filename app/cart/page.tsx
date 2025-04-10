@@ -35,7 +35,7 @@ const CartPage = () => {
 
   return (
     <>
-      <Banner title="YOUR CART" description="Review your items and proceed to checkout when you're ready." />
+      {/* <Banner title="YOUR CART" description="Review your items and proceed to checkout when you're ready." /> */}
       <Container>
         <div className="py-12 max-w-7xl mx-auto">
           <Button variant="outline" className="mb-8" onClick={() => router.back()}>
