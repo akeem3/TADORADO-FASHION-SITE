@@ -525,7 +525,7 @@ function MeasurementsStep() {
     watch,
     setValue,
     formState: { errors },
-    trigger,
+     
   } = useFormContext<CheckoutFormData>()
 
   const gender = watch("measurements.gender")
@@ -577,7 +577,7 @@ function MeasurementsStep() {
             <div className="bg-[#46332E] text-white rounded-full w-6 h-6 flex items-center justify-center mr-2 flex-shrink-0 mt-0.5">
               4
             </div>
-            <p className="text-sm">For hips, measure at the fullest part, approximately 8" below your waist.</p>
+            <p className="text-sm">For hips, measure at the fullest part, approximately 8`&#34;` below your waist.</p>
           </div>
         </div>
       </div>
@@ -1041,7 +1041,7 @@ function PaymentStep() {
   const deliverySpeed = watch("delivery.deliverySpeed")
   const selectedCountry = watch("delivery.country")
   const paymentMethod = watch("payment.paymentMethod")
-  const agreeToTerms = watch("payment.agreeToTerms")
+
 
   // Calculate shipping cost based on country and delivery speed
   const calculateShippingCost = (country: string, deliverySpeed: string) => {
