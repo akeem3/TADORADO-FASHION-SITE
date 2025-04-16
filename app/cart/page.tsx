@@ -1,5 +1,8 @@
 "use client"
+<<<<<<< HEAD
 "lucide-react"
+=======
+>>>>>>> f5de19923adb6de0ab1008fdbf6bbeb083be5d5a
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -24,7 +27,11 @@ const CartPage = () => {
               <ShoppingBag className="mx-auto h-16 w-16 text-[#46332E]/30 mb-6" />
               <h2 className="text-2xl font-bold text-[#46332E] mb-4">Your cart is empty</h2>
               <p className="text-[#46332E]/70 mb-8">Looks like you haven`&#39;`t added any items to your cart yet.</p>
+<<<<<<< HEAD
               <Button onClick={() => router.push("/collections")} className="bg-[#46332E] hover:bg-[#46332E]/90 text-white rounded-lg">
+=======
+              <Button onClick={() => router.push("/collections")} className="bg-[#46332E] hover:bg-[#46332E]/90">
+>>>>>>> f5de19923adb6de0ab1008fdbf6bbeb083be5d5a
                 Continue Shopping
               </Button>
             </div>
@@ -162,8 +169,13 @@ const CartPage = () => {
                 </div>
 
                 <Button
+<<<<<<< HEAD
                   className="w-full bg-[#46332E] hover:bg-[#46332E]/90 py-6 text-lg text-white"
                   onClick={() => router.push("/checkOut")}
+=======
+                  className="w-full bg-[#46332E] hover:bg-[#46332E]/90 py-6 text-lg"
+                  onClick={() => alert("Checkout functionality would be implemented here")}
+>>>>>>> f5de19923adb6de0ab1008fdbf6bbeb083be5d5a
                 >
                   Proceed to Checkout
                 </Button>

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 "use client"
 
 import { useState, useEffect } from "react"
@@ -1244,3 +1245,15 @@ function PaymentStep() {
     </div>
   )
 }
+=======
+import React from 'react'
+
+function Checkout(): React.JSX.Element {
+  return (
+    <div>Checkowut page</div>
+  )
+}
+
+export default Checkout
+
+>>>>>>> f5de19923adb6de0ab1008fdbf6bbeb083be5d5a
