@@ -12,51 +12,14 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
-import { useCart } from "@/components/ui/CartContext"
 import Container from "@/app/Components/Container"
 import Banner from "@/components/ui/banner"
 import Image from "next/image"
-import type { UseFormRegister, UseFormWatch, UseFormSetValue, FieldErrors } from "react-hook-form"
+// Import the Path type from react-hook-form to properly type the setValue calls
+import type { UseFormRegister, UseFormWatch, UseFormSetValue, FieldErrors, Path } from "react-hook-form"
 
-// Define a curated list of countries for the dropdown
-const countriesList = [
-  { code: "US", name: "United States" },
-  { code: "CA", name: "Canada" },
-  { code: "GB", name: "United Kingdom" },
-  { code: "AU", name: "Australia" },
-  { code: "DE", name: "Germany" },
-  { code: "FR", name: "France" },
-  { code: "IT", name: "Italy" },
-  { code: "ES", name: "Spain" },
-  { code: "JP", name: "Japan" },
-  { code: "CN", name: "China" },
-  { code: "IN", name: "India" },
-  { code: "BR", name: "Brazil" },
-  { code: "MX", name: "Mexico" },
-  { code: "ZA", name: "South Africa" },
-  { code: "NG", name: "Nigeria" },
-  { code: "GH", name: "Ghana" },
-  { code: "KE", name: "Kenya" },
-  { code: "AE", name: "United Arab Emirates" },
-  { code: "SA", name: "Saudi Arabia" },
-  { code: "SG", name: "Singapore" },
-  { code: "MY", name: "Malaysia" },
-  { code: "NZ", name: "New Zealand" },
-  { code: "SE", name: "Sweden" },
-  { code: "NO", name: "Norway" },
-  { code: "DK", name: "Denmark" },
-  { code: "FI", name: "Finland" },
-  { code: "NL", name: "Netherlands" },
-  { code: "BE", name: "Belgium" },
-  { code: "CH", name: "Switzerland" },
-  { code: "AT", name: "Austria" },
-].sort((a, b) => a.name.localeCompare(b.name))
-
-// Outfit types
-const outfitTypes = {
-  male: ["Senator (Owanbe)", "Ankara", "Corporate", "Vintage"],
-  female: ["Owanbe Classical", "Bridal/Ankara", "Corset/Padded", "Gowns"],
-}
+// Update the CartProduct type to match what's in your CartContext
+import { useCart, type CartProduct } from "@/components/ui/CartContext"
 
 // Define form data type
 interface CheckoutFormData {
@@ -90,6 +53,28 @@ interface CheckoutFormData {
     paymentMethod: "card" | "paypal" | "bank"
     agreeToTerms: boolean
   }
+}
+
+// Dummy data for countries
+const countriesList = [
+  { code: "US", name: "United States" },
+  { code: "CA", name: "Canada" },
+  { code: "GB", name: "United Kingdom" },
+  { code: "FR", name: "France" },
+  { code: "DE", name: "Germany" },
+  { code: "IT", name: "Italy" },
+  { code: "ES", name: "Spain" },
+  { code: "NG", name: "Nigeria" },
+  { code: "GH", name: "Ghana" },
+  { code: "ZA", name: "South Africa" },
+  { code: "KE", name: "Kenya" },
+  // Add more countries as needed
+]
+
+// Dummy data for outfit types
+const outfitTypes = {
+  male: ["Suit", "Shirt", "Trousers", "Jacket"],
+  female: ["Dress", "Blouse", "Skirt", "Pants"],
 }
 
 export default function CheckoutPage() {
@@ -455,8 +440,9 @@ function MeasurementsStep({ register, watch, setValue, errors }: MeasurementsSte
   const gender = watch("measurements.gender")
   const measurementUnit = watch("measurements.measurementUnit")
 
-  const handleRadioChange = (field: string, value: string) => {
-    setValue(field as any, value)
+  // In the MeasurementsStep component, update the handleRadioChange function:
+  const handleRadioChange = (field: Path<CheckoutFormData>, value: string) => {
+    setValue(field, value)
   }
 
   return (
@@ -685,8 +671,9 @@ interface DeliveryStepProps {
 function DeliveryStep({ countryOptions, register, watch, setValue, errors }: DeliveryStepProps) {
   const selectedCountry = watch("delivery.country")
 
-  const handleRadioChange = (field: string, value: string) => {
-    setValue(field as any, value)
+  // In the DeliveryStep component, update the handleRadioChange function:
+  const handleRadioChange = (field: Path<CheckoutFormData>, value: string) => {
+    setValue(field, value)
   }
 
   return (
@@ -821,12 +808,13 @@ function DeliveryStep({ countryOptions, register, watch, setValue, errors }: Del
 }
 
 // Step 3: Payment
+// In the PaymentStep component, update the PaymentStepProps interface:
 interface PaymentStepProps {
   register: UseFormRegister<CheckoutFormData>
   watch: UseFormWatch<CheckoutFormData>
   setValue: UseFormSetValue<CheckoutFormData>
   errors: FieldErrors<CheckoutFormData>
-  cartItems: any[]
+  cartItems: CartProduct[]
   cartTotal: number
   shippingCost: number
 }
@@ -835,12 +823,13 @@ function PaymentStep({ register, watch, setValue, errors, cartItems, cartTotal, 
   const deliverySpeed = watch("delivery.deliverySpeed")
   const totalAmount = cartTotal + shippingCost
 
-  const handleRadioChange = (field: string, value: string) => {
-    setValue(field as any, value)
+  // In the PaymentStep component, update the handleRadioChange and handleCheckboxChange functions:
+  const handleRadioChange = (field: Path<CheckoutFormData>, value: string) => {
+    setValue(field, value)
   }
 
-  const handleCheckboxChange = (field: string, checked: boolean) => {
-    setValue(field as any, checked)
+  const handleCheckboxChange = (field: Path<CheckoutFormData>, checked: boolean) => {
+    setValue(field, checked)
   }
 
   return (
