@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation"
 import { Trash2, ArrowLeft, ShoppingBag } from "lucide-react"
 import { motion } from "framer-motion"
 import Container from "@/app/Components/Container"
-import Banner from "@/components/ui/banner"
 import { Button } from "@/components/ui/button"
 import { useCart } from "@/components/ui/CartContext"
 
@@ -17,7 +16,7 @@ const CartPage = () => {
   if (cartItems.length === 0) {
     return (
       <>
-        <Banner title="YOUR CART" description="Your shopping cart is currently empty." />
+        {/* <Banner title="YOUR CART" description="Your shopping cart is currently empty." /> */}
         <Container>
           <div className="py-16 text-center px-4">
             <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-sm border border-gray-100">
@@ -41,7 +40,7 @@ const CartPage = () => {
 
   return (
     <>
-      <Banner title="YOUR CART" description="Review your items and proceed to checkout when you're ready." />
+      {/* <Banner title="YOUR CART" description="Review your items and proceed to checkout when you're ready." /> */}
       <Container>
         <div className="py-12 max-w-7xl mx-auto">
           <Button variant="outline" className="mb-8" onClick={() => router.back()}>

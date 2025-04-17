@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import Container from "@/app/Components/Container"
-import Banner from "@/components/ui/banner"
+// import Banner from "@/components/ui/banner"
 import Image from "next/image"
 // Import the Path type from react-hook-form to properly type the setValue calls
 import type { UseFormRegister, UseFormWatch, UseFormSetValue, FieldErrors, Path } from "react-hook-form"
@@ -207,7 +207,7 @@ export default function CheckoutPage() {
   if (cartItems.length === 0) {
     return (
       <>
-        <Banner title="CHECKOUT" description="Complete your purchase with our secure checkout process." />
+        {/* <Banner title="CHECKOUT" description="Complete your purchase with our secure checkout process." /> */}
         <Container>
           <div className="py-16 text-center">
             <div className="max-w-md mx-auto">
@@ -225,7 +225,7 @@ export default function CheckoutPage() {
 
   return (
     <>
-      <Banner title="CHECKOUT" description="Complete your purchase with our secure checkout process." />
+      {/* <Banner title="CHECKOUT" description="Complete your purchase with our secure checkout process." /> */}
       <Container>
         <div className="py-12 max-w-7xl mx-auto">
           {/* Checkout Steps Indicator */}
