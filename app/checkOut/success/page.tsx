@@ -78,7 +78,7 @@ export default function CheckoutSuccessPage() {
             Continue Shopping
           </Button>
 
-          <Button onClick={() => router.push("/")} className="bg-[#46332E] hover:bg-[#46332E]/90">
+          <Button onClick={() => router.push("/")} className="bg-[#46332E] hover:bg-[#46332E]/90 text-white">
             Return to Home
           </Button>
         </div>

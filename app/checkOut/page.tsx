@@ -153,7 +153,7 @@ export default function CheckoutPage() {
 
       // Clear cart and redirect to success page
       clearCart()
-      router.push("/checkout/success")
+      router.push("/checkOut/success")
     } catch (error) {
       console.error("Error processing order:", error)
       alert("There was a problem processing your order. Please try again.")
