@@ -2,16 +2,16 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { useForm, FormProvider, useFormContext, type SubmitHandler } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import { Check, ChevronRight, ChevronLeft, Ruler, Truck, CreditCard, ShoppingBag } from "lucide-react"
+import { useForm } from "react-hook-form"
+import { motion, AnimatePresence } from "framer-motion"
+import { Check, ChevronRight, ChevronLeft, Ruler, Truck, CreditCard } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Checkbox } from "@/components/ui/checkbox"
 import { useCart } from "@/components/ui/CartContext"
 import Container from "@/app/Components/Container"
 import Banner from "@/components/ui/banner"
@@ -51,72 +51,57 @@ const countriesList = [
   { code: "AT", name: "Austria" },
 ].sort((a, b) => a.name.localeCompare(b.name))
 
-// Define the schema for the entire form
-const checkoutSchema = z.object({
-  // Step 1: Measurements
-  measurements: z.object({
-    gender: z.enum(["male", "female"]),
-    outfitType: z.string().min(1, "Please select an outfit type"),
-    height: z.string().min(1, "Height is required"),
-    shoulder: z.string().min(1, "Shoulder width is required"),
-    chest: z.string().optional(),
-    bust: z.string().optional(),
-    waist: z.string().min(1, "Waist measurement is required"),
-    hip: z.string().min(1, "Hip measurement is required"),
-    sleeve: z.string().min(1, "Sleeve length is required"),
-    inseam: z.string().optional(),
-    neck: z.string().optional(),
-    extraNote: z.string().optional(),
-    measurementUnit: z.enum(["inches", "cm"]),
-  }),
-
-  // Step 2: Delivery Details
-  delivery: z.object({
-    fullName: z.string().min(3, "Full name is required"),
-    email: z.string().email("Invalid email address"),
-    phone: z.string().min(10, "Valid phone number is required"),
-    country: z.string().min(1, "Country is required"),
-    state: z.string().min(1, "State/Province is required"),
-    city: z.string().min(1, "City is required"),
-    address: z.string().min(5, "Delivery address is required"),
-    postalCode: z.string().optional(),
-    deliverySpeed: z.enum(["standard", "express"]),
-  }),
-
-  // Step 3: Payment (minimal validation as payment will be handled by payment provider)
-  payment: z.object({
-    paymentMethod: z.enum(["card", "paypal", "bank"]),
-    agreeToTerms: z.boolean().refine((val) => val === true, {
-      message: "You must agree to the terms and conditions",
-    }),
-  }),
-})
-
-// Update the type definition to use the Zod schema
-type CheckoutFormData = z.infer<typeof checkoutSchema>
-
 // Outfit types
 const outfitTypes = {
   male: ["Senator (Owanbe)", "Ankara", "Corporate", "Vintage"],
   female: ["Owanbe Classical", "Bridal/Ankara", "Corset/Padded", "Gowns"],
 }
 
-const countryOptions = countriesList
+// Define form data type
+interface CheckoutFormData {
+  measurements: {
+    gender: "male" | "female"
+    outfitType: string
+    height: string
+    shoulder: string
+    chest?: string
+    bust?: string
+    waist: string
+    hip: string
+    sleeve: string
+    inseam?: string
+    neck?: string
+    extraNote?: string
+    measurementUnit: "inches" | "cm"
+  }
+  delivery: {
+    fullName: string
+    email: string
+    phone: string
+    country: string
+    state: string
+    city: string
+    address: string
+    postalCode?: string
+    deliverySpeed: "standard" | "express"
+  }
+  payment: {
+    paymentMethod: "card" | "paypal" | "bank"
+    agreeToTerms: boolean
+  }
+}
 
 export default function CheckoutPage() {
   const [step, setStep] = useState(1)
   const { cartItems, cartTotal, clearCart } = useCart()
   const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [formError, setFormError] = useState("")
 
-  // Now update the useForm call to properly use the type
   const methods = useForm<CheckoutFormData>({
-    resolver: zodResolver(checkoutSchema),
     defaultValues: {
       measurements: {
         gender: "male",
-        outfitType: outfitTypes.male[0],
+        outfitType: "",
         height: "",
         shoulder: "",
         chest: "",
@@ -127,7 +112,7 @@ export default function CheckoutPage() {
         inseam: "",
         neck: "",
         extraNote: "",
-        measurementUnit: "inches", // Explicitly set default
+        measurementUnit: "inches",
       },
       delivery: {
         fullName: "",
@@ -138,43 +123,44 @@ export default function CheckoutPage() {
         city: "",
         address: "",
         postalCode: "",
-        deliverySpeed: "standard", // Explicitly set default
+        deliverySpeed: "standard",
       },
       payment: {
-        paymentMethod: "card", // Explicitly set default
+        paymentMethod: "card",
         agreeToTerms: false,
       },
     },
     mode: "onChange",
   })
 
-  // Update the onSubmit function to use the correct type
-  const onSubmit: SubmitHandler<CheckoutFormData> = async (data) => {
-    setFormError("")
+  const {
+    handleSubmit,
+    watch,
+    setValue,
+    register,
+    formState: { errors },
+  } = methods
 
-    // For step 1 and 2, we'll handle navigation manually instead of relying on form submission
+  const onSubmit = async (data: CheckoutFormData) => {
     if (step < 3) {
-      handleNextStep()
+      setStep(step + 1)
+      // Scroll to top when changing steps
+      window.scrollTo({ top: 0, behavior: "smooth" })
       return
     }
 
-    // Final submission (step 3)
+    // Final submission
+    setIsSubmitting(true)
     try {
-      // Validate payment step
-      await checkoutSchema.shape.payment.parseAsync(data.payment)
-
-      setIsSubmitting(true)
-
       // Simulate API call with a delay
       await new Promise((resolve) => setTimeout(resolve, 1500))
 
       // Here you would integrate with your payment provider
       console.log("Order data:", {
         products: cartItems,
-        totalAmount: orderTotal,
+        totalAmount: cartTotal,
         customerInfo: data.delivery,
         measurements: data.measurements,
-        paymentMethod: data.payment.paymentMethod,
         paymentStatus: "paid",
         paymentRef: "ORDER_" + Math.random().toString(36).substring(2, 10).toUpperCase(),
       })
@@ -183,36 +169,9 @@ export default function CheckoutPage() {
       clearCart()
       router.push("/checkout/success")
     } catch (error) {
-      console.error("Payment validation error:", error)
-      setFormError("Please complete all payment information before submitting.")
+      console.error("Error processing order:", error)
+      alert("There was a problem processing your order. Please try again.")
       setIsSubmitting(false)
-    }
-  }
-
-  // Add this new function to handle next step navigation
-  const handleNextStep = async () => {
-    try {
-      const data = methods.getValues()
-
-      if (step === 1) {
-        // Validate measurements step
-        await checkoutSchema.shape.measurements.parseAsync(data.measurements)
-      } else if (step === 2) {
-        // Validate delivery step
-        await checkoutSchema.shape.delivery.parseAsync(data.delivery)
-      }
-
-      // If validation passes, move to the next step
-      setStep(step + 1)
-      // Scroll to top when changing steps
-      window.scrollTo({ top: 0, behavior: "smooth" })
-      setFormError("") // Clear any error messages
-    } catch (error) {
-      console.error("Validation error:", error)
-      setFormError("Please fill in all required fields correctly before proceeding.")
-
-      // Trigger form validation to show field-specific errors
-      methods.trigger()
     }
   }
 
@@ -238,8 +197,8 @@ export default function CheckoutPage() {
   }
 
   // Get the selected country and delivery speed
-  const selectedCountry = methods.watch("delivery.country")
-  const selectedDeliverySpeed = methods.watch("delivery.deliverySpeed")
+  const selectedCountry = watch("delivery.country")
+  const selectedDeliverySpeed = watch("delivery.deliverySpeed")
 
   // Calculate shipping cost
   const shippingCost = calculateShippingCost(selectedCountry, selectedDeliverySpeed)
@@ -258,43 +217,6 @@ export default function CheckoutPage() {
     }
   }, [])
 
-  // Add a function to validate the current step
-  const validateCurrentStep = async () => {
-    try {
-      if (step === 1) {
-        const measurementsData = methods.getValues("measurements")
-        await checkoutSchema.shape.measurements.parseAsync(measurementsData)
-        return true
-      } else if (step === 2) {
-        const deliveryData = methods.getValues("delivery")
-        await checkoutSchema.shape.delivery.parseAsync(deliveryData)
-        return true
-      } else if (step === 3) {
-        const paymentData = methods.getValues("payment")
-        await checkoutSchema.shape.payment.parseAsync(paymentData)
-        return true
-      }
-      return false
-    } catch (error) {
-      console.error("Validation error:", error)
-      setFormError("Please fill in all required fields correctly before proceeding.")
-      return false
-    }
-  }
-
-  // Add this to handle manual step navigation
-  const handleStepChange = async (newStep: number) => {
-    // Only validate when moving forward
-    if (newStep > step) {
-      const isValid = await validateCurrentStep()
-      if (!isValid) return
-    }
-
-    setFormError("")
-    setStep(newStep)
-    window.scrollTo({ top: 0, behavior: "smooth" })
-  }
-
   // If cart is empty, redirect to collections
   if (cartItems.length === 0) {
     return (
@@ -302,10 +224,7 @@ export default function CheckoutPage() {
         <Banner title="CHECKOUT" description="Complete your purchase with our secure checkout process." />
         <Container>
           <div className="py-16 text-center">
-            <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-sm border border-gray-100">
-              <div className="w-16 h-16 bg-[#F5F3F0] rounded-full flex items-center justify-center mx-auto mb-6">
-                <ShoppingBag className="h-8 w-8 text-[#46332E]" />
-              </div>
+            <div className="max-w-md mx-auto">
               <h2 className="text-2xl font-bold text-[#46332E] mb-4">Your cart is empty</h2>
               <p className="text-[#46332E]/70 mb-8">Add some items to your cart before proceeding to checkout.</p>
               <Button onClick={() => router.push("/collections")} className="bg-[#46332E] hover:bg-[#46332E]/90">
@@ -331,11 +250,7 @@ export default function CheckoutPage() {
                 { number: 2, title: "Delivery", icon: Truck },
                 { number: 3, title: "Payment", icon: CreditCard },
               ].map((item) => (
-                <div
-                  key={item.number}
-                  className={`flex flex-col items-center relative z-10 ${item.number < step ? "cursor-pointer" : ""}`}
-                  onClick={() => item.number < step && handleStepChange(item.number)}
-                >
+                <div key={item.number} className="flex flex-col items-center relative z-10">
                   <div
                     className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center mb-2 transition-all duration-300 ${
                       step >= item.number ? "bg-[#46332E] text-white" : "bg-gray-200 text-gray-500"
@@ -367,83 +282,93 @@ export default function CheckoutPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 px-4 sm:px-6">
             {/* Form Section */}
             <div className="lg:col-span-2 bg-white p-5 sm:p-6 rounded-lg shadow-sm border border-gray-100">
-              <FormProvider {...methods}>
-                <form onSubmit={methods.handleSubmit(onSubmit)}>
-                  {formError && (
-                    <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
-                      <p className="text-red-600 text-sm">{formError}</p>
-                    </div>
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <AnimatePresence mode="wait">
+                  {step === 1 && (
+                    <MeasurementsStep
+                      key="step1"
+                      register={register}
+                      watch={watch}
+                      setValue={setValue}
+                      errors={errors}
+                    />
                   )}
+                  {step === 2 && (
+                    <DeliveryStep
+                      key="step2"
+                      countryOptions={countriesList}
+                      register={register}
+                      watch={watch}
+                      setValue={setValue}
+                      errors={errors}
+                    />
+                  )}
+                  {step === 3 && (
+                    <PaymentStep
+                      key="step3"
+                      register={register}
+                      watch={watch}
+                      setValue={setValue}
+                      errors={errors}
+                      cartItems={cartItems}
+                      cartTotal={cartTotal}
+                      shippingCost={shippingCost}
+                    />
+                  )}
+                </AnimatePresence>
 
-                  <div>
-                    {step === 1 && <MeasurementsStep key="step1" />}
-                    {step === 2 && <DeliveryStep key="step2" countryOptions={countryOptions} />}
-                    {step === 3 && <PaymentStep key="step3" />}
-                  </div>
+                <div className="flex justify-between mt-8">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setStep(Math.max(1, step - 1))}
+                    disabled={step === 1}
+                    className="flex items-center"
+                  >
+                    <ChevronLeft className="mr-2 h-4 w-4" />
+                    Back
+                  </Button>
 
-                  {/* Replace the form submit button section with this improved version */}
-                  <div className="flex justify-between mt-8">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => {
-                        setFormError("") // Clear any error messages
-                        handleStepChange(Math.max(1, step - 1))
-                      }}
-                      disabled={step === 1 || isSubmitting}
-                      className="flex items-center"
-                    >
-                      <ChevronLeft className="mr-2 h-4 w-4" />
-                      Back
-                    </Button>
-
-                    {step < 3 ? (
-                      <Button
-                        type="button" // Changed from submit to button
-                        onClick={handleNextStep}
-                        className="bg-[#46332E] hover:bg-[#46332E]/90 text-white transition-all duration-300"
-                      >
+                  <Button
+                    type="submit"
+                    className="bg-[#46332E] hover:bg-[#46332E]/90 text-white transition-all duration-300"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? (
+                      <span className="flex items-center">
+                        <svg
+                          className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                        Processing...
+                      </span>
+                    ) : step === 3 ? (
+                      "Complete Order"
+                    ) : (
+                      <>
                         Continue
                         <ChevronRight className="ml-2 h-4 w-4" />
-                      </Button>
-                    ) : (
-                      <Button
-                        type="submit"
-                        className="bg-[#46332E] hover:bg-[#46332E]/90 text-white transition-all duration-300"
-                        disabled={isSubmitting}
-                      >
-                        {isSubmitting ? (
-                          <span className="flex items-center">
-                            <svg
-                              className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                            >
-                              <circle
-                                className="opacity-25"
-                                cx="12"
-                                cy="12"
-                                r="10"
-                                stroke="currentColor"
-                                strokeWidth="4"
-                              ></circle>
-                              <path
-                                className="opacity-75"
-                                fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                              ></path>
-                            </svg>
-                            Processing...
-                          </span>
-                        ) : (
-                          "Complete Order"
-                        )}
-                      </Button>
+                      </>
                     )}
-                  </div>
-                </form>
-              </FormProvider>
+                  </Button>
+                </div>
+              </form>
             </div>
 
             {/* Order Summary */}
@@ -517,37 +442,30 @@ export default function CheckoutPage() {
   )
 }
 
-// Replace the MeasurementsStep function with this improved version
 // Step 1: Measurements Form
-function MeasurementsStep() {
-  const {
-    register,
-    watch,
-    setValue,
-    formState: { errors },
-     
-  } = useFormContext<CheckoutFormData>()
+interface MeasurementsStepProps {
+  register: any
+  watch: any
+  setValue: any
+  errors: any
+}
 
+function MeasurementsStep({ register, watch, setValue, errors }: MeasurementsStepProps) {
   const gender = watch("measurements.gender")
   const measurementUnit = watch("measurements.measurementUnit")
-  const outfitType = watch("measurements.outfitType")
 
-  // Set a default outfit type when gender changes
-  useEffect(() => {
-    if (gender === "male" && !outfitTypes.male.includes(outfitType)) {
-      setValue("measurements.outfitType", outfitTypes.male[0], { shouldValidate: true })
-    } else if (gender === "female" && !outfitTypes.female.includes(outfitType)) {
-      setValue("measurements.outfitType", outfitTypes.female[0], { shouldValidate: true })
-    }
-  }, [gender, outfitType, setValue])
-
-  // Helper function to handle input changes and validate
-  const handleInputChange = (field: string, value: string) => {
-    setValue(`measurements.${field}` as any, value, { shouldValidate: true })
+  const handleRadioChange = (field: string, value: string) => {
+    setValue(field, value)
   }
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      transition={{ duration: 0.3 }}
+      className="space-y-6"
+    >
       <div className="bg-[#F5F3F0] p-5 rounded-lg mb-6">
         <h2 className="text-xl font-semibold text-[#46332E] mb-3">Measurement Instructions</h2>
         <p className="text-[#46332E]/80 mb-4">
@@ -577,7 +495,7 @@ function MeasurementsStep() {
             <div className="bg-[#46332E] text-white rounded-full w-6 h-6 flex items-center justify-center mr-2 flex-shrink-0 mt-0.5">
               4
             </div>
-            <p className="text-sm">For hips, measure at the fullest part, approximately 8`&#34;` below your waist.</p>
+            <p className="text-sm">For hips, measure at the fullest part, approximately 8`&#39;` below your waist.</p>
           </div>
         </div>
       </div>
@@ -592,9 +510,7 @@ function MeasurementsStep() {
             <RadioGroup
               defaultValue={measurementUnit}
               className="flex gap-6 mt-2"
-              onValueChange={(value) => {
-                setValue("measurements.measurementUnit", value as "inches" | "cm", { shouldValidate: true })
-              }}
+              onValueChange={(value) => handleRadioChange("measurements.measurementUnit", value)}
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="inches" id="inches" className="text-[#46332E]" />
@@ -617,9 +533,7 @@ function MeasurementsStep() {
             <RadioGroup
               defaultValue={gender}
               className="flex gap-6 mt-2"
-              onValueChange={(value) => {
-                setValue("measurements.gender", value as "male" | "female", { shouldValidate: true })
-              }}
+              onValueChange={(value) => handleRadioChange("measurements.gender", value)}
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="male" id="male" className="text-[#46332E]" />
@@ -642,12 +556,10 @@ function MeasurementsStep() {
               Outfit Type
             </Label>
             <Select
-              value={outfitType}
-              onValueChange={(value) => {
-                setValue("measurements.outfitType", value, { shouldValidate: true })
-              }}
+              onValueChange={(value) => setValue("measurements.outfitType", value)}
+              defaultValue={watch("measurements.outfitType")}
             >
-              <SelectTrigger id="outfitType" className="w-full mt-1">
+              <SelectTrigger className="w-full mt-1">
                 <SelectValue placeholder="Select outfit type" />
               </SelectTrigger>
               <SelectContent>
@@ -665,7 +577,7 @@ function MeasurementsStep() {
               </SelectContent>
             </Select>
             {errors.measurements?.outfitType && (
-              <p className="text-red-500 text-sm mt-1">{errors.measurements.outfitType.message}</p>
+              <p className="text-red-500 text-sm mt-1">Please select an outfit type</p>
             )}
           </div>
 
@@ -673,34 +585,18 @@ function MeasurementsStep() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <Label htmlFor="height" className="text-base font-medium">
-                Height ({measurementUnit}) <span className="text-red-500">*</span>
+                Height ({measurementUnit})
               </Label>
-              <Input
-                id="height"
-                type="text"
-                className="mt-1"
-                {...register("measurements.height")}
-                onChange={(e) => handleInputChange("height", e.target.value)}
-              />
-              {errors.measurements?.height && (
-                <p className="text-red-500 text-sm mt-1">{errors.measurements.height.message}</p>
-              )}
+              <Input id="height" type="text" className="mt-1" {...register("measurements.height")} />
+              {errors.measurements?.height && <p className="text-red-500 text-sm mt-1">Height is required</p>}
             </div>
 
             <div>
               <Label htmlFor="shoulder" className="text-base font-medium">
-                Shoulder Width ({measurementUnit}) <span className="text-red-500">*</span>
+                Shoulder Width ({measurementUnit})
               </Label>
-              <Input
-                id="shoulder"
-                type="text"
-                className="mt-1"
-                {...register("measurements.shoulder")}
-                onChange={(e) => handleInputChange("shoulder", e.target.value)}
-              />
-              {errors.measurements?.shoulder && (
-                <p className="text-red-500 text-sm mt-1">{errors.measurements.shoulder.message}</p>
-              )}
+              <Input id="shoulder" type="text" className="mt-1" {...register("measurements.shoulder")} />
+              {errors.measurements?.shoulder && <p className="text-red-500 text-sm mt-1">Shoulder width is required</p>}
             </div>
 
             {gender === "male" ? (
@@ -708,107 +604,53 @@ function MeasurementsStep() {
                 <Label htmlFor="chest" className="text-base font-medium">
                   Chest ({measurementUnit})
                 </Label>
-                <Input
-                  id="chest"
-                  type="text"
-                  className="mt-1"
-                  {...register("measurements.chest")}
-                  onChange={(e) => handleInputChange("chest", e.target.value)}
-                />
-                {errors.measurements?.chest && (
-                  <p className="text-red-500 text-sm mt-1">{errors.measurements.chest.message}</p>
-                )}
+                <Input id="chest" type="text" className="mt-1" {...register("measurements.chest")} />
               </div>
             ) : (
               <div>
                 <Label htmlFor="bust" className="text-base font-medium">
                   Bust ({measurementUnit})
                 </Label>
-                <Input
-                  id="bust"
-                  type="text"
-                  className="mt-1"
-                  {...register("measurements.bust")}
-                  onChange={(e) => handleInputChange("bust", e.target.value)}
-                />
-                {errors.measurements?.bust && (
-                  <p className="text-red-500 text-sm mt-1">{errors.measurements.bust.message}</p>
-                )}
+                <Input id="bust" type="text" className="mt-1" {...register("measurements.bust")} />
               </div>
             )}
 
             <div>
               <Label htmlFor="waist" className="text-base font-medium">
-                Waist ({measurementUnit}) <span className="text-red-500">*</span>
+                Waist ({measurementUnit})
               </Label>
-              <Input
-                id="waist"
-                type="text"
-                className="mt-1"
-                {...register("measurements.waist")}
-                onChange={(e) => handleInputChange("waist", e.target.value)}
-              />
-              {errors.measurements?.waist && (
-                <p className="text-red-500 text-sm mt-1">{errors.measurements.waist.message}</p>
-              )}
+              <Input id="waist" type="text" className="mt-1" {...register("measurements.waist")} />
+              {errors.measurements?.waist && <p className="text-red-500 text-sm mt-1">Waist measurement is required</p>}
             </div>
 
             <div>
               <Label htmlFor="hip" className="text-base font-medium">
-                Hip ({measurementUnit}) <span className="text-red-500">*</span>
+                Hip ({measurementUnit})
               </Label>
-              <Input
-                id="hip"
-                type="text"
-                className="mt-1"
-                {...register("measurements.hip")}
-                onChange={(e) => handleInputChange("hip", e.target.value)}
-              />
-              {errors.measurements?.hip && (
-                <p className="text-red-500 text-sm mt-1">{errors.measurements.hip.message}</p>
-              )}
+              <Input id="hip" type="text" className="mt-1" {...register("measurements.hip")} />
+              {errors.measurements?.hip && <p className="text-red-500 text-sm mt-1">Hip measurement is required</p>}
             </div>
 
             <div>
               <Label htmlFor="sleeve" className="text-base font-medium">
-                Sleeve Length ({measurementUnit}) <span className="text-red-500">*</span>
+                Sleeve Length ({measurementUnit})
               </Label>
-              <Input
-                id="sleeve"
-                type="text"
-                className="mt-1"
-                {...register("measurements.sleeve")}
-                onChange={(e) => handleInputChange("sleeve", e.target.value)}
-              />
-              {errors.measurements?.sleeve && (
-                <p className="text-red-500 text-sm mt-1">{errors.measurements.sleeve.message}</p>
-              )}
+              <Input id="sleeve" type="text" className="mt-1" {...register("measurements.sleeve")} />
+              {errors.measurements?.sleeve && <p className="text-red-500 text-sm mt-1">Sleeve length is required</p>}
             </div>
 
             <div>
               <Label htmlFor="inseam" className="text-base font-medium">
                 Inseam / Trouser Length ({measurementUnit})
               </Label>
-              <Input
-                id="inseam"
-                type="text"
-                className="mt-1"
-                {...register("measurements.inseam")}
-                onChange={(e) => handleInputChange("inseam", e.target.value)}
-              />
+              <Input id="inseam" type="text" className="mt-1" {...register("measurements.inseam")} />
             </div>
 
             <div>
               <Label htmlFor="neck" className="text-base font-medium">
                 Neck Circumference ({measurementUnit})
               </Label>
-              <Input
-                id="neck"
-                type="text"
-                className="mt-1"
-                {...register("measurements.neck")}
-                onChange={(e) => handleInputChange("neck", e.target.value)}
-              />
+              <Input id="neck" type="text" className="mt-1" {...register("measurements.neck")} />
             </div>
           </div>
 
@@ -824,91 +666,69 @@ function MeasurementsStep() {
               {...register("measurements.extraNote")}
             />
           </div>
-
-          <div className="text-sm text-gray-500">
-            <span className="text-red-500">*</span> Required fields
-          </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }
 
-// Replace the DeliveryStep function with this improved version
 // Step 2: Delivery Details
-function DeliveryStep({ countryOptions }: { countryOptions: { code: string; name: string }[] }) {
-  const {
-    register,
-    watch,
-    setValue,
-    formState: { errors },
-  } = useFormContext<CheckoutFormData>()
+interface DeliveryStepProps {
+  countryOptions: { code: string; name: string }[]
+  register: any
+  watch: any
+  setValue: any
+  errors: any
+}
 
+function DeliveryStep({ countryOptions, register, watch, setValue, errors }: DeliveryStepProps) {
   const selectedCountry = watch("delivery.country")
 
-  // Helper function to handle input changes and validate
-  const handleInputChange = (field: string, value: string) => {
-    setValue(`delivery.${field}` as any, value, { shouldValidate: true })
+  const handleRadioChange = (field: string, value: string) => {
+    setValue(field, value)
   }
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      transition={{ duration: 0.3 }}
+      className="space-y-6"
+    >
       <h2 className="text-xl font-semibold text-[#46332E] mb-6">Delivery Details</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <Label htmlFor="fullName" className="text-base font-medium">
-            Full Name <span className="text-red-500">*</span>
+            Full Name
           </Label>
-          <Input
-            id="fullName"
-            type="text"
-            className="mt-1"
-            {...register("delivery.fullName")}
-            onChange={(e) => handleInputChange("fullName", e.target.value)}
-          />
-          {errors.delivery?.fullName && <p className="text-red-500 text-sm mt-1">{errors.delivery.fullName.message}</p>}
+          <Input id="fullName" type="text" className="mt-1" {...register("delivery.fullName")} />
+          {errors.delivery?.fullName && <p className="text-red-500 text-sm mt-1">Full name is required</p>}
         </div>
 
         <div>
           <Label htmlFor="email" className="text-base font-medium">
-            Email Address <span className="text-red-500">*</span>
+            Email Address
           </Label>
-          <Input
-            id="email"
-            type="email"
-            className="mt-1"
-            {...register("delivery.email")}
-            onChange={(e) => handleInputChange("email", e.target.value)}
-          />
-          {errors.delivery?.email && <p className="text-red-500 text-sm mt-1">{errors.delivery.email.message}</p>}
+          <Input id="email" type="email" className="mt-1" {...register("delivery.email")} />
+          {errors.delivery?.email && <p className="text-red-500 text-sm mt-1">Valid email is required</p>}
         </div>
 
         <div>
           <Label htmlFor="phone" className="text-base font-medium">
-            Phone Number <span className="text-red-500">*</span>
+            Phone Number
           </Label>
-          <Input
-            id="phone"
-            type="tel"
-            className="mt-1"
-            {...register("delivery.phone")}
-            onChange={(e) => handleInputChange("phone", e.target.value)}
-          />
-          {errors.delivery?.phone && <p className="text-red-500 text-sm mt-1">{errors.delivery.phone.message}</p>}
+          <Input id="phone" type="tel" className="mt-1" {...register("delivery.phone")} />
+          {errors.delivery?.phone && <p className="text-red-500 text-sm mt-1">Valid phone number is required</p>}
         </div>
 
         <div>
           <Label htmlFor="country" className="text-base font-medium">
-            Country <span className="text-red-500">*</span>
+            Country
           </Label>
-          <Select
-            value={selectedCountry}
-            onValueChange={(value) => {
-              setValue("delivery.country", value, { shouldValidate: true })
-            }}
-          >
-            <SelectTrigger id="country" className="w-full mt-1">
+          <Select onValueChange={(value) => setValue("delivery.country", value)} defaultValue={selectedCountry}>
+            <SelectTrigger className="w-full mt-1">
               <SelectValue placeholder="Select country" />
             </SelectTrigger>
             <SelectContent className="max-h-[200px] overflow-y-auto">
@@ -919,73 +739,47 @@ function DeliveryStep({ countryOptions }: { countryOptions: { code: string; name
               ))}
             </SelectContent>
           </Select>
-          {errors.delivery?.country && <p className="text-red-500 text-sm mt-1">{errors.delivery.country.message}</p>}
+          {errors.delivery?.country && <p className="text-red-500 text-sm mt-1">Country is required</p>}
         </div>
 
         <div>
           <Label htmlFor="state" className="text-base font-medium">
-            State / Province / Region <span className="text-red-500">*</span>
+            State / Province / Region
           </Label>
-          <Input
-            id="state"
-            type="text"
-            className="mt-1"
-            {...register("delivery.state")}
-            onChange={(e) => handleInputChange("state", e.target.value)}
-          />
-          {errors.delivery?.state && <p className="text-red-500 text-sm mt-1">{errors.delivery.state.message}</p>}
+          <Input id="state" type="text" className="mt-1" {...register("delivery.state")} />
+          {errors.delivery?.state && <p className="text-red-500 text-sm mt-1">State/Province is required</p>}
         </div>
 
         <div>
           <Label htmlFor="city" className="text-base font-medium">
-            City <span className="text-red-500">*</span>
+            City
           </Label>
-          <Input
-            id="city"
-            type="text"
-            className="mt-1"
-            {...register("delivery.city")}
-            onChange={(e) => handleInputChange("city", e.target.value)}
-          />
-          {errors.delivery?.city && <p className="text-red-500 text-sm mt-1">{errors.delivery.city.message}</p>}
+          <Input id="city" type="text" className="mt-1" {...register("delivery.city")} />
+          {errors.delivery?.city && <p className="text-red-500 text-sm mt-1">City is required</p>}
         </div>
 
         <div className="md:col-span-2">
           <Label htmlFor="address" className="text-base font-medium">
-            Street Address <span className="text-red-500">*</span>
+            Street Address
           </Label>
-          <Textarea
-            id="address"
-            className="mt-1"
-            {...register("delivery.address")}
-            onChange={(e) => handleInputChange("address", e.target.value)}
-          />
-          {errors.delivery?.address && <p className="text-red-500 text-sm mt-1">{errors.delivery.address.message}</p>}
+          <Textarea id="address" className="mt-1" {...register("delivery.address")} />
+          {errors.delivery?.address && <p className="text-red-500 text-sm mt-1">Delivery address is required</p>}
         </div>
 
         <div>
           <Label htmlFor="postalCode" className="text-base font-medium">
             Postal / Zip Code
           </Label>
-          <Input
-            id="postalCode"
-            type="text"
-            className="mt-1"
-            {...register("delivery.postalCode")}
-            onChange={(e) => handleInputChange("postalCode", e.target.value)}
-          />
+          <Input id="postalCode" type="text" className="mt-1" {...register("delivery.postalCode")} />
         </div>
       </div>
 
       <div>
         <Label className="text-base font-medium">Delivery Speed</Label>
         <RadioGroup
-          defaultValue="standard"
+          defaultValue={watch("delivery.deliverySpeed")}
           className="mt-2 space-y-3"
-          value={watch("delivery.deliverySpeed")}
-          onValueChange={(value) => {
-            setValue("delivery.deliverySpeed", value as "standard" | "express", { shouldValidate: true })
-          }}
+          onValueChange={(value) => handleRadioChange("delivery.deliverySpeed", value)}
         >
           <div className="flex items-start space-x-2 border p-3 rounded-md hover:bg-gray-50 transition-colors cursor-pointer">
             <RadioGroupItem value="standard" id="standard" className="mt-1 text-[#46332E]" />
@@ -1021,59 +815,42 @@ function DeliveryStep({ countryOptions }: { countryOptions: { code: string; name
           </div>
         </RadioGroup>
       </div>
-
-      <div className="text-sm text-gray-500">
-        <span className="text-red-500">*</span> Required fields
-      </div>
-    </div>
+    </motion.div>
   )
 }
 
 // Step 3: Payment
-function PaymentStep() {
-  const {
-    register,
-    formState: { errors },
-    watch,
-    setValue,
-  } = useFormContext<CheckoutFormData>()
-  const { cartItems, cartTotal } = useCart()
+interface PaymentStepProps {
+  register: any
+  watch: any
+  setValue: any
+  errors: any
+  cartItems: any[]
+  cartTotal: number
+  shippingCost: number
+}
+
+function PaymentStep({ register, watch, setValue, errors, cartItems, cartTotal, shippingCost }: PaymentStepProps) {
   const deliverySpeed = watch("delivery.deliverySpeed")
   const selectedCountry = watch("delivery.country")
-  const paymentMethod = watch("payment.paymentMethod")
-
-
-  // Calculate shipping cost based on country and delivery speed
-  const calculateShippingCost = (country: string, deliverySpeed: string) => {
-    // Group countries by shipping zones
-    const zone1 = ["US", "CA"] // North America
-    const zone2 = ["GB", "FR", "DE", "IT", "ES"] // Europe
-    const zone3 = ["NG", "GH", "ZA", "KE"] // Africa
-
-    let baseRate = 10 // Default international rate
-
-    if (zone1.includes(country)) {
-      baseRate = 8
-    } else if (zone2.includes(country)) {
-      baseRate = 12
-    } else if (zone3.includes(country)) {
-      baseRate = 15
-    }
-
-    // Express delivery costs more
-    return deliverySpeed === "express" ? baseRate * 2.5 : baseRate
-  }
-
-  const shippingCost = calculateShippingCost(selectedCountry, deliverySpeed)
   const totalAmount = cartTotal + shippingCost
 
-  // Helper function to handle payment method change
-  const handlePaymentMethodChange = (value: string) => {
-    setValue("payment.paymentMethod", value as "card" | "paypal" | "bank", { shouldValidate: true })
+  const handleRadioChange = (field: string, value: string) => {
+    setValue(field, value)
+  }
+
+  const handleCheckboxChange = (field: string, checked: boolean) => {
+    setValue(field, checked)
   }
 
   return (
-    <div className="space-y-6">
+    <motion.div
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      transition={{ duration: 0.3 }}
+      className="space-y-6"
+    >
       <h2 className="text-xl font-semibold text-[#46332E] mb-6">Order Summary & Payment</h2>
 
       <div className="bg-[#F5F3F0] p-5 rounded-lg mb-6">
@@ -1086,7 +863,7 @@ function PaymentStep() {
                 <p className="font-medium">{item.name}</p>
                 <p className="text-sm text-[#46332E]/70">Qty: {item.quantity}</p>
               </div>
-              <p className="font-medium">${((item.salePrice || item.price) * item.quantity).toFixed(2)}</p>
+              <p className="font-medium">${(item.salePrice || item.price) * item.quantity}</p>
             </div>
           ))}
 
@@ -1108,11 +885,13 @@ function PaymentStep() {
       </div>
 
       <div>
-        <h3 className="font-medium text-[#46332E] mb-3">
-          Payment Method <span className="text-red-500">*</span>
-        </h3>
+        <h3 className="font-medium text-[#46332E] mb-3">Payment Method</h3>
 
-        <RadioGroup value={paymentMethod} className="space-y-3" onValueChange={handlePaymentMethodChange}>
+        <RadioGroup
+          defaultValue={watch("payment.paymentMethod")}
+          className="space-y-3"
+          onValueChange={(value) => handleRadioChange("payment.paymentMethod", value)}
+        >
           <div className="flex items-start space-x-2 border p-3 rounded-md hover:bg-gray-50 transition-colors cursor-pointer">
             <RadioGroupItem value="card" id="card" className="mt-1 text-[#46332E]" />
             <div className="flex-1">
@@ -1143,39 +922,6 @@ function PaymentStep() {
                   className="rounded-md"
                 />
               </div>
-
-              {paymentMethod === "card" && (
-                <div className="mt-4 space-y-3 border-t pt-3">
-                  <div>
-                    <Label htmlFor="cardNumber" className="text-sm font-medium">
-                      Card Number
-                    </Label>
-                    <Input id="cardNumber" type="text" className="mt-1" placeholder="1234 5678 9012 3456" />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <Label htmlFor="expiryDate" className="text-sm font-medium">
-                        Expiry Date
-                      </Label>
-                      <Input id="expiryDate" type="text" className="mt-1" placeholder="MM/YY" />
-                    </div>
-                    <div>
-                      <Label htmlFor="cvv" className="text-sm font-medium">
-                        CVV
-                      </Label>
-                      <Input id="cvv" type="text" className="mt-1" placeholder="123" />
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="nameOnCard" className="text-sm font-medium">
-                      Name on Card
-                    </Label>
-                    <Input id="nameOnCard" type="text" className="mt-1" placeholder="John Doe" />
-                  </div>
-                </div>
-              )}
             </div>
           </div>
 
@@ -1195,14 +941,6 @@ function PaymentStep() {
                   className="rounded-md"
                 />
               </div>
-
-              {paymentMethod === "paypal" && (
-                <div className="mt-4 space-y-3 border-t pt-3">
-                  <p className="text-sm text-[#46332E]/70">
-                    You will be redirected to PayPal to complete your payment securely.
-                  </p>
-                </div>
-              )}
             </div>
           </div>
 
@@ -1212,36 +950,39 @@ function PaymentStep() {
               <Label htmlFor="bank" className="font-medium cursor-pointer">
                 Bank Transfer
               </Label>
-              <p className="text-sm text-[#46332E]/70">Direct bank transfer (processing may take 1-2 business days</p>
+              <p className="text-sm text-[#46332E]/70">Direct bank transfer (processing may take 1-2 business days)</p>
             </div>
           </div>
         </RadioGroup>
+      </div>
 
-        <div className="mt-6">
-          <div className="flex items-center space-x-2">
-            <Input
-              type="checkbox"
-              id="agreeToTerms"
-              className="h-5 w-5 rounded text-[#46332E] focus:ring-0 focus:ring-offset-0 border-[#46332E]/30"
-              {...register("payment.agreeToTerms")}
-            />
-            <Label htmlFor="agreeToTerms" className="text-sm cursor-pointer">
-              I agree to the{" "}
-              <a href="#" className="text-[#46332E] underline underline-offset-2">
-                terms and conditions
-              </a>{" "}
-              <span className="text-red-500">*</span>
-            </Label>
-          </div>
+      <div className="flex items-start space-x-2 mt-6">
+        <div className="mt-1">
+          <Checkbox
+            id="agreeToTerms"
+            className="text-[#46332E] border-gray-300 rounded"
+            checked={watch("payment.agreeToTerms")}
+            onCheckedChange={(checked) => handleCheckboxChange("payment.agreeToTerms", checked as boolean)}
+          />
+        </div>
+        <div>
+          <label htmlFor="agreeToTerms" className="text-sm text-[#46332E] cursor-pointer">
+            I agree to the <span className="underline hover:text-[#46332E]/80">Terms and Conditions</span>,{" "}
+            <span className="underline hover:text-[#46332E]/80">Privacy Policy</span>, and{" "}
+            <span className="underline hover:text-[#46332E]/80">Refund Policy</span>
+          </label>
           {errors.payment?.agreeToTerms && (
-            <p className="text-red-500 text-sm mt-1">{errors.payment.agreeToTerms.message}</p>
+            <p className="text-red-500 text-sm mt-1">You must agree to the terms and conditions</p>
           )}
         </div>
       </div>
 
-      <div className="text-sm text-gray-500">
-        <span className="text-red-500">*</span> Required fields
+      <div className="bg-blue-50 p-4 rounded-md">
+        <p className="text-sm text-blue-800">
+          <strong>Note:</strong> By clicking `&#39;`Complete Order`&#39;`, you agree to place an order for custom-tailored clothing
+          based on the measurements you provided. Please ensure all measurements are accurate.
+        </p>
       </div>
-    </div>
+    </motion.div>
   )
 }

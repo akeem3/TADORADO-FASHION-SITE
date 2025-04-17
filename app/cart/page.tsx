@@ -2,7 +2,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Trash2, ArrowLeft, ShoppingBag, Plus, Minus } from "lucide-react"
+import { Trash2, ArrowLeft, ShoppingBag } from "lucide-react"
 import { motion } from "framer-motion"
 import Container from "@/app/Components/Container"
 import Banner from "@/components/ui/banner"
@@ -43,7 +43,7 @@ const CartPage = () => {
     <>
       <Banner title="YOUR CART" description="Review your items and proceed to checkout when you're ready." />
       <Container>
-        <div className="py-12 max-w-7xl mx-auto px-4">
+        <div className="py-12 max-w-7xl mx-auto">
           <Button variant="outline" className="mb-8" onClick={() => router.back()}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Continue Shopping
@@ -101,21 +101,21 @@ const CartPage = () => {
 
                       <div className="flex justify-between items-center mt-4">
                         {/* Quantity Controls */}
-                        <div className="flex items-center border rounded-md overflow-hidden">
+                        <div className="flex items-center border rounded-md">
                           <button
-                            onClick={() => updateQuantity(item.id, Math.max(1, item.quantity - 1))}
-                            className="px-3 py-2 text-[#46332E] hover:bg-gray-100 transition-colors flex items-center justify-center"
+                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                            className="px-3 py-1 text-[#46332E] hover:bg-gray-100 transition-colors"
                             aria-label="Decrease quantity"
                           >
-                            <Minus className="h-4 w-4" />
+                            -
                           </button>
-                          <span className="px-4 py-1 border-x">{item.quantity}</span>
+                          <span className="px-3 py-1">{item.quantity}</span>
                           <button
                             onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                            className="px-3 py-2 text-[#46332E] hover:bg-gray-100 transition-colors flex items-center justify-center"
+                            className="px-3 py-1 text-[#46332E] hover:bg-gray-100 transition-colors"
                             aria-label="Increase quantity"
                           >
-                            <Plus className="h-4 w-4" />
+                            +
                           </button>
                         </div>
 
@@ -148,7 +148,7 @@ const CartPage = () => {
 
             {/* Order Summary */}
             <div className="lg:col-span-1">
-              <div className="bg-white rounded-lg p-6 sticky top-24 shadow-sm border border-gray-100">
+              <div className="bg-white rounded-lg p-6 sticky top-24">
                 <h2 className="text-xl font-bold text-[#46332E] mb-4">Order Summary</h2>
 
                 <div className="space-y-3 mb-6">
@@ -173,8 +173,8 @@ const CartPage = () => {
                 </div>
 
                 <Button
-                  className="w-full bg-[#46332E] hover:bg-[#46332E]/90 py-6 text-lg transition-all duration-300"
-                  onClick={() => router.push("/checkOut")}
+                  className="w-full bg-[#46332E] hover:bg-[#46332E]/90 py-6 text-lg"
+                  onClick={() => router.push("/checkout")}
                 >
                   Proceed to Checkout
                 </Button>
@@ -182,40 +182,6 @@ const CartPage = () => {
                 <p className="text-xs text-center text-[#46332E]/60 mt-4">
                   Shipping, taxes, and discounts calculated at checkout
                 </p>
-
-                <div className="mt-6 pt-6 border-t border-gray-100">
-                  <h3 className="font-medium text-[#46332E] mb-2">We Accept</h3>
-                  <div className="flex gap-2 flex-wrap">
-                    <Image
-                      src="/placeholder.svg?height=30&width=40"
-                      alt="Visa"
-                      width={40}
-                      height={30}
-                      className="rounded-md"
-                    />
-                    <Image
-                      src="/placeholder.svg?height=30&width=40"
-                      alt="Mastercard"
-                      width={40}
-                      height={30}
-                      className="rounded-md"
-                    />
-                    <Image
-                      src="/placeholder.svg?height=30&width=40"
-                      alt="Amex"
-                      width={40}
-                      height={30}
-                      className="rounded-md"
-                    />
-                    <Image
-                      src="/placeholder.svg?height=30&width=40"
-                      alt="PayPal"
-                      width={40}
-                      height={30}
-                      className="rounded-md"
-                    />
-                  </div>
-                </div>
               </div>
             </div>
           </div>
