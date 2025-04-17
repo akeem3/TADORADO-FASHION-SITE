@@ -16,6 +16,7 @@ import { useCart } from "@/components/ui/CartContext"
 import Container from "@/app/Components/Container"
 import Banner from "@/components/ui/banner"
 import Image from "next/image"
+import type { UseFormRegister, UseFormWatch, UseFormSetValue, FieldErrors } from "react-hook-form"
 
 // Define a curated list of countries for the dropdown
 const countriesList = [
@@ -444,10 +445,10 @@ export default function CheckoutPage() {
 
 // Step 1: Measurements Form
 interface MeasurementsStepProps {
-  register: any
-  watch: any
-  setValue: any
-  errors: any
+  register: UseFormRegister<CheckoutFormData>
+  watch: UseFormWatch<CheckoutFormData>
+  setValue: UseFormSetValue<CheckoutFormData>
+  errors: FieldErrors<CheckoutFormData>
 }
 
 function MeasurementsStep({ register, watch, setValue, errors }: MeasurementsStepProps) {
@@ -455,7 +456,7 @@ function MeasurementsStep({ register, watch, setValue, errors }: MeasurementsSte
   const measurementUnit = watch("measurements.measurementUnit")
 
   const handleRadioChange = (field: string, value: string) => {
-    setValue(field, value)
+    setValue(field as any, value)
   }
 
   return (
@@ -495,7 +496,7 @@ function MeasurementsStep({ register, watch, setValue, errors }: MeasurementsSte
             <div className="bg-[#46332E] text-white rounded-full w-6 h-6 flex items-center justify-center mr-2 flex-shrink-0 mt-0.5">
               4
             </div>
-            <p className="text-sm">For hips, measure at the fullest part, approximately 8`&#39;` below your waist.</p>
+            <p className="text-sm">For hips, measure at the fullest part, approximately 8" below your waist.</p>
           </div>
         </div>
       </div>
@@ -675,17 +676,17 @@ function MeasurementsStep({ register, watch, setValue, errors }: MeasurementsSte
 // Step 2: Delivery Details
 interface DeliveryStepProps {
   countryOptions: { code: string; name: string }[]
-  register: any
-  watch: any
-  setValue: any
-  errors: any
+  register: UseFormRegister<CheckoutFormData>
+  watch: UseFormWatch<CheckoutFormData>
+  setValue: UseFormSetValue<CheckoutFormData>
+  errors: FieldErrors<CheckoutFormData>
 }
 
 function DeliveryStep({ countryOptions, register, watch, setValue, errors }: DeliveryStepProps) {
   const selectedCountry = watch("delivery.country")
 
   const handleRadioChange = (field: string, value: string) => {
-    setValue(field, value)
+    setValue(field as any, value)
   }
 
   return (
@@ -821,10 +822,10 @@ function DeliveryStep({ countryOptions, register, watch, setValue, errors }: Del
 
 // Step 3: Payment
 interface PaymentStepProps {
-  register: any
-  watch: any
-  setValue: any
-  errors: any
+  register: UseFormRegister<CheckoutFormData>
+  watch: UseFormWatch<CheckoutFormData>
+  setValue: UseFormSetValue<CheckoutFormData>
+  errors: FieldErrors<CheckoutFormData>
   cartItems: any[]
   cartTotal: number
   shippingCost: number
@@ -832,15 +833,14 @@ interface PaymentStepProps {
 
 function PaymentStep({ register, watch, setValue, errors, cartItems, cartTotal, shippingCost }: PaymentStepProps) {
   const deliverySpeed = watch("delivery.deliverySpeed")
-  const selectedCountry = watch("delivery.country")
   const totalAmount = cartTotal + shippingCost
 
   const handleRadioChange = (field: string, value: string) => {
-    setValue(field, value)
+    setValue(field as any, value)
   }
 
   const handleCheckboxChange = (field: string, checked: boolean) => {
-    setValue(field, checked)
+    setValue(field as any, checked)
   }
 
   return (
@@ -979,7 +979,7 @@ function PaymentStep({ register, watch, setValue, errors, cartItems, cartTotal, 
 
       <div className="bg-blue-50 p-4 rounded-md">
         <p className="text-sm text-blue-800">
-          <strong>Note:</strong> By clicking `&#39;`Complete Order`&#39;`, you agree to place an order for custom-tailored clothing
+          <strong>Note:</strong> By clicking "Complete Order", you agree to place an order for custom-tailored clothing
           based on the measurements you provided. Please ensure all measurements are accurate.
         </p>
       </div>
