@@ -42,7 +42,7 @@ export default function CheckoutSuccessPage() {
         <h1 className="text-3xl font-bold text-[#46332E] mb-4">Order Successful!</h1>
 
         <p className="text-lg text-[#46332E]/80 mb-8">
-          Thank you for your order. We`&#39;`ve received your request and will begin crafting your custom outfit soon.
+          Thank you for your order. We&#39;ve received your request and will begin crafting your custom outfit soon.
         </p>
 
         <div className="bg-[#F5F3F0] p-6 rounded-lg mb-8">
@@ -65,7 +65,7 @@ export default function CheckoutSuccessPage() {
         </div>
 
         <p className="text-[#46332E]/80 mb-8">
-          We`&#39;`ve sent a confirmation email with all the details of your order. If you have any questions, please contact
+          We&#39;ve sent a confirmation email with all the details of your order. If you have any questions, please contact
           our customer service.
         </p>
 
