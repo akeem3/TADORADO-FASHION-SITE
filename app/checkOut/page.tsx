@@ -292,7 +292,6 @@ export default function CheckoutPage() {
                   {step === 3 && (
                     <PaymentStep
                       key="step3"
-                      register={register}
                       watch={watch}
                       setValue={setValue}
                       errors={errors}
@@ -482,7 +481,7 @@ function MeasurementsStep({ register, watch, setValue, errors }: MeasurementsSte
             <div className="bg-[#46332E] text-white rounded-full w-6 h-6 flex items-center justify-center mr-2 flex-shrink-0 mt-0.5">
               4
             </div>
-            <p className="text-sm">For hips, measure at the fullest part, approximately 8`&#39;` below your waist.</p>
+            <p className="text-sm">For hips, measure at the fullest part, approximately 8`&#34;` below your waist.</p>
           </div>
         </div>
       </div>
@@ -810,7 +809,6 @@ function DeliveryStep({ countryOptions, register, watch, setValue, errors }: Del
 // Step 3: Payment
 // In the PaymentStep component, update the PaymentStepProps interface:
 interface PaymentStepProps {
-  register: UseFormRegister<CheckoutFormData>
   watch: UseFormWatch<CheckoutFormData>
   setValue: UseFormSetValue<CheckoutFormData>
   errors: FieldErrors<CheckoutFormData>
@@ -819,7 +817,7 @@ interface PaymentStepProps {
   shippingCost: number
 }
 
-function PaymentStep({ register, watch, setValue, errors, cartItems, cartTotal, shippingCost }: PaymentStepProps) {
+function PaymentStep({ watch, setValue, errors, cartItems, cartTotal, shippingCost }: PaymentStepProps) {
   const deliverySpeed = watch("delivery.deliverySpeed")
   const totalAmount = cartTotal + shippingCost
 
