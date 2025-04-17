@@ -496,7 +496,7 @@ function MeasurementsStep({ register, watch, setValue, errors }: MeasurementsSte
             <div className="bg-[#46332E] text-white rounded-full w-6 h-6 flex items-center justify-center mr-2 flex-shrink-0 mt-0.5">
               4
             </div>
-            <p className="text-sm">For hips, measure at the fullest part, approximately 8" below your waist.</p>
+            <p className="text-sm">For hips, measure at the fullest part, approximately 8`&#39;` below your waist.</p>
           </div>
         </div>
       </div>
@@ -979,7 +979,7 @@ function PaymentStep({ register, watch, setValue, errors, cartItems, cartTotal, 
 
       <div className="bg-blue-50 p-4 rounded-md">
         <p className="text-sm text-blue-800">
-          <strong>Note:</strong> By clicking "Complete Order", you agree to place an order for custom-tailored clothing
+          <strong>Note:</strong> By clicking `&#34;`Complete Order`&#34;`, you agree to place an order for custom-tailored clothing
           based on the measurements you provided. Please ensure all measurements are accurate.
         </p>
       </div>
