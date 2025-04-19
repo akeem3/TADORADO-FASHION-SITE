@@ -999,10 +999,10 @@ function DeliveryStep({
             onValueChange={(value) => setValue("delivery.country", value)}
             defaultValue={selectedCountry}
           >
-            <SelectTrigger className="w-full mt-2 px-4 py-3 border border-[#d6ccc2] rounded-xl shadow-sm text-[#46332E] focus:outline-none focus:ring-2 focus:ring-[#46332E]">
+            <SelectTrigger className="w-full mt-2 rounded-xl border border-[#d6ccc2] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#46332E] text-[#46332E] shadow-sm transition-all">
               <SelectValue placeholder="Select country" />
             </SelectTrigger>
-            <SelectContent className="max-h-[200px] overflow-y-auto text-[#46332E]">
+            <SelectContent className="max-h-[200px] overflow-y-auto text-[#46332E] bg-white shadow-lg rounded-xl border border-[#d6ccc2]">
               {countryOptions.map((country) => (
                 <SelectItem key={country.code} value={country.code}>
                   {country.name}
