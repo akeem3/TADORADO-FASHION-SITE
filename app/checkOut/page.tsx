@@ -13,7 +13,6 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import Container from "@/app/Components/Container"
-// import Banner from "@/components/ui/banner"
 import Image from "next/image"
 // Import the Path type from react-hook-form to properly type the setValue calls
 import type { UseFormRegister, UseFormWatch, UseFormSetValue, FieldErrors, Path } from "react-hook-form"
