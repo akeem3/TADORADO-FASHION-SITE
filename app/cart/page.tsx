@@ -9,7 +9,8 @@ import { Button } from "@/components/ui/button";
 import { useCart } from "@/components/ui/CartContext";
 
 const CartPage = () => {
-  const { cartItems, removeFromCart, updateQuantity, cartTotal, clearCart } = useCart();
+  const { cartItems, removeFromCart, updateQuantity, cartTotal, clearCart } =
+    useCart();
   const router = useRouter();
 
   if (cartItems.length === 0) {
@@ -20,9 +21,16 @@ const CartPage = () => {
             <div className="w-16 h-16 bg-[#F5F3F0] rounded-full flex items-center justify-center mx-auto mb-6">
               <ShoppingBag className="h-8 w-8 text-[#46332E]" />
             </div>
-            <h2 className="text-2xl font-bold text-[#46332E] mb-4">Your cart is empty</h2>
-            <p className="text-[#46332E]/70 mb-8">Looks like you haven&#39;t added any items to your cart yet.</p>
-            <Button onClick={() => router.push("/collections")} className="bg-[#46332E] hover:bg-[#46332E]/90 transition-all duration-300 text-white rounded-xl">
+            <h2 className="text-2xl font-bold text-[#46332E] mb-4">
+              Your cart is empty
+            </h2>
+            <p className="text-[#46332E]/70 mb-8">
+              Looks like you haven&#39;t added any items to your cart yet.
+            </p>
+            <Button
+              onClick={() => router.push("/collections")}
+              className="bg-[#46332E] hover:bg-[#46332E]/90 transition-all duration-300 text-white rounded-xl"
+            >
               Continue Shopping
             </Button>
           </div>
@@ -34,7 +42,11 @@ const CartPage = () => {
   return (
     <Container>
       <div className="py-12 max-w-7xl mx-auto">
-        <Button variant="outline" className="mb-8 rounded-xl" onClick={() => router.back()}>
+        <Button
+          variant="outline"
+          className="mb-8 rounded-xl border border-[#d6ccc2] text-[#46332E] hover:bg-[#f5f3f0] transition-all duration-200"
+          onClick={() => router.push("/collections")}
+        >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Continue Shopping
         </Button>
@@ -54,31 +66,49 @@ const CartPage = () => {
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ delay: index * 0.05 }}
                   className={`flex flex-col sm:flex-row gap-4 p-4 ${
-                    index !== cartItems.length - 1 ? "border-b border-gray-100" : ""
+                    index !== cartItems.length - 1
+                      ? "border-b border-gray-100"
+                      : ""
                   }`}
                 >
                   <div className="relative w-full sm:w-24 h-24 flex-shrink-0">
-                    <Image src={item.image || "/placeholder.svg"} alt={item.name} fill className="object-cover rounded-md" />
+                    <Image
+                      src={item.image || "/placeholder.svg"}
+                      alt={item.name}
+                      fill
+                      className="object-cover rounded-md"
+                    />
                   </div>
 
                   <div className="flex-1">
                     <div className="flex flex-col sm:flex-row sm:justify-between">
                       <div>
                         <h3 className="font-medium text-[#46332E]">
-                          <Link href={`/collections/product/${item.id}`} className="hover:underline">
+                          <Link
+                            href={`/collections/product/${item.id}`}
+                            className="hover:underline"
+                          >
                             {item.name}
                           </Link>
                         </h3>
-                        <p className="text-sm text-[#46332E]/70">{item.category}</p>
+                        <p className="text-sm text-[#46332E]/70">
+                          {item.category}
+                        </p>
                       </div>
                       <div className="mt-2 sm:mt-0 text-right">
                         {item.salePrice ? (
                           <div>
-                            <span className="font-bold text-[#46332E]">${item.salePrice}</span>
-                            <span className="text-sm text-[#46332E]/60 line-through ml-2">${item.price}</span>
+                            <span className="font-bold text-[#46332E]">
+                              ${item.salePrice}
+                            </span>
+                            <span className="text-sm text-[#46332E]/60 line-through ml-2">
+                              ${item.price}
+                            </span>
                           </div>
                         ) : (
-                          <span className="font-bold text-[#46332E]">${item.price}</span>
+                          <span className="font-bold text-[#46332E]">
+                            ${item.price}
+                          </span>
                         )}
                       </div>
                     </div>
@@ -86,7 +116,9 @@ const CartPage = () => {
                     <div className="flex justify-between items-center mt-4">
                       <div className="flex items-center border rounded-md">
                         <button
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                          onClick={() =>
+                            updateQuantity(item.id, item.quantity - 1)
+                          }
                           className="px-3 py-1 text-[#46332E] hover:bg-gray-100 transition-colors rounded-l-md"
                           aria-label="Decrease quantity"
                         >
@@ -94,7 +126,9 @@ const CartPage = () => {
                         </button>
                         <span className="px-3 py-1">{item.quantity}</span>
                         <button
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          onClick={() =>
+                            updateQuantity(item.id, item.quantity + 1)
+                          }
                           className="px-3 py-1 text-[#46332E] hover:bg-gray-100 transition-colors rounded-r-md"
                           aria-label="Increase quantity"
                         >
@@ -130,7 +164,9 @@ const CartPage = () => {
 
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg p-6 sticky top-24">
-              <h2 className="text-xl font-bold text-[#46332E] mb-4">Order Summary</h2>
+              <h2 className="text-xl font-bold text-[#46332E] mb-4">
+                Order Summary
+              </h2>
 
               <div className="space-y-3 mb-6">
                 <div className="flex justify-between">
