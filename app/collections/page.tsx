@@ -11,34 +11,11 @@ import { Badge } from "@/components/ui/badge";
 import Container from "@/app/Components/Container";
 import Banner from "@/components/ui/banner";
 import { useSearchParams } from "next/navigation";
-import { products, Product } from "@/data/products";
-
-// import AddToCartButton from "@/components/ui/AddToCartButton";
+import { products, Product, maleCategories, femaleCategories } from "@/data/products";
 
 
 
 
-// Category definitions
-const maleCategories: Record<string, string> = {
-  senator: "Senator (Owanbe)",
-  ankara: "Ankara",
-  corporate: "Corporate",
-  vintage: "Vintage",
-};
-
-const femaleCategories: Record<string, string> = {
-  owanbe: "Owanbe Classical",
-  bridal: "Bridal/Ankara",
-  corset: "Corset/Padded",
-  gowns: "Gowns",
-  blouse: "Blouse",
-  skirts: "Skirts",
-  iro: "Iro and Buba",
-  corporate: "Corporate",
-  vintage: "Vintage",
-  boubou: "Boubou dress",
-  baby: "Baby Gown",
-};
 
 export default function CollectionsPage() {
   const searchParams = useSearchParams();
