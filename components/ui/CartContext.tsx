@@ -25,7 +25,16 @@ type CartContextType = {
   cartTotal: number
 }
 
-const CartContext = createContext<CartContextType | undefined>(undefined)
+// Initialize with default values to avoid undefined errors
+const CartContext = createContext<CartContextType>({
+  cartItems: [],
+  addToCart: () => {},
+  removeFromCart: () => {},
+  updateQuantity: () => {},
+  clearCart: () => {},
+  cartCount: 0,
+  cartTotal: 0,
+})
 
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [cartItems, setCartItems] = useState<CartProduct[]>([])
@@ -34,20 +43,24 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Load cart from localStorage on initial render
   useEffect(() => {
-    const storedCart = localStorage.getItem("cart")
-    if (storedCart) {
-      try {
-        const parsedCart = JSON.parse(storedCart)
-        setCartItems(parsedCart)
-      } catch (error) {
-        console.error("Failed to parse cart from localStorage:", error)
+    if (typeof window !== "undefined") {
+      const storedCart = localStorage.getItem("cart")
+      if (storedCart) {
+        try {
+          const parsedCart = JSON.parse(storedCart)
+          setCartItems(parsedCart)
+        } catch (error) {
+          console.error("Failed to parse cart from localStorage:", error)
+        }
       }
     }
   }, [])
 
   // Update localStorage and cart metrics whenever cartItems changes
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cartItems))
+    if (typeof window !== "undefined") {
+      localStorage.setItem("cart", JSON.stringify(cartItems))
+    }
 
     // Calculate cart count and total
     const count = cartItems.reduce((total, item) => total + item.quantity, 0)
@@ -113,8 +126,5 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
 export const useCart = () => {
   const context = useContext(CartContext)
-  if (context === undefined) {
-    throw new Error("useCart must be used within a CartProvider")
-  }
   return context
 }

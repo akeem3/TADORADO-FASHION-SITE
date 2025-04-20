@@ -7,6 +7,7 @@ import { useCart, type CartProduct } from "@/components/ui/CartContext"
 import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 
+
 interface AddToCartButtonProps {
   product: {
     id: number
