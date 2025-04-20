@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Star } from "lucide-react";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
 const testimonials = [
@@ -43,7 +43,7 @@ export default function TestimonialsSection() {
   };
 
   return (
-    <section className="bg-[#F5F3F0] py-24 lg:py-32 overflow-hidden">
+    <section className="bg-[#F5F3F0] py-24 lg:py-22 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           className="text-center max-w-3xl mx-auto mb-16"
@@ -156,12 +156,12 @@ export default function TestimonialsSection() {
           transition={{ duration: 0.6, delay: 0.4 }}
           viewport={{ once: true }}
         >
-          <Button
+          {/* <Button
             size="lg"
             className="bg-[#46332E] hover:bg-[#46332E]/90 text-white px-8 py-6 rounded-2xl text-lg"
           >
             Get Started
-          </Button>
+          </Button> */}
         </motion.div>
       </div>
     </section>
