@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Tadorado
+🌐 Live Demo: https://tadorado.vercel.app
 
-## Getting Started
+Tadorado is a full-stack web application built using Next.js, bootstrapped with create-next-app. It features modern web development best practices, including optimized font loading with next/font and a clean, responsive UI using Geist.
 
-First, run the development server:
+Getting Started
+To run the project locally:
 
-```bash
+bash
+Copy
+Edit
+# Install dependencies
+npm install
+
+# Start the development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Once the server is running, open http://localhost:3000 in your browser to view the application.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+You can begin editing the project from the app/page.tsx file. Thanks to Next.js's hot-reloading, updates will be reflected immediately.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Technologies Used
+Framework: Next.js 14 (App Router)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Language: TypeScript
 
-## Learn More
+Styling: Tailwind CSS
 
-To learn more about Next.js, take a look at the following resources:
+Fonts: Optimized with [next/font] using the Geist font family
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Deployment: Hosted on Vercel
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Other Tools: ESLint, Prettier
 
-## Deploy on Vercel
+Deployment
+The application is deployed via Vercel, offering seamless integration with Next.js projects.
+For more information on deploying your own Next.js app, refer to the official documentation.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Learn More
+If you'd like to explore Next.js further:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Next.js Documentation – Features and API details
+
+Next.js Interactive Tutorial – Step-by-step guide for beginners
+
+Next.js GitHub Repository – Source code and community contributions
+
+Note:
+This project highlights my ability to build, optimize, and deploy full-stack web applications using modern technologies. I am continually enhancing this project to refine my skills and showcase my proficiency in scalable web development.
