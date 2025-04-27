@@ -347,6 +347,7 @@ function ProductCard({ product }: { product: Product }) {
   )
 }
 
+
 // Mobile Filters Component
 function MobileFilters({
   ageGroup,
@@ -389,7 +390,7 @@ function MobileFilters({
                 type="radio"
                 id={`age-${age}-mobile`}
                 name="age-group-mobile"
-                checked={ageGroup === age}
+                checked={ageGroup === age}  
                 onChange={() => setAgeGroup(age)}
                 className="h-4 w-4 text-[#46332E] focus:ring-[#46332E]"
               />
@@ -546,3 +547,5 @@ function DesktopFilters({
     </div>
   )
 }
+
+
