@@ -1,4 +1,4 @@
-#Tadorado
+Tadorado
 🌐 Live Demo: https://tadorado.vercel.app
 
 Tadorado is a full-stack web application built using Next.js, bootstrapped with create-next-app. It features modern web development best practices, including optimized font loading with next/font and a clean, responsive UI using Geist.
