@@ -42,8 +42,13 @@ Tadorado Fashion needed more than just a digital storefront—they needed a full
 
 ---
 
-### 🛒 Shop Page
+### 🛍️ Shop Page
 ![Shop Page](https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/shop.png?alt=media&token=7db1c140-fd78-4709-a791-5c483c8bc3af)
+
+---
+
+### 📄 Product Page
+![Product Page](https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/FireShot%20Capture%20020%20-%20Tadorado%20Fashion%20-%20tadoradotailoring.vercel.app.png?alt=media&token=8e394c1e-7824-4dcc-ac98-18523854a206)
 
 ---
 
