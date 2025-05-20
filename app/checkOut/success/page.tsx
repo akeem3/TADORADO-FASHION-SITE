@@ -56,7 +56,6 @@ export default function CheckoutSuccessPage() {
               <span className="font-medium">Date:</span>
               <span>{new Date().toLocaleDateString()}</span>
             </div>
-
             <div className="flex justify-between">
               <span className="font-medium">Estimated Delivery:</span>
               <span>7–14 business days</span>

@@ -57,7 +57,7 @@ export default function CategoriesSection() {
               Explore a variety of styles crafted to perfection. Find the perfect fit for every occasion.
             </motion.p>
           </motion.div>
-          
+
           {/* Updated View All Link */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
