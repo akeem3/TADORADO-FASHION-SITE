@@ -3,19 +3,17 @@ import { prisma } from "@/lib/prisma";
 
 export async function GET(
   req: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: Record<string, string> }
 ) {
-  const { id } = context.params;
+  const id = parseInt(params.id);
 
-  const productId = parseInt(id);
-
-  if (isNaN(productId)) {
+  if (isNaN(id)) {
     return NextResponse.json({ error: "Invalid product ID" }, { status: 400 });
   }
 
   try {
     const product = await prisma.product.findUnique({
-      where: { id: productId },
+      where: { id },
     });
 
     if (!product) {
@@ -24,7 +22,7 @@ export async function GET(
 
     return NextResponse.json(product);
   } catch (error) {
-    console.error("❌ Error fetching product by ID:", error);
+    console.error("❌ Error fetching product:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
