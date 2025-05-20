@@ -1,14 +1,21 @@
-// app/api/products/[id]/route.ts
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  context: { params: { id: string } }
 ) {
+  const { id } = context.params;
+
+  const productId = parseInt(id);
+
+  if (isNaN(productId)) {
+    return NextResponse.json({ error: "Invalid product ID" }, { status: 400 });
+  }
+
   try {
     const product = await prisma.product.findUnique({
-      where: { id: parseInt(params.id) },
+      where: { id: productId },
     });
 
     if (!product) {
