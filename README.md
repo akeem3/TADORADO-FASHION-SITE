@@ -57,6 +57,11 @@ Tadorado Fashion needed more than just a digital storefront—they needed a full
 
 ---
 
+### 💳 Checkout Page
+![Checkout Page](https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/FireShot%20Capture%20022%20-%20Tadorado%20Fashion%20-%20tadoradotailoring.vercel.app.png?alt=media&token=2e89186b-376f-4e00-913b-5d1454779c1f)
+
+---
+
 ## 🧠 Why This Project Matters
 
 This isn't just a portfolio piece—it's a business tool that helps **Tadorado**:
