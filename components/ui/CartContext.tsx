@@ -1,6 +1,6 @@
 "use client";
 
-import { create } from "zustand";
+import { create, StateCreator } from "zustand";
 import { persist } from "zustand/middleware";
 
 // Define the product type
@@ -30,106 +30,106 @@ interface CartStore {
   getFinalTotal: () => number;
 }
 
-export const useCartStore = create<CartStore>()(
-  persist(
-    (
-      set: (fn: (state: CartStore) => CartStore | Partial<CartStore>) => void,
-      get: () => CartStore
-    ) => ({
-      items: [],
+type CartPersistedState = Pick<CartStore, "items">;
 
-      addItem: (product: CartProduct) => {
-        set((state: CartStore) => {
-          const existingItem = state.items.find(
-            (item: CartProduct) => item.id === product.id
-          );
+const cartStoreCreator: StateCreator<
+  CartStore,
+  [],
+  [["zustand/persist", CartPersistedState]],
+  CartStore
+> = (set, get) => ({
+  items: [],
 
-          if (existingItem) {
-            // Update quantity if item exists
-            return {
-              items: state.items.map((item: CartProduct) =>
-                item.id === product.id
-                  ? { ...item, quantity: item.quantity + product.quantity }
-                  : item
-              ),
-            };
-          } else {
-            // Add new item
-            return {
-              items: [...state.items, product],
-            };
-          }
-        });
-      },
+  addItem: (product: CartProduct) => {
+    set((state: CartStore) => {
+      const existingItem = state.items.find(
+        (item: CartProduct) => item.id === product.id
+      );
 
-      removeItem: (productId: number) => {
-        set((state: CartStore) => ({
-          items: state.items.filter(
-            (item: CartProduct) => item.id !== productId
-          ),
-        }));
-      },
-
-      updateQuantity: (productId: number, quantity: number) => {
-        if (quantity <= 0) {
-          get().removeItem(productId);
-          return;
-        }
-
-        set((state: CartStore) => ({
+      if (existingItem) {
+        // Update quantity if item exists
+        return {
           items: state.items.map((item: CartProduct) =>
-            item.id === productId ? { ...item, quantity } : item
+            item.id === product.id
+              ? { ...item, quantity: item.quantity + product.quantity }
+              : item
           ),
-        }));
-      },
+        };
+      } else {
+        // Add new item
+        return {
+          items: [...state.items, product],
+        };
+      }
+    });
+  },
 
-      clearCart: () => {
-        set({ items: [] });
-      },
+  removeItem: (productId: number) => {
+    set((state: CartStore) => ({
+      items: state.items.filter((item: CartProduct) => item.id !== productId),
+    }));
+  },
 
-      getItemCount: () => {
-        return get().items.reduce(
-          (total: number, item: CartProduct) => total + item.quantity,
-          0
-        );
-      },
-
-      getSubtotal: () => {
-        return get().items.reduce((total: number, item: CartProduct) => {
-          const price = item.salePrice || item.price;
-          return total + price * item.quantity;
-        }, 0);
-      },
-
-      getTax: () => {
-        // Calculate tax (example: 8.5% tax rate)
-        const subtotal = get().getSubtotal();
-        return subtotal * 0.085;
-      },
-
-      getShipping: () => {
-        // Free shipping over $50, otherwise $5.99
-        const subtotal = get().getSubtotal();
-        return subtotal >= 50 ? 0 : 5.99;
-      },
-
-      getTotalPrice: () => {
-        return get().getSubtotal();
-      },
-
-      getFinalTotal: () => {
-        const subtotal = get().getSubtotal();
-        const tax = get().getTax();
-        const shipping = get().getShipping();
-        return subtotal + tax + shipping;
-      },
-    }),
-    {
-      name: "cart-storage",
-
-      partialize: (state) => ({ items: state.items }),
+  updateQuantity: (productId: number, quantity: number) => {
+    if (quantity <= 0) {
+      get().removeItem(productId);
+      return;
     }
-  )
+
+    set((state: CartStore) => ({
+      items: state.items.map((item: CartProduct) =>
+        item.id === productId ? { ...item, quantity } : item
+      ),
+    }));
+  },
+
+  clearCart: () => {
+    set({ items: [] });
+  },
+
+  getItemCount: () => {
+    return get().items.reduce(
+      (total: number, item: CartProduct) => total + item.quantity,
+      0
+    );
+  },
+
+  getSubtotal: () => {
+    return get().items.reduce((total: number, item: CartProduct) => {
+      const price = item.salePrice || item.price;
+      return total + price * item.quantity;
+    }, 0);
+  },
+
+  getTax: () => {
+    // Calculate tax (example: 8.5% tax rate)
+    const subtotal = get().getSubtotal();
+    return subtotal * 0.085;
+  },
+
+  getShipping: () => {
+    // Free shipping over $50, otherwise $5.99
+    const subtotal = get().getSubtotal();
+    return subtotal >= 50 ? 0 : 5.99;
+  },
+
+  getTotalPrice: () => {
+    return get().getSubtotal();
+  },
+
+  getFinalTotal: () => {
+    const subtotal = get().getSubtotal();
+    const tax = get().getTax();
+    const shipping = get().getShipping();
+    return subtotal + tax + shipping;
+  },
+});
+
+export const useCartStore = create<CartStore>()(
+  persist(cartStoreCreator, {
+    name: "cart-storage",
+    partialize: (state) => ({ items: state.items }),
+  })
 );
 
 // Legacy context for backward compatibility
