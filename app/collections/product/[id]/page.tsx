@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { ArrowLeft, Star } from "lucide-react";
 import { useRouter } from "next/navigation";
+import AddToCartButton from "@/components/ui/AddToCartButton";
 
 type Product = {
   id: number;
@@ -121,6 +122,21 @@ export default function ProductDetailPage() {
               </Button>
               <span className="text-xl px-4">{quantity}</span>
               <Button onClick={() => setQuantity(quantity + 1)}>+</Button>
+              <AddToCartButton
+                product={{
+                  id: product.id,
+                  name: product.name,
+                  price: product.price,
+                  salePrice: product.salePrice,
+                  image: product.image,
+                  category: product.category,
+                  subCategory: product.subCategory,
+                }}
+                quantity={quantity}
+                showQuantity={false}
+                redirectToCart={true}
+                className="flex-1"
+              />
               <Button className="bg-[#46332E] text-white flex-1">
                 Buy Now
               </Button>
