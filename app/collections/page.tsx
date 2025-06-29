@@ -166,7 +166,7 @@ export default function CollectionsPage() {
                     >
                       <option value="all">All</option>
                       <option value="adult">Adult</option>
-                      <option value="kids">Kids</option>
+                      <option value="children">Children</option>
                       <option value="baby">Baby</option>
                     </select>
                   </div>

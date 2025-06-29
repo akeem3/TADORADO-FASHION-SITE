@@ -12,6 +12,7 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
   const { cartCount } = useCart(); // ✅ Get cart item count
+  const [mounted, setMounted] = useState(false);
 
   // Handle scroll effect
   useEffect(() => {
@@ -21,6 +22,10 @@ export default function Navbar() {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    setMounted(true);
   }, []);
 
   return (
@@ -83,8 +88,8 @@ export default function Navbar() {
                 <ShoppingBag size={24} />
               </Link>
 
-              {/* Show badge only if cartCount > 0 */}
-              {cartCount > 0 && (
+              {/* Show badge only if cartCount > 0 and mounted */}
+              {mounted && cartCount > 0 && (
                 <span className="absolute top-0 right-0 flex items-center justify-center w-5 h-5 text-xs text-white bg-[#8d6e63] rounded-full">
                   {cartCount}
                 </span>
