@@ -16,7 +16,7 @@ export default function BannerSection() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <h1 className="text-5xl sm:text-6xl lg:text-8xl font-extrabold text-[#46332E] mb-4 lg:mb-6 leading-tight tracking-tight">
+        <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-[#46332E] mb-4 lg:mb-6 leading-tight tracking-tight">
           BOLD STYLE <br /> EVERY DAY
         </h1>
         <p className="text-[#5A3E36] text-lg sm:text-xl lg:text-2xl leading-relaxed mb-6 lg:mb-8 max-w-xl mx-auto lg:mx-0">
