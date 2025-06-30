@@ -4,6 +4,18 @@ import type { Product } from "@/data/products";
 
 type ProductInput = Omit<Product, "id"> & { [key: string]: unknown };
 
+// Simple slugify function
+function slugify(text: string) {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-") // Replace spaces with -
+    .replace(/[^a-z0-9\-]/g, "") // Remove all non-alphanumeric except -
+    .replace(/\-+/g, "-") // Replace multiple - with single -
+    .replace(/^-+|-+$/g, ""); // Trim - from start/end
+}
+
 function parseProductData(data: ProductInput) {
   return {
     name: data.name,
@@ -28,6 +40,7 @@ function parseProductData(data: ProductInput) {
     image: data.image,
     hoverImage: data.hoverImage || undefined,
     description: data.description || undefined,
+    slug: data.slug ? String(data.slug) : slugify(data.name),
   };
 }
 
