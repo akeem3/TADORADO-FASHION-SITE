@@ -58,12 +58,26 @@ export default function CollectionsPage() {
 
   useEffect(() => {
     fetch("/api/products")
-      .then((res) => res.json())
-      .then((data) => setProducts(data));
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch products");
+        return res.json();
+      })
+      .then((data) => setProducts(data))
+      .catch((err) => {
+        // Optionally set an error state here
+        console.error(err);
+      });
 
     fetch("/api/products/filters")
-      .then((res) => res.json())
-      .then((data) => setFilters(data));
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch filters");
+        return res.json();
+      })
+      .then((data) => setFilters(data))
+      .catch((err) => {
+        // Optionally set an error state here
+        console.error(err);
+      });
   }, []);
 
   const featuredProducts = products.filter((p) => p.isFeatured);

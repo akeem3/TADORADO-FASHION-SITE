@@ -24,7 +24,11 @@ export async function GET() {
 
     for (const item of data) {
       const { category, ageGroup, subCategory } = item;
-      if (category === "male" || category === "female") {
+      if (
+        (category === "male" || category === "female") &&
+        ageGroup &&
+        subCategory
+      ) {
         filters[category].ageGroups.add(ageGroup);
         filters[category].subCategories.add(subCategory);
       }

@@ -37,6 +37,7 @@ async function main() {
       },
       {
         name: "Owanbe Classical Gown",
+        slug: slugify("Owanbe Classical Gown"),
         category: "female",
         subCategory: "owanbe",
         ageGroup: "adult",

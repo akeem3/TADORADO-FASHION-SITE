@@ -1,58 +1,76 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { useForm } from "react-hook-form"
-import { motion, AnimatePresence } from "framer-motion"
-import { Check, ChevronRight, ChevronLeft, Ruler, Truck, CreditCard } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
-import Container from "@/app/Components/Container"
-import Banner from "@/components/ui/banner"
-import Image from "next/image"
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  Check,
+  ChevronRight,
+  ChevronLeft,
+  Ruler,
+  Truck,
+  CreditCard,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import Container from "@/app/Components/Container";
+import Image from "next/image";
 // Import the Path type from react-hook-form to properly type the setValue calls
-import type { UseFormRegister, UseFormWatch, UseFormSetValue, FieldErrors, Path } from "react-hook-form"
+import type {
+  UseFormRegister,
+  UseFormWatch,
+  UseFormSetValue,
+  FieldErrors,
+  Path,
+} from "react-hook-form";
 
 // Update the CartProduct type to match what's in your CartContext
-import { useCart, type CartProduct } from "@/components/ui/CartContext"
+import { useCart, type CartProduct } from "@/components/ui/CartContext";
 
 // Define form data type
 interface CheckoutFormData {
   measurements: {
-    gender: "male" | "female"
-    outfitType: string
-    height: string
-    shoulder: string
-    chest?: string
-    bust?: string
-    waist: string
-    hip: string
-    sleeve: string
-    inseam?: string
-    neck?: string
-    extraNote?: string
-    measurementUnit: "inches" | "cm"
-  }
+    gender: "male" | "female";
+    outfitType: string;
+    height: string;
+    shoulder: string;
+    chest?: string;
+    bust?: string;
+    waist: string;
+    hip: string;
+    sleeve: string;
+    inseam?: string;
+    neck?: string;
+    extraNote?: string;
+    measurementUnit: "inches" | "cm";
+  };
   delivery: {
-    fullName: string
-    email: string
-    phone: string
-    country: string
-    state: string
-    city: string
-    address: string
-    postalCode?: string
-    deliverySpeed: "standard" | "express"
-  }
+    fullName: string;
+    email: string;
+    phone: string;
+    country: string;
+    state: string;
+    city: string;
+    address: string;
+    postalCode?: string;
+    deliverySpeed: "standard" | "express";
+  };
   payment: {
-    paymentMethod: "card" | "paypal" | "bank"
-    agreeToTerms: boolean
-  }
+    paymentMethod: "card" | "paypal" | "bank";
+    agreeToTerms: boolean;
+  };
 }
 
 // Dummy data for countries
@@ -69,19 +87,19 @@ const countriesList = [
   { code: "ZA", name: "South Africa" },
   { code: "KE", name: "Kenya" },
   // Add more countries as needed
-]
+];
 
 // Dummy data for outfit types
 const outfitTypes = {
   male: ["Suit", "Shirt", "Trousers", "Jacket"],
   female: ["Dress", "Blouse", "Skirt", "Pants"],
-}
+};
 
 export default function CheckoutPage() {
-  const [step, setStep] = useState(1)
-  const { cartItems, cartTotal, clearCart } = useCart()
-  const router = useRouter()
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [step, setStep] = useState(1);
+  const { cartItems, cartTotal, clearCart } = useCart();
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const methods = useForm<CheckoutFormData>({
     defaultValues: {
@@ -117,7 +135,7 @@ export default function CheckoutPage() {
       },
     },
     mode: "onBlur", // Changed from onChange to onBlur for better UX
-  })
+  });
 
   const {
     handleSubmit,
@@ -125,12 +143,12 @@ export default function CheckoutPage() {
     setValue,
     register,
     formState: { errors },
-  } = methods
+  } = methods;
 
   const onSubmit = async (data: CheckoutFormData) => {
     if (step < 3) {
       // Check for errors in the current step before proceeding
-      let hasErrors = false
+      let hasErrors = false;
 
       if (step === 1) {
         // Validate measurements step
@@ -142,8 +160,10 @@ export default function CheckoutPage() {
           !data.measurements.hip ||
           !data.measurements.sleeve
         ) {
-          hasErrors = true
-          alert("Please fill in all required measurement fields before continuing.")
+          hasErrors = true;
+          alert(
+            "Please fill in all required measurement fields before continuing."
+          );
         }
       } else if (step === 2) {
         // Validate delivery step
@@ -156,30 +176,34 @@ export default function CheckoutPage() {
           !data.delivery.city ||
           !data.delivery.address
         ) {
-          hasErrors = true
-          alert("Please fill in all required delivery fields before continuing.")
+          hasErrors = true;
+          alert(
+            "Please fill in all required delivery fields before continuing."
+          );
         }
       }
 
       if (!hasErrors) {
-        setStep(step + 1)
+        setStep(step + 1);
         // Scroll to top when changing steps
-        window.scrollTo({ top: 0, behavior: "smooth" })
+        window.scrollTo({ top: 0, behavior: "smooth" });
       }
-      return
+      return;
     }
 
     // For the final step, check if terms are agreed to
     if (!data.payment.agreeToTerms) {
-      alert("You must agree to the terms and conditions to complete your order.")
-      return
+      alert(
+        "You must agree to the terms and conditions to complete your order."
+      );
+      return;
     }
 
     // Final submission
-    setIsSubmitting(true)
+    setIsSubmitting(true);
     try {
       // Simulate API call with a delay
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+      await new Promise((resolve) => setTimeout(resolve, 1500));
 
       // Here you would integrate with your payment provider
       console.log("Order data:", {
@@ -188,86 +212,97 @@ export default function CheckoutPage() {
         customerInfo: data.delivery,
         measurements: data.measurements,
         paymentStatus: "paid",
-        paymentRef: "ORDER_" + Math.random().toString(36).substring(2, 10).toUpperCase(),
-      })
+        paymentRef:
+          "ORDER_" + Math.random().toString(36).substring(2, 10).toUpperCase(),
+      });
 
       // Clear cart and redirect to success page
-      clearCart()
-      router.push("/checkOut/success")
+      clearCart();
+      router.push("/checkOut/success");
     } catch (error) {
-      console.error("Error processing order:", error)
-      alert("There was a problem processing your order. Please try again.")
-      setIsSubmitting(false)
+      console.error("Error processing order:", error);
+      alert("There was a problem processing your order. Please try again.");
+      setIsSubmitting(false);
     }
-  }
+  };
 
   // Calculate shipping cost based on country and delivery speed
   const calculateShippingCost = (country: string, deliverySpeed: string) => {
     // Group countries by shipping zones
-    const zone1 = ["US", "CA"] // North America
-    const zone2 = ["GB", "FR", "DE", "IT", "ES"] // Europe
-    const zone3 = ["NG", "GH", "ZA", "KE"] // Africa
+    const zone1 = ["US", "CA"]; // North America
+    const zone2 = ["GB", "FR", "DE", "IT", "ES"]; // Europe
+    const zone3 = ["NG", "GH", "ZA", "KE"]; // Africa
 
-    let baseRate = 10 // Default international rate
+    let baseRate = 10; // Default international rate
 
     if (zone1.includes(country)) {
-      baseRate = 8
+      baseRate = 8;
     } else if (zone2.includes(country)) {
-      baseRate = 12
+      baseRate = 12;
     } else if (zone3.includes(country)) {
-      baseRate = 15
+      baseRate = 15;
     }
 
     // Express delivery costs more
-    return deliverySpeed === "express" ? baseRate * 2.5 : baseRate
-  }
+    return deliverySpeed === "express" ? baseRate * 2.5 : baseRate;
+  };
 
   // Get the selected country and delivery speed
-  const selectedCountry = watch("delivery.country")
-  const selectedDeliverySpeed = watch("delivery.deliverySpeed")
+  const selectedCountry = watch("delivery.country");
+  const selectedDeliverySpeed = watch("delivery.deliverySpeed");
 
   // Calculate shipping cost
-  const shippingCost = calculateShippingCost(selectedCountry, selectedDeliverySpeed)
+  const shippingCost = calculateShippingCost(
+    selectedCountry,
+    selectedDeliverySpeed
+  );
 
   // Calculate total with shipping
-  const orderTotal = cartTotal + shippingCost
+  const orderTotal = cartTotal + shippingCost;
 
   // Add global styles for smooth scrolling
   useEffect(() => {
     // Add smooth scrolling to the document
-    document.documentElement.style.scrollBehavior = "smooth"
+    document.documentElement.style.scrollBehavior = "smooth";
 
     return () => {
       // Clean up
-      document.documentElement.style.scrollBehavior = ""
-    }
-  }, [])
+      document.documentElement.style.scrollBehavior = "";
+    };
+  }, []);
 
   // If cart is empty, redirect to collections
   if (cartItems.length === 0) {
     return (
       <>
-        <Banner title="CHECKOUT" description="Complete your purchase with our secure checkout process." />
+        {/* <Banner title="CHECKOUT" description="Complete your purchase with our secure checkout process." /> */}
         <Container>
           <div className="py-16 text-center">
             <div className="max-w-md mx-auto">
-              <h2 className="text-2xl font-bold text-[#46332E] mb-4">Your cart is empty</h2>
-              <p className="text-[#46332E]/70 mb-8">Add some items to your cart before proceeding to checkout.</p>
-              <Button onClick={() => router.push("/collections")} className="bg-[#46332E] hover:bg-[#46332E]/90">
+              <h2 className="text-2xl font-bold text-[#46332E] mb-4">
+                Your cart is empty
+              </h2>
+              <p className="text-[#46332E]/70 mb-8">
+                Add some items to your cart before proceeding to checkout.
+              </p>
+              <Button
+                onClick={() => router.push("/collections")}
+                className="bg-[#46332E] hover:bg-[#46332E]/90"
+              >
                 Browse Collections
               </Button>
             </div>
           </div>
         </Container>
       </>
-    )
+    );
   }
 
   // Add a function to check if the current step has errors before proceeding
   // Add this function before the return statement in the main component
 
   const checkStepValidity = async (currentStep: number) => {
-    let isValid = true
+    let isValid = true;
 
     if (currentStep === 1) {
       // Validate measurements step fields
@@ -278,8 +313,8 @@ export default function CheckoutPage() {
         "measurements.waist",
         "measurements.hip",
         "measurements.sleeve",
-      ])
-      isValid = result
+      ]);
+      isValid = result;
     } else if (currentStep === 2) {
       // Validate delivery step fields
       const result = await methods.trigger([
@@ -290,20 +325,20 @@ export default function CheckoutPage() {
         "delivery.state",
         "delivery.city",
         "delivery.address",
-      ])
-      isValid = result
+      ]);
+      isValid = result;
     } else if (currentStep === 3) {
       // Validate payment step fields
-      const result = await methods.trigger("payment.agreeToTerms")
-      isValid = result
+      const result = await methods.trigger("payment.agreeToTerms");
+      isValid = result;
     }
 
-    return isValid
-  }
+    return isValid;
+  };
 
   return (
     <>
-      <Banner title="CHECKOUT" description="Complete your purchase with our secure checkout process." />
+      {/* <Banner title="CHECKOUT" description="Complete your purchase with our secure checkout process." /> */}
       <Container>
         <div className="py-12 max-w-7xl mx-auto">
           {/* Checkout Steps Indicator */}
@@ -314,10 +349,15 @@ export default function CheckoutPage() {
                 { number: 2, title: "Delivery", icon: Truck },
                 { number: 3, title: "Payment", icon: CreditCard },
               ].map((item) => (
-                <div key={item.number} className="flex flex-col items-center relative z-10">
+                <div
+                  key={item.number}
+                  className="flex flex-col items-center relative z-10"
+                >
                   <div
                     className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center mb-2 transition-all duration-300 ${
-                      step >= item.number ? "bg-[#46332E] text-white" : "bg-gray-200 text-gray-500"
+                      step >= item.number
+                        ? "bg-[#46332E] text-white"
+                        : "bg-gray-200 text-gray-500"
                     }`}
                   >
                     {step > item.number ? (
@@ -327,7 +367,11 @@ export default function CheckoutPage() {
                     )}
                   </div>
                   <span
-                    className={`text-xs sm:text-sm text-center ${step >= item.number ? "text-[#46332E] font-medium" : "text-gray-500"}`}
+                    className={`text-xs sm:text-sm text-center ${
+                      step >= item.number
+                        ? "text-[#46332E] font-medium"
+                        : "text-gray-500"
+                    }`}
                   >
                     {item.title}
                   </span>
@@ -403,19 +447,21 @@ export default function CheckoutPage() {
                     onClick={async () => {
                       if (step === 3) {
                         // For the final step, submit the form
-                        const isValid = await checkStepValidity(step)
+                        const isValid = await checkStepValidity(step);
                         if (isValid) {
-                          handleSubmit(onSubmit)()
+                          handleSubmit(onSubmit)();
                         }
                       } else {
                         // For other steps, validate and then proceed
-                        const isValid = await checkStepValidity(step)
+                        const isValid = await checkStepValidity(step);
                         if (isValid) {
-                          setStep(step + 1)
-                          window.scrollTo({ top: 0, behavior: "smooth" })
+                          setStep(step + 1);
+                          window.scrollTo({ top: 0, behavior: "smooth" });
                         } else {
                           // Show a message about validation errors
-                          alert("Please fill in all required fields before proceeding.")
+                          alert(
+                            "Please fill in all required fields before proceeding."
+                          );
                         }
                       }
                     }}
@@ -460,19 +506,38 @@ export default function CheckoutPage() {
             {/* Order Summary */}
             <div className="lg:col-span-1">
               <div className="bg-gray-50 rounded-lg p-5 sm:p-6 shadow-sm border border-gray-100 sticky top-24">
-                <h2 className="text-xl font-bold text-[#46332E] mb-4">Order Summary</h2>
+                <h2 className="text-xl font-bold text-[#46332E] mb-4">
+                  Order Summary
+                </h2>
 
                 <div className="space-y-4 mb-6 max-h-[40vh] overflow-y-auto pr-2">
                   {cartItems.map((item) => (
-                    <div key={item.id} className="flex gap-3 pb-3 border-b border-gray-100 last:border-0">
+                    <div
+                      key={item.id}
+                      className="flex gap-3 pb-3 border-b border-gray-100 last:border-0"
+                    >
                       <div className="relative w-16 h-16 flex-shrink-0 rounded-md overflow-hidden">
-                        <Image src={item.image || "/placeholder.svg"} alt={item.name} fill className="object-cover" />
+                        <Image
+                          src={item.image || "/placeholder.svg"}
+                          alt={item.name}
+                          fill
+                          className="object-cover"
+                        />
                       </div>
                       <div className="flex-1">
-                        <h3 className="font-medium text-[#46332E] line-clamp-1">{item.name}</h3>
+                        <h3 className="font-medium text-[#46332E] line-clamp-1">
+                          {item.name}
+                        </h3>
                         <div className="flex justify-between">
-                          <p className="text-sm text-[#46332E]/70">Qty: {item.quantity}</p>
-                          <p className="font-medium">${((item.salePrice || item.price) * item.quantity).toFixed(2)}</p>
+                          <p className="text-sm text-[#46332E]/70">
+                            Qty: {item.quantity}
+                          </p>
+                          <p className="font-medium">
+                            $
+                            {(
+                              (item.salePrice || item.price) * item.quantity
+                            ).toFixed(2)}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -486,7 +551,9 @@ export default function CheckoutPage() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#46332E]/70">Shipping</span>
-                    <span className="font-medium">${shippingCost.toFixed(2)}</span>
+                    <span className="font-medium">
+                      ${shippingCost.toFixed(2)}
+                    </span>
                   </div>
                   <div className="border-t pt-3 mt-3">
                     <div className="flex justify-between font-bold">
@@ -498,7 +565,9 @@ export default function CheckoutPage() {
 
                 {step === 1 && (
                   <div className="mt-6 p-4 bg-blue-50 rounded-md text-sm">
-                    <h3 className="font-medium text-blue-800 mb-2">Measurement Tips:</h3>
+                    <h3 className="font-medium text-blue-800 mb-2">
+                      Measurement Tips:
+                    </h3>
                     <ul className="list-disc pl-5 space-y-1 text-blue-700">
                       <li>Use a soft measuring tape</li>
                       <li>Keep one finger space between tape and skin</li>
@@ -510,7 +579,9 @@ export default function CheckoutPage() {
 
                 {step === 2 && (
                   <div className="mt-6 p-4 bg-blue-50 rounded-md text-sm">
-                    <h3 className="font-medium text-blue-800 mb-2">Shipping Information:</h3>
+                    <h3 className="font-medium text-blue-800 mb-2">
+                      Shipping Information:
+                    </h3>
                     <ul className="list-disc pl-5 space-y-1 text-blue-700">
                       <li>We ship worldwide to over 180 countries</li>
                       <li>Standard delivery: 7-14 business days</li>
@@ -525,25 +596,30 @@ export default function CheckoutPage() {
         </div>
       </Container>
     </>
-  )
+  );
 }
 
 // Step 1: Measurements Form
 interface MeasurementsStepProps {
-  register: UseFormRegister<CheckoutFormData>
-  watch: UseFormWatch<CheckoutFormData>
-  setValue: UseFormSetValue<CheckoutFormData>
-  errors: FieldErrors<CheckoutFormData>
+  register: UseFormRegister<CheckoutFormData>;
+  watch: UseFormWatch<CheckoutFormData>;
+  setValue: UseFormSetValue<CheckoutFormData>;
+  errors: FieldErrors<CheckoutFormData>;
 }
 
-function MeasurementsStep({ register, watch, setValue, errors }: MeasurementsStepProps) {
-  const gender = watch("measurements.gender")
-  const measurementUnit = watch("measurements.measurementUnit")
+function MeasurementsStep({
+  register,
+  watch,
+  setValue,
+  errors,
+}: MeasurementsStepProps) {
+  const gender = watch("measurements.gender");
+  const measurementUnit = watch("measurements.measurementUnit");
 
   // In the MeasurementsStep component, update the handleRadioChange function:
   const handleRadioChange = (field: Path<CheckoutFormData>, value: string) => {
-    setValue(field, value)
-  }
+    setValue(field, value);
+  };
 
   return (
     <motion.div
@@ -554,41 +630,57 @@ function MeasurementsStep({ register, watch, setValue, errors }: MeasurementsSte
       className="space-y-6"
     >
       <div className="bg-[#F5F3F0] p-5 rounded-lg mb-6">
-        <h2 className="text-xl font-semibold text-[#46332E] mb-3">Measurement Instructions</h2>
+        <h2 className="text-xl font-semibold text-[#46332E] mb-3">
+          Measurement Instructions
+        </h2>
         <p className="text-[#46332E]/80 mb-4">
-          For the perfect custom fit, please provide your measurements accurately. Use a soft measuring tape and keep
-          one finger space between the tape and your skin.
+          For the perfect custom fit, please provide your measurements
+          accurately. Use a soft measuring tape and keep one finger space
+          between the tape and your skin.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex items-start">
             <div className="bg-[#46332E] text-white rounded-full w-6 h-6 flex items-center justify-center mr-2 flex-shrink-0 mt-0.5">
               1
             </div>
-            <p className="text-sm">Stand straight with your arms relaxed at your sides for most measurements.</p>
+            <p className="text-sm">
+              Stand straight with your arms relaxed at your sides for most
+              measurements.
+            </p>
           </div>
           <div className="flex items-start">
             <div className="bg-[#46332E] text-white rounded-full w-6 h-6 flex items-center justify-center mr-2 flex-shrink-0 mt-0.5">
               2
             </div>
-            <p className="text-sm">For chest/bust, measure at the fullest part while breathing normally.</p>
+            <p className="text-sm">
+              For chest/bust, measure at the fullest part while breathing
+              normally.
+            </p>
           </div>
           <div className="flex items-start">
             <div className="bg-[#46332E] text-white rounded-full w-6 h-6 flex items-center justify-center mr-2 flex-shrink-0 mt-0.5">
               3
             </div>
-            <p className="text-sm">For waist, measure at your natural waistline (the narrowest part).</p>
+            <p className="text-sm">
+              For waist, measure at your natural waistline (the narrowest part).
+            </p>
           </div>
           <div className="flex items-start">
             <div className="bg-[#46332E] text-white rounded-full w-6 h-6 flex items-center justify-center mr-2 flex-shrink-0 mt-0.5">
               4
             </div>
-            <p className="text-sm">For hips, measure at the fullest part, approximately 8&#34; below your waist.</p>
+            <p className="text-sm">
+              For hips, measure at the fullest part, approximately 8&#34; below
+              your waist.
+            </p>
           </div>
         </div>
       </div>
 
       <div>
-        <h2 className="text-xl font-semibold text-[#46332E] mb-6">Your Measurements</h2>
+        <h2 className="text-xl font-semibold text-[#46332E] mb-6">
+          Your Measurements
+        </h2>
 
         <div className="space-y-6">
           {/* Measurement Unit Selection */}
@@ -597,10 +689,16 @@ function MeasurementsStep({ register, watch, setValue, errors }: MeasurementsSte
             <RadioGroup
               defaultValue={measurementUnit}
               className="flex gap-6 mt-2"
-              onValueChange={(value) => handleRadioChange("measurements.measurementUnit", value)}
+              onValueChange={(value) =>
+                handleRadioChange("measurements.measurementUnit", value)
+              }
             >
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="inches" id="inches" className="text-[#46332E]" />
+                <RadioGroupItem
+                  value="inches"
+                  id="inches"
+                  className="text-[#46332E]"
+                />
                 <Label htmlFor="inches" className="cursor-pointer">
                   Inches
                 </Label>
@@ -620,16 +718,26 @@ function MeasurementsStep({ register, watch, setValue, errors }: MeasurementsSte
             <RadioGroup
               defaultValue={gender}
               className="flex gap-6 mt-2"
-              onValueChange={(value) => handleRadioChange("measurements.gender", value)}
+              onValueChange={(value) =>
+                handleRadioChange("measurements.gender", value)
+              }
             >
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="male" id="male" className="text-[#46332E]" />
+                <RadioGroupItem
+                  value="male"
+                  id="male"
+                  className="text-[#46332E]"
+                />
                 <Label htmlFor="male" className="cursor-pointer">
                   Male
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="female" id="female" className="text-[#46332E]" />
+                <RadioGroupItem
+                  value="female"
+                  id="female"
+                  className="text-[#46332E]"
+                />
                 <Label htmlFor="female" className="cursor-pointer">
                   Female
                 </Label>
@@ -643,7 +751,9 @@ function MeasurementsStep({ register, watch, setValue, errors }: MeasurementsSte
               Outfit Type
             </Label>
             <Select
-              onValueChange={(value) => setValue("measurements.outfitType", value)}
+              onValueChange={(value) =>
+                setValue("measurements.outfitType", value)
+              }
               defaultValue={watch("measurements.outfitType")}
             >
               <SelectTrigger className="w-full mt-1">
@@ -664,7 +774,9 @@ function MeasurementsStep({ register, watch, setValue, errors }: MeasurementsSte
               </SelectContent>
             </Select>
             {errors.measurements?.outfitType && (
-              <p className="text-red-500 text-sm mt-1">Please select an outfit type</p>
+              <p className="text-red-500 text-sm mt-1">
+                Please select an outfit type
+              </p>
             )}
           </div>
 
@@ -682,7 +794,9 @@ function MeasurementsStep({ register, watch, setValue, errors }: MeasurementsSte
                   required: "Height is required",
                 })}
               />
-              {errors.measurements?.height && <p className="text-red-500 text-sm mt-1">Height is required</p>}
+              {errors.measurements?.height && (
+                <p className="text-red-500 text-sm mt-1">Height is required</p>
+              )}
             </div>
 
             <div>
@@ -697,7 +811,11 @@ function MeasurementsStep({ register, watch, setValue, errors }: MeasurementsSte
                   required: "Shoulder width is required",
                 })}
               />
-              {errors.measurements?.shoulder && <p className="text-red-500 text-sm mt-1">Shoulder width is required</p>}
+              {errors.measurements?.shoulder && (
+                <p className="text-red-500 text-sm mt-1">
+                  Shoulder width is required
+                </p>
+              )}
             </div>
 
             {gender === "male" ? (
@@ -705,14 +823,24 @@ function MeasurementsStep({ register, watch, setValue, errors }: MeasurementsSte
                 <Label htmlFor="chest" className="text-base font-medium">
                   Chest ({measurementUnit})
                 </Label>
-                <Input id="chest" type="text" className="mt-1" {...register("measurements.chest")} />
+                <Input
+                  id="chest"
+                  type="text"
+                  className="mt-1"
+                  {...register("measurements.chest")}
+                />
               </div>
             ) : (
               <div>
                 <Label htmlFor="bust" className="text-base font-medium">
                   Bust ({measurementUnit})
                 </Label>
-                <Input id="bust" type="text" className="mt-1" {...register("measurements.bust")} />
+                <Input
+                  id="bust"
+                  type="text"
+                  className="mt-1"
+                  {...register("measurements.bust")}
+                />
               </div>
             )}
 
@@ -728,7 +856,11 @@ function MeasurementsStep({ register, watch, setValue, errors }: MeasurementsSte
                   required: "Waist measurement is required",
                 })}
               />
-              {errors.measurements?.waist && <p className="text-red-500 text-sm mt-1">Waist measurement is required</p>}
+              {errors.measurements?.waist && (
+                <p className="text-red-500 text-sm mt-1">
+                  Waist measurement is required
+                </p>
+              )}
             </div>
 
             <div>
@@ -743,7 +875,11 @@ function MeasurementsStep({ register, watch, setValue, errors }: MeasurementsSte
                   required: "Hip measurement is required",
                 })}
               />
-              {errors.measurements?.hip && <p className="text-red-500 text-sm mt-1">Hip measurement is required</p>}
+              {errors.measurements?.hip && (
+                <p className="text-red-500 text-sm mt-1">
+                  Hip measurement is required
+                </p>
+              )}
             </div>
 
             <div>
@@ -758,21 +894,35 @@ function MeasurementsStep({ register, watch, setValue, errors }: MeasurementsSte
                   required: "Sleeve length is required",
                 })}
               />
-              {errors.measurements?.sleeve && <p className="text-red-500 text-sm mt-1">Sleeve length is required</p>}
+              {errors.measurements?.sleeve && (
+                <p className="text-red-500 text-sm mt-1">
+                  Sleeve length is required
+                </p>
+              )}
             </div>
 
             <div>
               <Label htmlFor="inseam" className="text-base font-medium">
                 Inseam / Trouser Length ({measurementUnit})
               </Label>
-              <Input id="inseam" type="text" className="mt-1" {...register("measurements.inseam")} />
+              <Input
+                id="inseam"
+                type="text"
+                className="mt-1"
+                {...register("measurements.inseam")}
+              />
             </div>
 
             <div>
               <Label htmlFor="neck" className="text-base font-medium">
                 Neck Circumference ({measurementUnit})
               </Label>
-              <Input id="neck" type="text" className="mt-1" {...register("measurements.neck")} />
+              <Input
+                id="neck"
+                type="text"
+                className="mt-1"
+                {...register("measurements.neck")}
+              />
             </div>
           </div>
 
@@ -791,25 +941,31 @@ function MeasurementsStep({ register, watch, setValue, errors }: MeasurementsSte
         </div>
       </div>
     </motion.div>
-  )
+  );
 }
 
 // Step 2: Delivery Details
 interface DeliveryStepProps {
-  countryOptions: { code: string; name: string }[]
-  register: UseFormRegister<CheckoutFormData>
-  watch: UseFormWatch<CheckoutFormData>
-  setValue: UseFormSetValue<CheckoutFormData>
-  errors: FieldErrors<CheckoutFormData>
+  countryOptions: { code: string; name: string }[];
+  register: UseFormRegister<CheckoutFormData>;
+  watch: UseFormWatch<CheckoutFormData>;
+  setValue: UseFormSetValue<CheckoutFormData>;
+  errors: FieldErrors<CheckoutFormData>;
 }
 
-function DeliveryStep({ countryOptions, register, watch, setValue, errors }: DeliveryStepProps) {
-  const selectedCountry = watch("delivery.country")
+function DeliveryStep({
+  countryOptions,
+  register,
+  watch,
+  setValue,
+  errors,
+}: DeliveryStepProps) {
+  const selectedCountry = watch("delivery.country");
 
   // In the DeliveryStep component, update the handleRadioChange function:
   const handleRadioChange = (field: Path<CheckoutFormData>, value: string) => {
-    setValue(field, value)
-  }
+    setValue(field, value);
+  };
 
   return (
     <motion.div
@@ -819,7 +975,9 @@ function DeliveryStep({ countryOptions, register, watch, setValue, errors }: Del
       transition={{ duration: 0.3 }}
       className="space-y-6"
     >
-      <h2 className="text-xl font-semibold text-[#46332E] mb-6">Delivery Details</h2>
+      <h2 className="text-xl font-semibold text-[#46332E] mb-6">
+        Delivery Details
+      </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
@@ -834,7 +992,9 @@ function DeliveryStep({ countryOptions, register, watch, setValue, errors }: Del
               required: "Full name is required",
             })}
           />
-          {errors.delivery?.fullName && <p className="text-red-500 text-sm mt-1">Full name is required</p>}
+          {errors.delivery?.fullName && (
+            <p className="text-red-500 text-sm mt-1">Full name is required</p>
+          )}
         </div>
 
         <div>
@@ -853,7 +1013,9 @@ function DeliveryStep({ countryOptions, register, watch, setValue, errors }: Del
               },
             })}
           />
-          {errors.delivery?.email && <p className="text-red-500 text-sm mt-1">Valid email is required</p>}
+          {errors.delivery?.email && (
+            <p className="text-red-500 text-sm mt-1">Valid email is required</p>
+          )}
         </div>
 
         <div>
@@ -868,14 +1030,21 @@ function DeliveryStep({ countryOptions, register, watch, setValue, errors }: Del
               required: "Phone number is required",
             })}
           />
-          {errors.delivery?.phone && <p className="text-red-500 text-sm mt-1">Valid phone number is required</p>}
+          {errors.delivery?.phone && (
+            <p className="text-red-500 text-sm mt-1">
+              Valid phone number is required
+            </p>
+          )}
         </div>
 
         <div>
           <Label htmlFor="country" className="text-base font-medium">
             Country
           </Label>
-          <Select onValueChange={(value) => setValue("delivery.country", value)} defaultValue={selectedCountry}>
+          <Select
+            onValueChange={(value) => setValue("delivery.country", value)}
+            defaultValue={selectedCountry}
+          >
             <SelectTrigger className="w-full mt-1">
               <SelectValue placeholder="Select country" />
             </SelectTrigger>
@@ -887,7 +1056,9 @@ function DeliveryStep({ countryOptions, register, watch, setValue, errors }: Del
               ))}
             </SelectContent>
           </Select>
-          {errors.delivery?.country && <p className="text-red-500 text-sm mt-1">Country is required</p>}
+          {errors.delivery?.country && (
+            <p className="text-red-500 text-sm mt-1">Country is required</p>
+          )}
         </div>
 
         <div>
@@ -902,7 +1073,11 @@ function DeliveryStep({ countryOptions, register, watch, setValue, errors }: Del
               required: "State/Province is required",
             })}
           />
-          {errors.delivery?.state && <p className="text-red-500 text-sm mt-1">State/Province is required</p>}
+          {errors.delivery?.state && (
+            <p className="text-red-500 text-sm mt-1">
+              State/Province is required
+            </p>
+          )}
         </div>
 
         <div>
@@ -917,7 +1092,9 @@ function DeliveryStep({ countryOptions, register, watch, setValue, errors }: Del
               required: "City is required",
             })}
           />
-          {errors.delivery?.city && <p className="text-red-500 text-sm mt-1">City is required</p>}
+          {errors.delivery?.city && (
+            <p className="text-red-500 text-sm mt-1">City is required</p>
+          )}
         </div>
 
         <div className="md:col-span-2">
@@ -931,14 +1108,23 @@ function DeliveryStep({ countryOptions, register, watch, setValue, errors }: Del
               required: "Delivery address is required",
             })}
           />
-          {errors.delivery?.address && <p className="text-red-500 text-sm mt-1">Delivery address is required</p>}
+          {errors.delivery?.address && (
+            <p className="text-red-500 text-sm mt-1">
+              Delivery address is required
+            </p>
+          )}
         </div>
 
         <div>
           <Label htmlFor="postalCode" className="text-base font-medium">
             Postal / Zip Code
           </Label>
-          <Input id="postalCode" type="text" className="mt-1" {...register("delivery.postalCode")} />
+          <Input
+            id="postalCode"
+            type="text"
+            className="mt-1"
+            {...register("delivery.postalCode")}
+          />
         </div>
       </div>
 
@@ -947,10 +1133,16 @@ function DeliveryStep({ countryOptions, register, watch, setValue, errors }: Del
         <RadioGroup
           defaultValue={watch("delivery.deliverySpeed")}
           className="mt-2 space-y-3"
-          onValueChange={(value) => handleRadioChange("delivery.deliverySpeed", value)}
+          onValueChange={(value) =>
+            handleRadioChange("delivery.deliverySpeed", value)
+          }
         >
           <div className="flex items-start space-x-2 border p-3 rounded-md hover:bg-gray-50 transition-colors cursor-pointer">
-            <RadioGroupItem value="standard" id="standard" className="mt-1 text-[#46332E]" />
+            <RadioGroupItem
+              value="standard"
+              id="standard"
+              className="mt-1 text-[#46332E]"
+            />
             <div className="flex-1">
               <Label htmlFor="standard" className="font-medium cursor-pointer">
                 Standard Delivery
@@ -960,13 +1152,17 @@ function DeliveryStep({ countryOptions, register, watch, setValue, errors }: Del
                 {selectedCountry === "US" || selectedCountry === "CA"
                   ? "$8.00"
                   : ["GB", "FR", "DE", "IT", "ES"].includes(selectedCountry)
-                    ? "$12.00"
-                    : "$15.00"}
+                  ? "$12.00"
+                  : "$15.00"}
               </p>
             </div>
           </div>
           <div className="flex items-start space-x-2 border p-3 rounded-md hover:bg-gray-50 transition-colors cursor-pointer">
-            <RadioGroupItem value="express" id="express" className="mt-1 text-[#46332E]" />
+            <RadioGroupItem
+              value="express"
+              id="express"
+              className="mt-1 text-[#46332E]"
+            />
             <div className="flex-1">
               <Label htmlFor="express" className="font-medium cursor-pointer">
                 Express Delivery
@@ -976,42 +1172,53 @@ function DeliveryStep({ countryOptions, register, watch, setValue, errors }: Del
                 {selectedCountry === "US" || selectedCountry === "CA"
                   ? "$20.00"
                   : ["GB", "FR", "DE", "IT", "ES"].includes(selectedCountry)
-                    ? "$30.00"
-                    : "$37.50"}
+                  ? "$30.00"
+                  : "$37.50"}
               </p>
             </div>
           </div>
         </RadioGroup>
       </div>
     </motion.div>
-  )
+  );
 }
 
 // Step 3: Payment
 // In the PaymentStep component, update the PaymentStepProps interface:
 interface PaymentStepProps {
-  watch: UseFormWatch<CheckoutFormData>
-  setValue: UseFormSetValue<CheckoutFormData>
-  errors: FieldErrors<CheckoutFormData>
-  cartItems: CartProduct[]
-  cartTotal: number
-  shippingCost: number
-  register: UseFormRegister<CheckoutFormData> // Add this line
+  watch: UseFormWatch<CheckoutFormData>;
+  setValue: UseFormSetValue<CheckoutFormData>;
+  errors: FieldErrors<CheckoutFormData>;
+  cartItems: CartProduct[];
+  cartTotal: number;
+  shippingCost: number;
+  register: UseFormRegister<CheckoutFormData>; // Add this line
 }
 
 // Then update the PaymentStep component function signature to include register:
-function PaymentStep({ watch, setValue, errors, cartItems, cartTotal, shippingCost, register }: PaymentStepProps) {
-  const deliverySpeed = watch("delivery.deliverySpeed")
-  const totalAmount = cartTotal + shippingCost
+function PaymentStep({
+  watch,
+  setValue,
+  errors,
+  cartItems,
+  cartTotal,
+  shippingCost,
+  register,
+}: PaymentStepProps) {
+  const deliverySpeed = watch("delivery.deliverySpeed");
+  const totalAmount = cartTotal + shippingCost;
 
   // In the PaymentStep component, update the handleRadioChange and handleCheckboxChange functions:
   const handleRadioChange = (field: Path<CheckoutFormData>, value: string) => {
-    setValue(field, value)
-  }
+    setValue(field, value);
+  };
 
-  const handleCheckboxChange = (field: Path<CheckoutFormData>, checked: boolean) => {
-    setValue(field, checked)
-  }
+  const handleCheckboxChange = (
+    field: Path<CheckoutFormData>,
+    checked: boolean
+  ) => {
+    setValue(field, checked);
+  };
 
   return (
     <motion.div
@@ -1021,7 +1228,9 @@ function PaymentStep({ watch, setValue, errors, cartItems, cartTotal, shippingCo
       transition={{ duration: 0.3 }}
       className="space-y-6"
     >
-      <h2 className="text-xl font-semibold text-[#46332E] mb-6">Order Summary & Payment</h2>
+      <h2 className="text-xl font-semibold text-[#46332E] mb-6">
+        Order Summary & Payment
+      </h2>
 
       <div className="bg-[#F5F3F0] p-5 rounded-lg mb-6">
         <h3 className="font-medium text-[#46332E] mb-3">Order Details</h3>
@@ -1031,9 +1240,13 @@ function PaymentStep({ watch, setValue, errors, cartItems, cartTotal, shippingCo
             <div key={item.id} className="flex justify-between">
               <div>
                 <p className="font-medium">{item.name}</p>
-                <p className="text-sm text-[#46332E]/70">Qty: {item.quantity}</p>
+                <p className="text-sm text-[#46332E]/70">
+                  Qty: {item.quantity}
+                </p>
               </div>
-              <p className="font-medium">${(item.salePrice || item.price) * item.quantity}</p>
+              <p className="font-medium">
+                ${(item.salePrice || item.price) * item.quantity}
+              </p>
             </div>
           ))}
 
@@ -1043,7 +1256,10 @@ function PaymentStep({ watch, setValue, errors, cartItems, cartTotal, shippingCo
               <span>${cartTotal.toFixed(2)}</span>
             </div>
             <div className="flex justify-between mt-1">
-              <span>Shipping ({deliverySpeed === "express" ? "Express" : "Standard"})</span>
+              <span>
+                Shipping ({deliverySpeed === "express" ? "Express" : "Standard"}
+                )
+              </span>
               <span>${shippingCost.toFixed(2)}</span>
             </div>
             <div className="flex justify-between mt-3 font-bold">
@@ -1060,15 +1276,23 @@ function PaymentStep({ watch, setValue, errors, cartItems, cartTotal, shippingCo
         <RadioGroup
           defaultValue={watch("payment.paymentMethod")}
           className="space-y-3"
-          onValueChange={(value) => handleRadioChange("payment.paymentMethod", value)}
+          onValueChange={(value) =>
+            handleRadioChange("payment.paymentMethod", value)
+          }
         >
           <div className="flex items-start space-x-2 border p-3 rounded-md hover:bg-gray-50 transition-colors cursor-pointer">
-            <RadioGroupItem value="card" id="card" className="mt-1 text-[#46332E]" />
+            <RadioGroupItem
+              value="card"
+              id="card"
+              className="mt-1 text-[#46332E]"
+            />
             <div className="flex-1">
               <Label htmlFor="card" className="font-medium cursor-pointer">
                 Credit / Debit Card
               </Label>
-              <p className="text-sm text-[#46332E]/70">Secure payment via credit or debit card</p>
+              <p className="text-sm text-[#46332E]/70">
+                Secure payment via credit or debit card
+              </p>
               <div className="flex gap-2 mt-2">
                 <Image
                   src="/placeholder.svg?height=30&width=40"
@@ -1096,12 +1320,18 @@ function PaymentStep({ watch, setValue, errors, cartItems, cartTotal, shippingCo
           </div>
 
           <div className="flex items-start space-x-2 border p-3 rounded-md hover:bg-gray-50 transition-colors cursor-pointer">
-            <RadioGroupItem value="paypal" id="paypal" className="mt-1 text-[#46332E]" />
+            <RadioGroupItem
+              value="paypal"
+              id="paypal"
+              className="mt-1 text-[#46332E]"
+            />
             <div className="flex-1">
               <Label htmlFor="paypal" className="font-medium cursor-pointer">
                 PayPal
               </Label>
-              <p className="text-sm text-[#46332E]/70">Fast and secure payment with PayPal</p>
+              <p className="text-sm text-[#46332E]/70">
+                Fast and secure payment with PayPal
+              </p>
               <div className="mt-2">
                 <Image
                   src="/placeholder.svg?height=30&width=80"
@@ -1115,12 +1345,18 @@ function PaymentStep({ watch, setValue, errors, cartItems, cartTotal, shippingCo
           </div>
 
           <div className="flex items-start space-x-2 border p-3 rounded-md hover:bg-gray-50 transition-colors cursor-pointer">
-            <RadioGroupItem value="bank" id="bank" className="mt-1 text-[#46332E]" />
+            <RadioGroupItem
+              value="bank"
+              id="bank"
+              className="mt-1 text-[#46332E]"
+            />
             <div className="flex-1">
               <Label htmlFor="bank" className="font-medium cursor-pointer">
                 Bank Transfer
               </Label>
-              <p className="text-sm text-[#46332E]/70">Direct bank transfer (processing may take 1-2 business days)</p>
+              <p className="text-sm text-[#46332E]/70">
+                Direct bank transfer (processing may take 1-2 business days)
+              </p>
             </div>
           </div>
         </RadioGroup>
@@ -1133,10 +1369,12 @@ function PaymentStep({ watch, setValue, errors, cartItems, cartTotal, shippingCo
             className="text-[#46332E] border-gray-300 rounded"
             checked={watch("payment.agreeToTerms")}
             onCheckedChange={(checked) => {
-              handleCheckboxChange("payment.agreeToTerms", checked as boolean)
+              handleCheckboxChange("payment.agreeToTerms", checked as boolean);
               // If unchecked, manually trigger validation
               if (!checked) {
-                setValue("payment.agreeToTerms", false, { shouldValidate: true })
+                setValue("payment.agreeToTerms", false, {
+                  shouldValidate: true,
+                });
               }
             }}
             {...register("payment.agreeToTerms", {
@@ -1145,23 +1383,39 @@ function PaymentStep({ watch, setValue, errors, cartItems, cartTotal, shippingCo
           />
         </div>
         <div>
-          <label htmlFor="agreeToTerms" className="text-sm text-[#46332E] cursor-pointer">
-            I agree to the <span className="underline hover:text-[#46332E]/80">Terms and Conditions</span>,{" "}
-            <span className="underline hover:text-[#46332E]/80">Privacy Policy</span>, and{" "}
-            <span className="underline hover:text-[#46332E]/80">Refund Policy</span>
+          <label
+            htmlFor="agreeToTerms"
+            className="text-sm text-[#46332E] cursor-pointer"
+          >
+            I agree to the{" "}
+            <span className="underline hover:text-[#46332E]/80">
+              Terms and Conditions
+            </span>
+            ,{" "}
+            <span className="underline hover:text-[#46332E]/80">
+              Privacy Policy
+            </span>
+            , and{" "}
+            <span className="underline hover:text-[#46332E]/80">
+              Refund Policy
+            </span>
           </label>
           {errors.payment?.agreeToTerms && (
-            <p className="text-red-500 text-sm mt-1">You must agree to the terms and conditions</p>
+            <p className="text-red-500 text-sm mt-1">
+              You must agree to the terms and conditions
+            </p>
           )}
         </div>
       </div>
 
       <div className="bg-blue-50 p-4 rounded-md">
         <p className="text-sm text-blue-800">
-          <strong>Note:</strong> By clicking &#34;Complete Order&#34;, you agree to place an order for custom-tailored clothing
-          based on the measurements you provided. Please ensure all measurements are accurate.
+          <strong>Note:</strong> By clicking &#34;Complete Order&#34;, you agree
+          to place an order for custom-tailored clothing based on the
+          measurements you provided. Please ensure all measurements are
+          accurate.
         </p>
       </div>
     </motion.div>
-  )
+  );
 }
