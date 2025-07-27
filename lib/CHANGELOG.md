@@ -291,10 +291,10 @@ GOOGLE_SHEET_FILENAME=Tadorado Export
 - [x] Sale price field removed from Google Sheets export and backend logic
 - [x] Sale price concept fully removed from all calculations, UI, models, and data
 - [x] Contact Page completion (dedicated contact page with location, Google Maps integration, and updated contact details)
+- [x] Contact Details update (location, phone, email, business hours updated and Google Maps loading issue fixed)
 
 ### Remaining Issues
 
-- [ ] Contact Details update
 - [ ] Checkout form details correction
 - [ ] Collection page (Styles details Update)
 - [ ] Home Page (improve steps section, buttons, Testimonials)

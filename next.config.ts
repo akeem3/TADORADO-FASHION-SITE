@@ -14,9 +14,7 @@ const nextConfig: NextConfig = {
   // Production optimizations
   output: "standalone",
   // Ensure proper hostname binding for Render
-  experimental: {
-    serverComponentsExternalPackages: ["@prisma/client"],
-  },
+  serverExternalPackages: ["@prisma/client"],
 };
 
 export default nextConfig;

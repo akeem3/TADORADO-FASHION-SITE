@@ -34,7 +34,7 @@ export default function Contact() {
         {/* Contact Content Section */}
         <section className="py-16">
           <div className="max-w-4xl mx-auto">
-            {/* ✅ Plain text section (no Framer Motion) */}
+            {/* Plain text section (no Framer Motion) */}
             <div className="text-center mb-12">
               <h2 className="text-3xl sm:text-4xl font-bold text-[#46332E] mb-4">
                 Get in Touch
