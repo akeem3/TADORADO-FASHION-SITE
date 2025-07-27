@@ -41,7 +41,7 @@ import { useCart, type CartProduct } from "@/components/ui/CartContext";
 
 // Define form data type
 interface CheckoutFormData {
-  measurements: {
+  measurements: Array<{
     gender: "male" | "female";
     outfitType: string;
     height: string;
@@ -55,7 +55,8 @@ interface CheckoutFormData {
     neck?: string;
     extraNote?: string;
     measurementUnit: "inches" | "cm";
-  };
+    label?: string; // For user to label each set (e.g. "For Dad", "For Me")
+  }>;
   delivery: {
     fullName: string;
     email: string;
@@ -101,23 +102,48 @@ export default function CheckoutPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const [measurements, setMeasurements] = useState<
+    CheckoutFormData["measurements"]
+  >([
+    {
+      gender: "male",
+      outfitType: "",
+      height: "",
+      shoulder: "",
+      chest: "",
+      bust: "",
+      waist: "",
+      hip: "",
+      sleeve: "",
+      inseam: "",
+      neck: "",
+      extraNote: "",
+      measurementUnit: "inches",
+      label: "",
+    },
+  ]);
+  const [activeMeasurementIndex, setActiveMeasurementIndex] = useState(0);
+
   const methods = useForm<CheckoutFormData>({
     defaultValues: {
-      measurements: {
-        gender: "male",
-        outfitType: "",
-        height: "",
-        shoulder: "",
-        chest: "",
-        bust: "",
-        waist: "",
-        hip: "",
-        sleeve: "",
-        inseam: "",
-        neck: "",
-        extraNote: "",
-        measurementUnit: "inches",
-      },
+      measurements: [
+        {
+          gender: "male",
+          outfitType: "",
+          height: "",
+          shoulder: "",
+          chest: "",
+          bust: "",
+          waist: "",
+          hip: "",
+          sleeve: "",
+          inseam: "",
+          neck: "",
+          extraNote: "",
+          measurementUnit: "inches",
+          label: "",
+        },
+      ],
       delivery: {
         fullName: "",
         email: "",
@@ -153,12 +179,12 @@ export default function CheckoutPage() {
       if (step === 1) {
         // Validate measurements step
         if (
-          !data.measurements.outfitType ||
-          !data.measurements.height ||
-          !data.measurements.shoulder ||
-          !data.measurements.waist ||
-          !data.measurements.hip ||
-          !data.measurements.sleeve
+          !data.measurements[activeMeasurementIndex].outfitType ||
+          !data.measurements[activeMeasurementIndex].height ||
+          !data.measurements[activeMeasurementIndex].shoulder ||
+          !data.measurements[activeMeasurementIndex].waist ||
+          !data.measurements[activeMeasurementIndex].hip ||
+          !data.measurements[activeMeasurementIndex].sleeve
         ) {
           hasErrors = true;
           alert(
@@ -202,25 +228,34 @@ export default function CheckoutPage() {
     // Final submission
     setIsSubmitting(true);
     try {
-      // Simulate API call with a delay
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Here you would integrate with your payment provider
-      console.log("Order data:", {
-        products: cartItems,
-        totalAmount: cartTotal,
-        customerInfo: data.delivery,
-        measurements: data.measurements,
-        paymentStatus: "paid",
-        paymentRef:
-          "ORDER_" + Math.random().toString(36).substring(2, 10).toUpperCase(),
+      // Call the backend order API to trigger the Excel export
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customerInfo: data.delivery,
+          measurements: data.measurements,
+          deliveryInfo: data.delivery,
+          paymentInfo: {
+            method: data.payment.paymentMethod,
+            status: "paid",
+          },
+          cartItems,
+          totalAmount: cartTotal,
+          shippingCost,
+          taxAmount: 0,
+          notes: "",
+        }),
       });
-
-      // Clear cart and redirect to success page
-      clearCart();
-      router.push("/checkOut/success");
-    } catch (error) {
-      console.error("Error processing order:", error);
+      const result = await response.json();
+      if (result.success) {
+        router.push("/checkOut/success");
+        setTimeout(() => clearCart(), 500);
+      } else {
+        alert("Order failed: " + (result.error || "Unknown error"));
+        setIsSubmitting(false);
+      }
+    } catch {
       alert("There was a problem processing your order. Please try again.");
       setIsSubmitting(false);
     }
@@ -287,7 +322,7 @@ export default function CheckoutPage() {
               </p>
               <Button
                 onClick={() => router.push("/collections")}
-                className="bg-[#46332E] hover:bg-[#46332E]/90"
+                className="rounded-xl bg-[#46332E] text-white hover:bg-[#46332E]/90"
               >
                 Browse Collections
               </Button>
@@ -307,12 +342,12 @@ export default function CheckoutPage() {
     if (currentStep === 1) {
       // Validate measurements step fields
       const result = await methods.trigger([
-        "measurements.outfitType",
-        "measurements.height",
-        "measurements.shoulder",
-        "measurements.waist",
-        "measurements.hip",
-        "measurements.sleeve",
+        `measurements.${activeMeasurementIndex}.outfitType`,
+        `measurements.${activeMeasurementIndex}.height`,
+        `measurements.${activeMeasurementIndex}.shoulder`,
+        `measurements.${activeMeasurementIndex}.waist`,
+        `measurements.${activeMeasurementIndex}.hip`,
+        `measurements.${activeMeasurementIndex}.sleeve`,
       ]);
       isValid = result;
     } else if (currentStep === 2) {
@@ -395,6 +430,10 @@ export default function CheckoutPage() {
                   {step === 1 && (
                     <MeasurementsStep
                       key="step1"
+                      measurements={measurements}
+                      setMeasurements={setMeasurements}
+                      activeMeasurementIndex={activeMeasurementIndex}
+                      setActiveMeasurementIndex={setActiveMeasurementIndex}
                       register={register}
                       watch={watch}
                       setValue={setValue}
@@ -434,7 +473,7 @@ export default function CheckoutPage() {
                     variant="outline"
                     onClick={() => setStep(Math.max(1, step - 1))}
                     disabled={step === 1}
-                    className="flex items-center"
+                    className="rounded-xl flex items-center"
                   >
                     <ChevronLeft className="mr-2 h-4 w-4" />
                     Back
@@ -442,7 +481,7 @@ export default function CheckoutPage() {
 
                   <Button
                     type="button" // Changed from submit to button
-                    className="bg-[#46332E] hover:bg-[#46332E]/90 text-white transition-all duration-300"
+                    className="rounded-xl bg-[#46332E] text-white hover:bg-[#46332E]/90 transition-all duration-300"
                     disabled={isSubmitting}
                     onClick={async () => {
                       if (step === 3) {
@@ -564,11 +603,11 @@ export default function CheckoutPage() {
                 </div>
 
                 {step === 1 && (
-                  <div className="mt-6 p-4 bg-blue-50 rounded-md text-sm">
-                    <h3 className="font-medium text-blue-800 mb-2">
+                  <div className="mt-6 p-4 bg-[#F5F3F0] rounded-md text-sm">
+                    <h3 className="font-medium text-[#46332E] mb-2">
                       Measurement Tips:
                     </h3>
-                    <ul className="list-disc pl-5 space-y-1 text-blue-700">
+                    <ul className="list-disc pl-5 space-y-1 text-[#46332E]">
                       <li>Use a soft measuring tape</li>
                       <li>Keep one finger space between tape and skin</li>
                       <li>Select your preferred measurement unit</li>
@@ -578,11 +617,11 @@ export default function CheckoutPage() {
                 )}
 
                 {step === 2 && (
-                  <div className="mt-6 p-4 bg-blue-50 rounded-md text-sm">
-                    <h3 className="font-medium text-blue-800 mb-2">
+                  <div className="mt-6 p-4 bg-[#F5F3F0] rounded-md text-sm">
+                    <h3 className="font-medium text-[#46332E] mb-2">
                       Shipping Information:
                     </h3>
-                    <ul className="list-disc pl-5 space-y-1 text-blue-700">
+                    <ul className="list-disc pl-5 space-y-1 text-[#46332E]">
                       <li>We ship worldwide to over 180 countries</li>
                       <li>Standard delivery: 7-14 business days</li>
                       <li>Express delivery: 3-5 business days</li>
@@ -601,6 +640,12 @@ export default function CheckoutPage() {
 
 // Step 1: Measurements Form
 interface MeasurementsStepProps {
+  measurements: CheckoutFormData["measurements"];
+  setMeasurements: React.Dispatch<
+    React.SetStateAction<CheckoutFormData["measurements"]>
+  >;
+  activeMeasurementIndex: number;
+  setActiveMeasurementIndex: React.Dispatch<React.SetStateAction<number>>;
   register: UseFormRegister<CheckoutFormData>;
   watch: UseFormWatch<CheckoutFormData>;
   setValue: UseFormSetValue<CheckoutFormData>;
@@ -608,13 +653,19 @@ interface MeasurementsStepProps {
 }
 
 function MeasurementsStep({
+  measurements,
+  setMeasurements,
+  activeMeasurementIndex,
+  setActiveMeasurementIndex,
   register,
   watch,
   setValue,
   errors,
 }: MeasurementsStepProps) {
-  const gender = watch("measurements.gender");
-  const measurementUnit = watch("measurements.measurementUnit");
+  const gender = watch(`measurements.${activeMeasurementIndex}.gender`);
+  const measurementUnit = watch(
+    `measurements.${activeMeasurementIndex}.measurementUnit`
+  );
 
   // In the MeasurementsStep component, update the handleRadioChange function:
   const handleRadioChange = (field: Path<CheckoutFormData>, value: string) => {
@@ -629,47 +680,53 @@ function MeasurementsStep({
       transition={{ duration: 0.3 }}
       className="space-y-6"
     >
-      <div className="bg-[#F5F3F0] p-5 rounded-lg mb-6">
-        <h2 className="text-xl font-semibold text-[#46332E] mb-3">
-          Measurement Instructions
-        </h2>
-        <p className="text-[#46332E]/80 mb-4">
+      {/* Enhanced Measurement Instructions */}
+      <div className="bg-gradient-to-r from-[#F5F3F0] to-[#E8E4E0] p-6 rounded-xl border border-[#46332E]/10 mb-8">
+        <div className="flex items-center mb-4">
+          <div className="bg-[#46332E] text-white rounded-full w-8 h-8 flex items-center justify-center mr-3">
+            <Ruler className="w-4 h-4" />
+          </div>
+          <h2 className="text-xl font-semibold text-[#46332E]">
+            Measurement Instructions
+          </h2>
+        </div>
+        <p className="text-[#46332E]/80 mb-6 leading-relaxed">
           For the perfect custom fit, please provide your measurements
           accurately. Use a soft measuring tape and keep one finger space
           between the tape and your skin.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="flex items-start">
-            <div className="bg-[#46332E] text-white rounded-full w-6 h-6 flex items-center justify-center mr-2 flex-shrink-0 mt-0.5">
+          <div className="flex items-start bg-white/50 p-3 rounded-lg">
+            <div className="bg-[#46332E] text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 flex-shrink-0 mt-0.5">
               1
             </div>
-            <p className="text-sm">
+            <p className="text-sm font-medium">
               Stand straight with your arms relaxed at your sides for most
               measurements.
             </p>
           </div>
-          <div className="flex items-start">
-            <div className="bg-[#46332E] text-white rounded-full w-6 h-6 flex items-center justify-center mr-2 flex-shrink-0 mt-0.5">
+          <div className="flex items-start bg-white/50 p-3 rounded-lg">
+            <div className="bg-[#46332E] text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 flex-shrink-0 mt-0.5">
               2
             </div>
-            <p className="text-sm">
+            <p className="text-sm font-medium">
               For chest/bust, measure at the fullest part while breathing
               normally.
             </p>
           </div>
-          <div className="flex items-start">
-            <div className="bg-[#46332E] text-white rounded-full w-6 h-6 flex items-center justify-center mr-2 flex-shrink-0 mt-0.5">
+          <div className="flex items-start bg-white/50 p-3 rounded-lg">
+            <div className="bg-[#46332E] text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 flex-shrink-0 mt-0.5">
               3
             </div>
-            <p className="text-sm">
+            <p className="text-sm font-medium">
               For waist, measure at your natural waistline (the narrowest part).
             </p>
           </div>
-          <div className="flex items-start">
-            <div className="bg-[#46332E] text-white rounded-full w-6 h-6 flex items-center justify-center mr-2 flex-shrink-0 mt-0.5">
+          <div className="flex items-start bg-white/50 p-3 rounded-lg">
+            <div className="bg-[#46332E] text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 flex-shrink-0 mt-0.5">
               4
             </div>
-            <p className="text-sm">
+            <p className="text-sm font-medium">
               For hips, measure at the fullest part, approximately 8&#34; below
               your waist.
             </p>
@@ -677,20 +734,142 @@ function MeasurementsStep({
         </div>
       </div>
 
-      <div>
-        <h2 className="text-xl font-semibold text-[#46332E] mb-6">
-          Your Measurements
-        </h2>
+      {/* Enhanced Person Selection */}
+      <div className="bg-white border border-gray-200 rounded-xl p-6 mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-[#46332E]">
+            Who are you measuring?
+          </h3>
+          <span className="text-sm text-[#46332E]/60">
+            {measurements.length}{" "}
+            {measurements.length === 1 ? "person" : "people"}
+          </span>
+        </div>
+
+        {/* Person Tabs */}
+        <div className="flex flex-wrap gap-2 mb-6">
+          {measurements.map((m, idx) => (
+            <button
+              key={idx}
+              onClick={() => setActiveMeasurementIndex(idx)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
+                idx === activeMeasurementIndex
+                  ? "bg-[#46332E] text-white shadow-md"
+                  : "bg-gray-100 text-[#46332E] hover:bg-gray-200"
+              }`}
+            >
+              <div className="w-2 h-2 rounded-full bg-current"></div>
+              {m.label || `Person ${idx + 1}`}
+              {idx === activeMeasurementIndex && <Check className="w-3 h-3" />}
+            </button>
+          ))}
+
+          <button
+            onClick={() => {
+              setMeasurements([
+                ...measurements,
+                {
+                  gender: "male",
+                  outfitType: "",
+                  height: "",
+                  shoulder: "",
+                  chest: "",
+                  bust: "",
+                  waist: "",
+                  hip: "",
+                  sleeve: "",
+                  inseam: "",
+                  neck: "",
+                  extraNote: "",
+                  measurementUnit: "inches",
+                  label: "",
+                },
+              ]);
+              setActiveMeasurementIndex(measurements.length);
+            }}
+            className="px-4 py-2 rounded-lg text-sm font-medium bg-[#F5F3F0] text-[#46332E] hover:bg-[#E8E4E0] transition-all duration-200 flex items-center gap-2 border border-[#E5D3C6]"
+          >
+            <div className="w-4 h-4 rounded-full border-2 border-current flex items-center justify-center">
+              <span className="text-xs">+</span>
+            </div>
+            Add Another Person
+          </button>
+        </div>
+
+        {/* Person Label Input */}
+        <div className="mb-6">
+          <Label
+            htmlFor="label"
+            className="text-base font-medium text-[#46332E]"
+          >
+            Label this person (e.g., &quot;For Me&quot;, &quot;For Dad&quot;,
+            &quot;For Mom&quot;)
+          </Label>
+          <Input
+            id="label"
+            type="text"
+            className="rounded-xl border border-[#E5D3C6]"
+            placeholder="Enter a name or label for this person..."
+            value={measurements[activeMeasurementIndex].label || ""}
+            onChange={(e) => {
+              const updated = [...measurements];
+              updated[activeMeasurementIndex].label = e.target.value;
+              setMeasurements(updated);
+            }}
+          />
+        </div>
+
+        {/* Remove Person Button */}
+        {measurements.length > 1 && (
+          <div className="mb-6">
+            <button
+              onClick={() => {
+                const newMeasurements = measurements.filter(
+                  (_, idx) => idx !== activeMeasurementIndex
+                );
+                setMeasurements(newMeasurements);
+                setActiveMeasurementIndex(
+                  Math.max(0, activeMeasurementIndex - 1)
+                );
+              }}
+              className="px-4 py-2 rounded-lg text-sm font-medium bg-red-50 text-red-600 hover:bg-red-100 transition-all duration-200 flex items-center gap-2 border border-red-200"
+            >
+              <div className="w-4 h-4 rounded-full border-2 border-current flex items-center justify-center">
+                <span className="text-xs">×</span>
+              </div>
+              Remove This Person
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Current Person's Measurements */}
+      <div className="bg-white border border-gray-200 rounded-xl p-6">
+        <div className="flex items-center mb-6">
+          <div className="bg-[#46332E] text-white rounded-full w-8 h-8 flex items-center justify-center mr-3">
+            {activeMeasurementIndex + 1}
+          </div>
+          <h2 className="text-xl font-semibold text-[#46332E]">
+            {measurements[activeMeasurementIndex].label ||
+              `Person ${activeMeasurementIndex + 1}`}{" "}
+            Measurements
+          </h2>
+        </div>
 
         <div className="space-y-6">
           {/* Measurement Unit Selection */}
-          <div>
-            <Label className="text-base font-medium">Measurement Unit</Label>
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <Label className="text-base font-medium text-[#46332E]">
+              Measurement Unit
+            </Label>
             <RadioGroup
               defaultValue={measurementUnit}
-              className="flex gap-6 mt-2"
+              className="flex gap-6 mt-3"
               onValueChange={(value) =>
-                handleRadioChange("measurements.measurementUnit", value)
+                handleRadioChange(
+                  `measurements.${activeMeasurementIndex}.measurementUnit`,
+                  value
+                )
               }
             >
               <div className="flex items-center space-x-2">
@@ -699,13 +878,13 @@ function MeasurementsStep({
                   id="inches"
                   className="text-[#46332E]"
                 />
-                <Label htmlFor="inches" className="cursor-pointer">
+                <Label htmlFor="inches" className="cursor-pointer font-medium">
                   Inches
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="cm" id="cm" className="text-[#46332E]" />
-                <Label htmlFor="cm" className="cursor-pointer">
+                <Label htmlFor="cm" className="cursor-pointer font-medium">
                   Centimeters
                 </Label>
               </div>
@@ -713,13 +892,18 @@ function MeasurementsStep({
           </div>
 
           {/* Gender Selection */}
-          <div>
-            <Label className="text-base font-medium">Gender</Label>
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <Label className="text-base font-medium text-[#46332E]">
+              Gender
+            </Label>
             <RadioGroup
               defaultValue={gender}
-              className="flex gap-6 mt-2"
+              className="flex gap-6 mt-3"
               onValueChange={(value) =>
-                handleRadioChange("measurements.gender", value)
+                handleRadioChange(
+                  `measurements.${activeMeasurementIndex}.gender`,
+                  value
+                )
               }
             >
               <div className="flex items-center space-x-2">
@@ -728,7 +912,7 @@ function MeasurementsStep({
                   id="male"
                   className="text-[#46332E]"
                 />
-                <Label htmlFor="male" className="cursor-pointer">
+                <Label htmlFor="male" className="cursor-pointer font-medium">
                   Male
                 </Label>
               </div>
@@ -738,7 +922,7 @@ function MeasurementsStep({
                   id="female"
                   className="text-[#46332E]"
                 />
-                <Label htmlFor="female" className="cursor-pointer">
+                <Label htmlFor="female" className="cursor-pointer font-medium">
                   Female
                 </Label>
               </div>
@@ -746,20 +930,28 @@ function MeasurementsStep({
           </div>
 
           {/* Outfit Type */}
-          <div>
-            <Label htmlFor="outfitType" className="text-base font-medium">
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <Label
+              htmlFor="outfitType"
+              className="text-base font-medium text-[#46332E]"
+            >
               Outfit Type
             </Label>
             <Select
               onValueChange={(value) =>
-                setValue("measurements.outfitType", value)
+                handleRadioChange(
+                  `measurements.${activeMeasurementIndex}.outfitType`,
+                  value
+                )
               }
-              defaultValue={watch("measurements.outfitType")}
+              defaultValue={watch(
+                `measurements.${activeMeasurementIndex}.outfitType`
+              )}
             >
-              <SelectTrigger className="w-full mt-1">
+              <SelectTrigger className="rounded-xl w-full mt-3 bg-white focus:ring-2 focus:ring-[#E5D3C6] focus:border-[#E5D3C6]">
                 <SelectValue placeholder="Select outfit type" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-[#FDF7F2]">
                 {gender === "male"
                   ? outfitTypes.male.map((type) => (
                       <SelectItem key={type} value={type}>
@@ -773,169 +965,223 @@ function MeasurementsStep({
                     ))}
               </SelectContent>
             </Select>
-            {errors.measurements?.outfitType && (
-              <p className="text-red-500 text-sm mt-1">
+            {typeof errors.measurements === "object" &&
+            errors.measurements &&
+            errors.measurements[activeMeasurementIndex]?.outfitType ? (
+              <p className="text-red-500 text-sm mt-2">
                 Please select an outfit type
               </p>
-            )}
+            ) : null}
           </div>
 
           {/* Common Measurements */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <Label htmlFor="height" className="text-base font-medium">
+            <div className="bg-white p-4 rounded-lg border border-gray-200">
+              <Label
+                htmlFor="height"
+                className="text-base font-medium text-[#46332E]"
+              >
                 Height ({measurementUnit})
               </Label>
               <Input
                 id="height"
                 type="text"
-                className="mt-1"
-                {...register("measurements.height", {
+                className="rounded-xl border border-[#E5D3C6]"
+                placeholder={`Enter height in ${measurementUnit}`}
+                {...register(`measurements.${activeMeasurementIndex}.height`, {
                   required: "Height is required",
                 })}
               />
-              {errors.measurements?.height && (
-                <p className="text-red-500 text-sm mt-1">Height is required</p>
-              )}
+              {typeof errors.measurements === "object" &&
+              errors.measurements &&
+              errors.measurements[activeMeasurementIndex]?.height ? (
+                <p className="text-red-500 text-sm mt-2">Height is required</p>
+              ) : null}
             </div>
 
-            <div>
-              <Label htmlFor="shoulder" className="text-base font-medium">
+            <div className="bg-white p-4 rounded-lg border border-gray-200">
+              <Label
+                htmlFor="shoulder"
+                className="text-base font-medium text-[#46332E]"
+              >
                 Shoulder Width ({measurementUnit})
               </Label>
               <Input
                 id="shoulder"
                 type="text"
-                className="mt-1"
-                {...register("measurements.shoulder", {
-                  required: "Shoulder width is required",
-                })}
+                className="rounded-xl border border-[#E5D3C6]"
+                placeholder={`Enter shoulder width in ${measurementUnit}`}
+                {...register(
+                  `measurements.${activeMeasurementIndex}.shoulder`,
+                  {
+                    required: "Shoulder width is required",
+                  }
+                )}
               />
-              {errors.measurements?.shoulder && (
-                <p className="text-red-500 text-sm mt-1">
+              {typeof errors.measurements === "object" &&
+              errors.measurements &&
+              errors.measurements[activeMeasurementIndex]?.shoulder ? (
+                <p className="text-red-500 text-sm mt-2">
                   Shoulder width is required
                 </p>
-              )}
+              ) : null}
             </div>
 
             {gender === "male" ? (
-              <div>
-                <Label htmlFor="chest" className="text-base font-medium">
+              <div className="bg-white p-4 rounded-lg border border-gray-200">
+                <Label
+                  htmlFor="chest"
+                  className="text-base font-medium text-[#46332E]"
+                >
                   Chest ({measurementUnit})
                 </Label>
                 <Input
                   id="chest"
                   type="text"
-                  className="mt-1"
-                  {...register("measurements.chest")}
+                  className="rounded-xl border border-[#E5D3C6]"
+                  placeholder={`Enter chest measurement in ${measurementUnit}`}
+                  {...register(`measurements.${activeMeasurementIndex}.chest`)}
                 />
               </div>
             ) : (
-              <div>
-                <Label htmlFor="bust" className="text-base font-medium">
+              <div className="bg-white p-4 rounded-lg border border-gray-200">
+                <Label
+                  htmlFor="bust"
+                  className="text-base font-medium text-[#46332E]"
+                >
                   Bust ({measurementUnit})
                 </Label>
                 <Input
                   id="bust"
                   type="text"
-                  className="mt-1"
-                  {...register("measurements.bust")}
+                  className="rounded-xl border border-[#E5D3C6]"
+                  placeholder={`Enter bust measurement in ${measurementUnit}`}
+                  {...register(`measurements.${activeMeasurementIndex}.bust`)}
                 />
               </div>
             )}
 
-            <div>
-              <Label htmlFor="waist" className="text-base font-medium">
+            <div className="bg-white p-4 rounded-lg border border-gray-200">
+              <Label
+                htmlFor="waist"
+                className="text-base font-medium text-[#46332E]"
+              >
                 Waist ({measurementUnit})
               </Label>
               <Input
                 id="waist"
                 type="text"
-                className="mt-1"
-                {...register("measurements.waist", {
+                className="rounded-xl border border-[#E5D3C6]"
+                placeholder={`Enter waist measurement in ${measurementUnit}`}
+                {...register(`measurements.${activeMeasurementIndex}.waist`, {
                   required: "Waist measurement is required",
                 })}
               />
-              {errors.measurements?.waist && (
-                <p className="text-red-500 text-sm mt-1">
+              {typeof errors.measurements === "object" &&
+              errors.measurements &&
+              errors.measurements[activeMeasurementIndex]?.waist ? (
+                <p className="text-red-500 text-sm mt-2">
                   Waist measurement is required
                 </p>
-              )}
+              ) : null}
             </div>
 
-            <div>
-              <Label htmlFor="hip" className="text-base font-medium">
+            <div className="bg-white p-4 rounded-lg border border-gray-200">
+              <Label
+                htmlFor="hip"
+                className="text-base font-medium text-[#46332E]"
+              >
                 Hip ({measurementUnit})
               </Label>
               <Input
                 id="hip"
                 type="text"
-                className="mt-1"
-                {...register("measurements.hip", {
+                className="rounded-xl border border-[#E5D3C6]"
+                placeholder={`Enter hip measurement in ${measurementUnit}`}
+                {...register(`measurements.${activeMeasurementIndex}.hip`, {
                   required: "Hip measurement is required",
                 })}
               />
-              {errors.measurements?.hip && (
-                <p className="text-red-500 text-sm mt-1">
+              {typeof errors.measurements === "object" &&
+              errors.measurements &&
+              errors.measurements[activeMeasurementIndex]?.hip ? (
+                <p className="text-red-500 text-sm mt-2">
                   Hip measurement is required
                 </p>
-              )}
+              ) : null}
             </div>
 
-            <div>
-              <Label htmlFor="sleeve" className="text-base font-medium">
+            <div className="bg-white p-4 rounded-lg border border-gray-200">
+              <Label
+                htmlFor="sleeve"
+                className="text-base font-medium text-[#46332E]"
+              >
                 Sleeve Length ({measurementUnit})
               </Label>
               <Input
                 id="sleeve"
                 type="text"
-                className="mt-1"
-                {...register("measurements.sleeve", {
+                className="rounded-xl border border-[#E5D3C6]"
+                placeholder={`Enter sleeve length in ${measurementUnit}`}
+                {...register(`measurements.${activeMeasurementIndex}.sleeve`, {
                   required: "Sleeve length is required",
                 })}
               />
-              {errors.measurements?.sleeve && (
-                <p className="text-red-500 text-sm mt-1">
+              {typeof errors.measurements === "object" &&
+              errors.measurements &&
+              errors.measurements[activeMeasurementIndex]?.sleeve ? (
+                <p className="text-red-500 text-sm mt-2">
                   Sleeve length is required
                 </p>
-              )}
+              ) : null}
             </div>
 
-            <div>
-              <Label htmlFor="inseam" className="text-base font-medium">
+            <div className="bg-white p-4 rounded-lg border border-gray-200">
+              <Label
+                htmlFor="inseam"
+                className="text-base font-medium text-[#46332E]"
+              >
                 Inseam / Trouser Length ({measurementUnit})
               </Label>
               <Input
                 id="inseam"
                 type="text"
-                className="mt-1"
-                {...register("measurements.inseam")}
+                className="rounded-xl border border-[#E5D3C6]"
+                placeholder={`Enter inseam length in ${measurementUnit}`}
+                {...register(`measurements.${activeMeasurementIndex}.inseam`)}
               />
             </div>
 
-            <div>
-              <Label htmlFor="neck" className="text-base font-medium">
+            <div className="bg-white p-4 rounded-lg border border-gray-200">
+              <Label
+                htmlFor="neck"
+                className="text-base font-medium text-[#46332E]"
+              >
                 Neck Circumference ({measurementUnit})
               </Label>
               <Input
                 id="neck"
                 type="text"
-                className="mt-1"
-                {...register("measurements.neck")}
+                className="rounded-xl border border-[#E5D3C6]"
+                placeholder={`Enter neck circumference in ${measurementUnit}`}
+                {...register(`measurements.${activeMeasurementIndex}.neck`)}
               />
             </div>
           </div>
 
           {/* Additional Notes */}
-          <div>
-            <Label htmlFor="extraNote" className="text-base font-medium">
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <Label
+              htmlFor="extraNote"
+              className="text-base font-medium text-[#46332E]"
+            >
               Additional Notes (Optional)
             </Label>
             <Textarea
               id="extraNote"
-              className="mt-1"
+              className="rounded-xl border border-[#E5D3C6]"
               placeholder="Any specific requirements or details about your measurements..."
-              {...register("measurements.extraNote")}
+              {...register(`measurements.${activeMeasurementIndex}.extraNote`)}
             />
           </div>
         </div>
@@ -975,206 +1221,287 @@ function DeliveryStep({
       transition={{ duration: 0.3 }}
       className="space-y-6"
     >
-      <h2 className="text-xl font-semibold text-[#46332E] mb-6">
-        Delivery Details
-      </h2>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <Label htmlFor="fullName" className="text-base font-medium">
-            Full Name
-          </Label>
-          <Input
-            id="fullName"
-            type="text"
-            className="mt-1"
-            {...register("delivery.fullName", {
-              required: "Full name is required",
-            })}
-          />
-          {errors.delivery?.fullName && (
-            <p className="text-red-500 text-sm mt-1">Full name is required</p>
-          )}
+      {/* Enhanced Delivery Header */}
+      <div className="bg-gradient-to-r from-[#F5F3F0] to-[#E8E4E0] p-6 rounded-xl border border-[#46332E]/10 mb-8">
+        <div className="flex items-center mb-4">
+          <div className="bg-[#46332E] text-white rounded-full w-8 h-8 flex items-center justify-center mr-3">
+            <Truck className="w-4 h-4" />
+          </div>
+          <h2 className="text-xl font-semibold text-[#46332E]">
+            Delivery Details
+          </h2>
         </div>
+        <p className="text-[#46332E]/80 leading-relaxed">
+          Please provide your shipping information so we can deliver your
+          custom-tailored clothing to the right address.
+        </p>
+      </div>
 
-        <div>
-          <Label htmlFor="email" className="text-base font-medium">
-            Email Address
-          </Label>
-          <Input
-            id="email"
-            type="email"
-            className="mt-1"
-            {...register("delivery.email", {
-              required: "Email is required",
-              pattern: {
-                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                message: "Invalid email address",
-              },
-            })}
-          />
-          {errors.delivery?.email && (
-            <p className="text-red-500 text-sm mt-1">Valid email is required</p>
-          )}
-        </div>
+      <div className="bg-white border border-gray-200 rounded-xl p-6 mb-6">
+        <h3 className="text-lg font-semibold text-[#46332E] mb-4">
+          Contact Information
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <Label
+              htmlFor="fullName"
+              className="text-base font-medium text-[#46332E]"
+            >
+              Full Name
+            </Label>
+            <Input
+              id="fullName"
+              type="text"
+              className="rounded-xl border border-[#E5D3C6]"
+              placeholder="Enter your full name"
+              {...register("delivery.fullName", {
+                required: "Full name is required",
+              })}
+            />
+            {errors.delivery?.fullName && (
+              <p className="text-red-500 text-sm mt-2">Full name is required</p>
+            )}
+          </div>
 
-        <div>
-          <Label htmlFor="phone" className="text-base font-medium">
-            Phone Number
-          </Label>
-          <Input
-            id="phone"
-            type="tel"
-            className="mt-1"
-            {...register("delivery.phone", {
-              required: "Phone number is required",
-            })}
-          />
-          {errors.delivery?.phone && (
-            <p className="text-red-500 text-sm mt-1">
-              Valid phone number is required
-            </p>
-          )}
-        </div>
+          <div>
+            <Label
+              htmlFor="email"
+              className="text-base font-medium text-[#46332E]"
+            >
+              Email Address
+            </Label>
+            <Input
+              id="email"
+              type="email"
+              className="rounded-xl border border-[#E5D3C6]"
+              placeholder="Enter your email address"
+              {...register("delivery.email", {
+                required: "Email is required",
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: "Invalid email address",
+                },
+              })}
+            />
+            {errors.delivery?.email && (
+              <p className="text-red-500 text-sm mt-2">
+                Valid email is required
+              </p>
+            )}
+          </div>
 
-        <div>
-          <Label htmlFor="country" className="text-base font-medium">
-            Country
-          </Label>
-          <Select
-            onValueChange={(value) => setValue("delivery.country", value)}
-            defaultValue={selectedCountry}
-          >
-            <SelectTrigger className="w-full mt-1">
-              <SelectValue placeholder="Select country" />
-            </SelectTrigger>
-            <SelectContent className="max-h-[200px] overflow-y-auto">
-              {countryOptions.map((country) => (
-                <SelectItem key={country.code} value={country.code}>
-                  {country.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {errors.delivery?.country && (
-            <p className="text-red-500 text-sm mt-1">Country is required</p>
-          )}
-        </div>
+          <div>
+            <Label
+              htmlFor="phone"
+              className="text-base font-medium text-[#46332E]"
+            >
+              Phone Number
+            </Label>
+            <Input
+              id="phone"
+              type="tel"
+              className="rounded-xl border border-[#E5D3C6]"
+              placeholder="Enter your phone number"
+              {...register("delivery.phone", {
+                required: "Phone number is required",
+              })}
+            />
+            {errors.delivery?.phone && (
+              <p className="text-red-500 text-sm mt-2">
+                Valid phone number is required
+              </p>
+            )}
+          </div>
 
-        <div>
-          <Label htmlFor="state" className="text-base font-medium">
-            State / Province / Region
-          </Label>
-          <Input
-            id="state"
-            type="text"
-            className="mt-1"
-            {...register("delivery.state", {
-              required: "State/Province is required",
-            })}
-          />
-          {errors.delivery?.state && (
-            <p className="text-red-500 text-sm mt-1">
-              State/Province is required
-            </p>
-          )}
-        </div>
-
-        <div>
-          <Label htmlFor="city" className="text-base font-medium">
-            City
-          </Label>
-          <Input
-            id="city"
-            type="text"
-            className="mt-1"
-            {...register("delivery.city", {
-              required: "City is required",
-            })}
-          />
-          {errors.delivery?.city && (
-            <p className="text-red-500 text-sm mt-1">City is required</p>
-          )}
-        </div>
-
-        <div className="md:col-span-2">
-          <Label htmlFor="address" className="text-base font-medium">
-            Street Address
-          </Label>
-          <Textarea
-            id="address"
-            className="mt-1"
-            {...register("delivery.address", {
-              required: "Delivery address is required",
-            })}
-          />
-          {errors.delivery?.address && (
-            <p className="text-red-500 text-sm mt-1">
-              Delivery address is required
-            </p>
-          )}
-        </div>
-
-        <div>
-          <Label htmlFor="postalCode" className="text-base font-medium">
-            Postal / Zip Code
-          </Label>
-          <Input
-            id="postalCode"
-            type="text"
-            className="mt-1"
-            {...register("delivery.postalCode")}
-          />
+          <div>
+            <Label
+              htmlFor="country"
+              className="text-base font-medium text-[#46332E]"
+            >
+              Country
+            </Label>
+            <Select
+              onValueChange={(value) => setValue("delivery.country", value)}
+              defaultValue={selectedCountry}
+            >
+              <SelectTrigger className="rounded-xl w-full mt-2 focus:ring-2 focus:ring-[#E5D3C6] focus:border-[#E5D3C6]">
+                <SelectValue placeholder="Select country" />
+              </SelectTrigger>
+              <SelectContent className="bg-[#FDF7F2]">
+                {countryOptions.map((country) => (
+                  <SelectItem key={country.code} value={country.code}>
+                    {country.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {errors.delivery?.country && (
+              <p className="text-red-500 text-sm mt-2">Country is required</p>
+            )}
+          </div>
         </div>
       </div>
 
-      <div>
-        <Label className="text-base font-medium">Delivery Speed</Label>
+      {/* Address Information */}
+      <div className="bg-white border border-gray-200 rounded-xl p-6 mb-6">
+        <h3 className="text-lg font-semibold text-[#46332E] mb-4">
+          Shipping Address
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <Label
+              htmlFor="state"
+              className="text-base font-medium text-[#46332E]"
+            >
+              State / Province / Region
+            </Label>
+            <Input
+              id="state"
+              type="text"
+              className="rounded-xl border border-[#E5D3C6]"
+              placeholder="Enter your state or province"
+              {...register("delivery.state", {
+                required: "State/Province is required",
+              })}
+            />
+            {errors.delivery?.state && (
+              <p className="text-red-500 text-sm mt-2">
+                State/Province is required
+              </p>
+            )}
+          </div>
+
+          <div>
+            <Label
+              htmlFor="city"
+              className="text-base font-medium text-[#46332E]"
+            >
+              City
+            </Label>
+            <Input
+              id="city"
+              type="text"
+              className="rounded-xl border border-[#E5D3C6]"
+              placeholder="Enter your city"
+              {...register("delivery.city", {
+                required: "City is required",
+              })}
+            />
+            {errors.delivery?.city && (
+              <p className="text-red-500 text-sm mt-2">City is required</p>
+            )}
+          </div>
+
+          <div className="md:col-span-2">
+            <Label
+              htmlFor="address"
+              className="text-base font-medium text-[#46332E]"
+            >
+              Street Address
+            </Label>
+            <Textarea
+              id="address"
+              className="rounded-xl border border-[#E5D3C6]"
+              placeholder="Enter your complete street address"
+              {...register("delivery.address", {
+                required: "Delivery address is required",
+              })}
+            />
+            {errors.delivery?.address && (
+              <p className="text-red-500 text-sm mt-2">
+                Delivery address is required
+              </p>
+            )}
+          </div>
+
+          <div>
+            <Label
+              htmlFor="postalCode"
+              className="text-base font-medium text-[#46332E]"
+            >
+              Postal / Zip Code
+            </Label>
+            <Input
+              id="postalCode"
+              type="text"
+              className="rounded-xl border border-[#E5D3C6]"
+              placeholder="Enter your postal code"
+              {...register("delivery.postalCode")}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Delivery Speed */}
+      <div className="bg-white border border-gray-200 rounded-xl p-6">
+        <h3 className="text-lg font-semibold text-[#46332E] mb-4">
+          Delivery Speed
+        </h3>
         <RadioGroup
           defaultValue={watch("delivery.deliverySpeed")}
-          className="mt-2 space-y-3"
+          className="space-y-4"
           onValueChange={(value) =>
             handleRadioChange("delivery.deliverySpeed", value)
           }
         >
-          <div className="flex items-start space-x-2 border p-3 rounded-md hover:bg-gray-50 transition-colors cursor-pointer">
+          <div className="flex items-start space-x-3 border-2 border-gray-200 p-4 rounded-lg hover:border-[#46332E]/30 transition-all duration-200 cursor-pointer">
             <RadioGroupItem
               value="standard"
               id="standard"
               className="mt-1 text-[#46332E]"
             />
             <div className="flex-1">
-              <Label htmlFor="standard" className="font-medium cursor-pointer">
+              <Label
+                htmlFor="standard"
+                className="font-semibold text-[#46332E] cursor-pointer text-base"
+              >
                 Standard Delivery
               </Label>
-              <p className="text-sm text-[#46332E]/70">7-14 business days</p>
-              <p className="text-sm font-medium mt-1">
-                {selectedCountry === "US" || selectedCountry === "CA"
-                  ? "$8.00"
-                  : ["GB", "FR", "DE", "IT", "ES"].includes(selectedCountry)
-                  ? "$12.00"
-                  : "$15.00"}
+              <p className="text-sm text-[#46332E]/70 mt-1">
+                7-14 business days
               </p>
+              <div className="flex items-center justify-between mt-2">
+                <span className="text-sm text-[#46332E]/60">
+                  Perfect for most orders
+                </span>
+                <span className="text-lg font-bold text-[#46332E]">
+                  {selectedCountry === "US" || selectedCountry === "CA"
+                    ? "$8.00"
+                    : ["GB", "FR", "DE", "IT", "ES"].includes(selectedCountry)
+                    ? "$12.00"
+                    : "$15.00"}
+                </span>
+              </div>
             </div>
           </div>
-          <div className="flex items-start space-x-2 border p-3 rounded-md hover:bg-gray-50 transition-colors cursor-pointer">
+          <div className="flex items-start space-x-3 border-2 border-gray-200 p-4 rounded-lg hover:border-[#46332E]/30 transition-all duration-200 cursor-pointer">
             <RadioGroupItem
               value="express"
               id="express"
               className="mt-1 text-[#46332E]"
             />
             <div className="flex-1">
-              <Label htmlFor="express" className="font-medium cursor-pointer">
+              <Label
+                htmlFor="express"
+                className="font-semibold text-[#46332E] cursor-pointer text-base"
+              >
                 Express Delivery
               </Label>
-              <p className="text-sm text-[#46332E]/70">3-5 business days</p>
-              <p className="text-sm font-medium mt-1">
-                {selectedCountry === "US" || selectedCountry === "CA"
-                  ? "$20.00"
-                  : ["GB", "FR", "DE", "IT", "ES"].includes(selectedCountry)
-                  ? "$30.00"
-                  : "$37.50"}
+              <p className="text-sm text-[#46332E]/70 mt-1">
+                3-5 business days
               </p>
+              <div className="flex items-center justify-between mt-2">
+                <span className="text-sm text-[#46332E]/60">
+                  Priority handling & faster delivery
+                </span>
+                <span className="text-lg font-bold text-[#46332E]">
+                  {selectedCountry === "US" || selectedCountry === "CA"
+                    ? "$20.00"
+                    : ["GB", "FR", "DE", "IT", "ES"].includes(selectedCountry)
+                    ? "$30.00"
+                    : "$37.50"}
+                </span>
+              </div>
             </div>
           </div>
         </RadioGroup>
@@ -1228,193 +1555,241 @@ function PaymentStep({
       transition={{ duration: 0.3 }}
       className="space-y-6"
     >
-      <h2 className="text-xl font-semibold text-[#46332E] mb-6">
-        Order Summary & Payment
-      </h2>
+      {/* Enhanced Payment Header */}
+      <div className="bg-gradient-to-r from-[#F5F3F0] to-[#E8E4E0] p-6 rounded-xl border border-[#46332E]/10 mb-8">
+        <div className="flex items-center mb-4">
+          <div className="bg-[#46332E] text-white rounded-full w-8 h-8 flex items-center justify-center mr-3">
+            <CreditCard className="w-4 h-4" />
+          </div>
+          <h2 className="text-xl font-semibold text-[#46332E]">
+            Order Summary & Payment
+          </h2>
+        </div>
+        <p className="text-[#46332E]/80 leading-relaxed">
+          Review your order details and choose your preferred payment method to
+          complete your purchase.
+        </p>
+      </div>
 
-      <div className="bg-[#F5F3F0] p-5 rounded-lg mb-6">
-        <h3 className="font-medium text-[#46332E] mb-3">Order Details</h3>
+      {/* Enhanced Order Summary */}
+      <div className="bg-white border border-gray-200 rounded-xl p-6 mb-6">
+        <h3 className="text-lg font-semibold text-[#46332E] mb-4">
+          Order Details
+        </h3>
 
         <div className="space-y-4">
           {cartItems.map((item) => (
-            <div key={item.id} className="flex justify-between">
-              <div>
-                <p className="font-medium">{item.name}</p>
+            <div
+              key={item.id}
+              className="flex justify-between items-center py-3 border-b border-gray-100 last:border-0"
+            >
+              <div className="flex-1">
+                <p className="font-semibold text-[#46332E]">{item.name}</p>
                 <p className="text-sm text-[#46332E]/70">
-                  Qty: {item.quantity}
+                  Quantity: {item.quantity}
                 </p>
               </div>
-              <p className="font-medium">
-                ${(item.salePrice || item.price) * item.quantity}
+              <p className="font-bold text-[#46332E]">
+                ${((item.salePrice || item.price) * item.quantity).toFixed(2)}
               </p>
             </div>
           ))}
 
-          <div className="border-t pt-3">
-            <div className="flex justify-between">
-              <span>Subtotal</span>
-              <span>${cartTotal.toFixed(2)}</span>
+          <div className="border-t border-gray-200 pt-4 mt-4">
+            <div className="flex justify-between py-2">
+              <span className="text-[#46332E]/70">Subtotal</span>
+              <span className="font-medium">${cartTotal.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between mt-1">
-              <span>
+            <div className="flex justify-between py-2">
+              <span className="text-[#46332E]/70">
                 Shipping ({deliverySpeed === "express" ? "Express" : "Standard"}
                 )
               </span>
-              <span>${shippingCost.toFixed(2)}</span>
+              <span className="font-medium">${shippingCost.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between mt-3 font-bold">
-              <span>Total</span>
-              <span>${totalAmount.toFixed(2)}</span>
+            <div className="flex justify-between py-3 border-t border-gray-200 mt-2">
+              <span className="text-lg font-bold text-[#46332E]">Total</span>
+              <span className="text-lg font-bold text-[#46332E]">
+                ${totalAmount.toFixed(2)}
+              </span>
             </div>
           </div>
         </div>
       </div>
 
-      <div>
-        <h3 className="font-medium text-[#46332E] mb-3">Payment Method</h3>
+      {/* Enhanced Payment Methods */}
+      <div className="bg-white border border-gray-200 rounded-xl p-6 mb-6">
+        <h3 className="text-lg font-semibold text-[#46332E] mb-4">
+          Payment Method
+        </h3>
 
         <RadioGroup
           defaultValue={watch("payment.paymentMethod")}
-          className="space-y-3"
+          className="space-y-4"
           onValueChange={(value) =>
             handleRadioChange("payment.paymentMethod", value)
           }
         >
-          <div className="flex items-start space-x-2 border p-3 rounded-md hover:bg-gray-50 transition-colors cursor-pointer">
+          <div className="flex items-start space-x-3 border-2 border-gray-200 p-4 rounded-lg hover:border-[#46332E]/30 transition-all duration-200 cursor-pointer">
             <RadioGroupItem
               value="card"
               id="card"
               className="mt-1 text-[#46332E]"
             />
             <div className="flex-1">
-              <Label htmlFor="card" className="font-medium cursor-pointer">
+              <Label
+                htmlFor="card"
+                className="font-semibold text-[#46332E] cursor-pointer text-base"
+              >
                 Credit / Debit Card
               </Label>
-              <p className="text-sm text-[#46332E]/70">
+              <p className="text-sm text-[#46332E]/70 mt-1">
                 Secure payment via credit or debit card
               </p>
-              <div className="flex gap-2 mt-2">
-                <Image
-                  src="/placeholder.svg?height=30&width=40"
-                  alt="Visa"
-                  width={40}
-                  height={30}
-                  className="rounded-md"
-                />
-                <Image
-                  src="/placeholder.svg?height=30&width=40"
-                  alt="Mastercard"
-                  width={40}
-                  height={30}
-                  className="rounded-md"
-                />
-                <Image
-                  src="/placeholder.svg?height=30&width=40"
-                  alt="Amex"
-                  width={40}
-                  height={30}
-                  className="rounded-md"
-                />
+              <div className="flex gap-2 mt-3">
+                <div className="bg-gray-100 px-3 py-1 rounded-md">
+                  <span className="text-xs font-medium text-gray-600">
+                    Visa
+                  </span>
+                </div>
+                <div className="bg-gray-100 px-3 py-1 rounded-md">
+                  <span className="text-xs font-medium text-gray-600">
+                    Mastercard
+                  </span>
+                </div>
+                <div className="bg-gray-100 px-3 py-1 rounded-md">
+                  <span className="text-xs font-medium text-gray-600">
+                    Amex
+                  </span>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="flex items-start space-x-2 border p-3 rounded-md hover:bg-gray-50 transition-colors cursor-pointer">
+          <div className="flex items-start space-x-3 border-2 border-gray-200 p-4 rounded-lg hover:border-[#46332E]/30 transition-all duration-200 cursor-pointer">
             <RadioGroupItem
               value="paypal"
               id="paypal"
               className="mt-1 text-[#46332E]"
             />
             <div className="flex-1">
-              <Label htmlFor="paypal" className="font-medium cursor-pointer">
+              <Label
+                htmlFor="paypal"
+                className="font-semibold text-[#46332E] cursor-pointer text-base"
+              >
                 PayPal
               </Label>
-              <p className="text-sm text-[#46332E]/70">
+              <p className="text-sm text-[#46332E]/70 mt-1">
                 Fast and secure payment with PayPal
               </p>
-              <div className="mt-2">
-                <Image
-                  src="/placeholder.svg?height=30&width=80"
-                  alt="PayPal"
-                  width={80}
-                  height={30}
-                  className="rounded-md"
-                />
+              <div className="mt-3">
+                <div className="bg-[#F5F3F0] px-3 py-1 rounded-md inline-block">
+                  <span className="text-xs font-medium text-[#46332E]">
+                    PayPal
+                  </span>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="flex items-start space-x-2 border p-3 rounded-md hover:bg-gray-50 transition-colors cursor-pointer">
+          <div className="flex items-start space-x-3 border-2 border-gray-200 p-4 rounded-lg hover:border-[#46332E]/30 transition-all duration-200 cursor-pointer">
             <RadioGroupItem
               value="bank"
               id="bank"
               className="mt-1 text-[#46332E]"
             />
             <div className="flex-1">
-              <Label htmlFor="bank" className="font-medium cursor-pointer">
+              <Label
+                htmlFor="bank"
+                className="font-semibold text-[#46332E] cursor-pointer text-base"
+              >
                 Bank Transfer
               </Label>
-              <p className="text-sm text-[#46332E]/70">
+              <p className="text-sm text-[#46332E]/70 mt-1">
                 Direct bank transfer (processing may take 1-2 business days)
               </p>
+              <div className="mt-3">
+                <div className="bg-green-50 px-3 py-1 rounded-md inline-block">
+                  <span className="text-xs font-medium text-green-600">
+                    Bank Transfer
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </RadioGroup>
       </div>
 
-      <div className="flex items-start space-x-2 mt-6">
-        <div className="mt-1">
-          <Checkbox
-            id="agreeToTerms"
-            className="text-[#46332E] border-gray-300 rounded"
-            checked={watch("payment.agreeToTerms")}
-            onCheckedChange={(checked) => {
-              handleCheckboxChange("payment.agreeToTerms", checked as boolean);
-              // If unchecked, manually trigger validation
-              if (!checked) {
-                setValue("payment.agreeToTerms", false, {
-                  shouldValidate: true,
-                });
-              }
-            }}
-            {...register("payment.agreeToTerms", {
-              required: "You must agree to the terms and conditions",
-            })}
-          />
-        </div>
-        <div>
-          <label
-            htmlFor="agreeToTerms"
-            className="text-sm text-[#46332E] cursor-pointer"
-          >
-            I agree to the{" "}
-            <span className="underline hover:text-[#46332E]/80">
-              Terms and Conditions
-            </span>
-            ,{" "}
-            <span className="underline hover:text-[#46332E]/80">
-              Privacy Policy
-            </span>
-            , and{" "}
-            <span className="underline hover:text-[#46332E]/80">
-              Refund Policy
-            </span>
-          </label>
-          {errors.payment?.agreeToTerms && (
-            <p className="text-red-500 text-sm mt-1">
-              You must agree to the terms and conditions
-            </p>
-          )}
+      {/* Enhanced Terms and Conditions */}
+      <div className="bg-white border border-gray-200 rounded-xl p-6 mb-6">
+        <div className="flex items-start space-x-3">
+          <div className="mt-1">
+            <Checkbox
+              id="agreeToTerms"
+              className="text-[#46332E] border-gray-300 rounded"
+              checked={watch("payment.agreeToTerms")}
+              onCheckedChange={(checked) => {
+                handleCheckboxChange(
+                  "payment.agreeToTerms",
+                  checked as boolean
+                );
+                // If unchecked, manually trigger validation
+                if (!checked) {
+                  setValue("payment.agreeToTerms", false, {
+                    shouldValidate: true,
+                  });
+                }
+              }}
+              {...register("payment.agreeToTerms", {
+                required: "You must agree to the terms and conditions",
+              })}
+            />
+          </div>
+          <div className="flex-1">
+            <label
+              htmlFor="agreeToTerms"
+              className="text-base text-[#46332E] cursor-pointer font-medium"
+            >
+              I agree to the{" "}
+              <span className="underline hover:text-[#46332E]/80 text-[#46332E]">
+                Terms and Conditions
+              </span>
+              ,{" "}
+              <span className="underline hover:text-[#46332E]/80 text-[#46332E]">
+                Privacy Policy
+              </span>
+              , and{" "}
+              <span className="underline hover:text-[#46332E]/80 text-[#46332E]">
+                Refund Policy
+              </span>
+            </label>
+            {errors.payment?.agreeToTerms && (
+              <p className="text-red-500 text-sm mt-2">
+                You must agree to the terms and conditions
+              </p>
+            )}
+          </div>
         </div>
       </div>
 
-      <div className="bg-blue-50 p-4 rounded-md">
-        <p className="text-sm text-blue-800">
-          <strong>Note:</strong> By clicking &#34;Complete Order&#34;, you agree
-          to place an order for custom-tailored clothing based on the
-          measurements you provided. Please ensure all measurements are
-          accurate.
-        </p>
+      {/* Enhanced Important Note */}
+      <div className="bg-gradient-to-r from-[#F5F3F0] to-[#E8E4E0] p-6 rounded-xl border border-[#E5D3C6]">
+        <div className="flex items-start">
+          <div className="bg-[#46332E] text-white rounded-full w-6 h-6 flex items-center justify-center mr-3 flex-shrink-0 mt-0.5">
+            <span className="text-xs font-bold">!</span>
+          </div>
+          <div>
+            <h4 className="font-semibold text-[#46332E] mb-2">
+              Important Note
+            </h4>
+            <p className="text-sm text-[#46332E] leading-relaxed">
+              By clicking &quot;Complete Order&quot;, you agree to place an
+              order for custom-tailored clothing based on the measurements you
+              provided. Please ensure all measurements are accurate for the best
+              fit.
+            </p>
+          </div>
+        </div>
       </div>
     </motion.div>
   );

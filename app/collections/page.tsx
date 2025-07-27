@@ -10,7 +10,6 @@ import { ArrowDown } from "lucide-react";
 import Container from "@/app/Components/Container";
 import Banner from "@/components/ui/banner";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
 
 type Product = {
   id: number;
@@ -55,8 +54,10 @@ export default function CollectionsPage() {
   const [femaleAgeGroup, setFemaleAgeGroup] = useState("all");
   const [maleSubCategory, setMaleSubCategory] = useState("all");
   const [femaleSubCategory, setFemaleSubCategory] = useState("all");
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    setIsLoading(true);
     fetch("/api/products")
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch products");
@@ -66,7 +67,8 @@ export default function CollectionsPage() {
       .catch((err) => {
         // Optionally set an error state here
         console.error(err);
-      });
+      })
+      .finally(() => setIsLoading(false));
 
     fetch("/api/products/filters")
       .then((res) => {
@@ -258,7 +260,11 @@ export default function CollectionsPage() {
 
               <TabsContent value="male">
                 <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {filteredMaleProducts.length > 0 ? (
+                  {isLoading ? (
+                    <p className="text-center text-[#46332E]/60 col-span-full">
+                      Loading products...
+                    </p>
+                  ) : filteredMaleProducts.length > 0 ? (
                     filteredMaleProducts.map((product) => (
                       <ProductCard key={product.id} product={product} />
                     ))
@@ -272,7 +278,11 @@ export default function CollectionsPage() {
 
               <TabsContent value="female">
                 <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {filteredFemaleProducts.length > 0 ? (
+                  {isLoading ? (
+                    <p className="text-center text-[#46332E]/60 col-span-full">
+                      Loading products...
+                    </p>
+                  ) : filteredFemaleProducts.length > 0 ? (
                     filteredFemaleProducts.map((product) => (
                       <ProductCard key={product.id} product={product} />
                     ))
@@ -315,14 +325,6 @@ function ProductCard({ product }: { product: Product }) {
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-105"
           />
-          <div className="absolute top-3 left-3 flex flex-col gap-2">
-            {product.isNew && (
-              <Badge className="bg-[#46332E] text-white rounded-2xl">New</Badge>
-            )}
-            {product.salePrice && (
-              <Badge className="bg-red-600 text-white rounded-2xl">Sale</Badge>
-            )}
-          </div>
         </div>
         <div className="p-4">
           <h3 className="text-lg font-semibold text-[#46332E] mb-1 hover:text-[#46332E]/80 transition-colors">
@@ -332,16 +334,7 @@ function ProductCard({ product }: { product: Product }) {
             {product.subCategory}
           </p>
           <div className="flex items-center gap-2">
-            {product.salePrice ? (
-              <>
-                <p className="font-bold text-[#46332E]">${product.salePrice}</p>
-                <p className="text-[#46332E]/60 line-through text-sm">
-                  ${product.price}
-                </p>
-              </>
-            ) : (
-              <p className="font-bold text-[#46332E]">${product.price}</p>
-            )}
+            <p className="font-bold text-[#46332E]">${product.price}</p>
           </div>
         </div>
       </Link>

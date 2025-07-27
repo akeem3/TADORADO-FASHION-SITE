@@ -16,6 +16,7 @@ type ProductFormState = Omit<
   isNew: "true" | "false";
   isFeatured: "true" | "false";
   salePrice: string;
+  hasSalePrice: "yes" | "no";
 };
 
 export default function NewProductPage() {
@@ -27,6 +28,7 @@ export default function NewProductPage() {
     ageGroup: "adult",
     price: 0,
     salePrice: "",
+    hasSalePrice: "no",
     isNew: "false",
     isFeatured: "false",
     image: "",
@@ -64,7 +66,10 @@ export default function NewProductPage() {
     const payload: Omit<Product, "id"> = {
       ...form,
       price: Number(form.price),
-      salePrice: form.salePrice !== "" ? Number(form.salePrice) : undefined,
+      salePrice:
+        form.hasSalePrice === "yes" && form.salePrice !== ""
+          ? Number(form.salePrice)
+          : undefined,
       isNew: form.isNew === "true",
       isFeatured: form.isFeatured === "true",
     };
@@ -95,21 +100,27 @@ export default function NewProductPage() {
           className="space-y-5 bg-white p-6 rounded-xl shadow"
         >
           <div>
-            <label className="block mb-1 font-medium" htmlFor="name">
-              Name
+            <label
+              className="block mb-1 font-medium text-[#46332E]"
+              htmlFor="name"
+            >
+              Product Name
             </label>
             <input
               id="name"
               name="name"
-              placeholder="Name"
+              placeholder="Enter product name"
               value={form.name || ""}
               onChange={handleChange}
-              className="w-full p-2 border rounded"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#46332E] focus:border-transparent"
               required
             />
           </div>
           <div>
-            <label htmlFor="category" className="block mb-1 font-medium">
+            <label
+              htmlFor="category"
+              className="block mb-1 font-medium text-[#46332E]"
+            >
               Category
             </label>
             <select
@@ -117,7 +128,7 @@ export default function NewProductPage() {
               name="category"
               value={form.category}
               onChange={handleChange}
-              className="w-full p-2 border rounded"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#46332E] focus:border-transparent"
               required
             >
               {categories.map((cat) => (
@@ -128,7 +139,10 @@ export default function NewProductPage() {
             </select>
           </div>
           <div>
-            <label htmlFor="subCategory" className="block mb-1 font-medium">
+            <label
+              htmlFor="subCategory"
+              className="block mb-1 font-medium text-[#46332E]"
+            >
               Sub Category
             </label>
             <select
@@ -136,7 +150,7 @@ export default function NewProductPage() {
               name="subCategory"
               value={form.subCategory}
               onChange={handleChange}
-              className="w-full p-2 border rounded"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#46332E] focus:border-transparent"
               required
             >
               {subCategoryOptions.map(([key, label]) => (
@@ -147,7 +161,10 @@ export default function NewProductPage() {
             </select>
           </div>
           <div>
-            <label htmlFor="ageGroup" className="block mb-1 font-medium">
+            <label
+              htmlFor="ageGroup"
+              className="block mb-1 font-medium text-[#46332E]"
+            >
               Age Group
             </label>
             <select
@@ -155,7 +172,7 @@ export default function NewProductPage() {
               name="ageGroup"
               value={form.ageGroup}
               onChange={handleChange}
-              className="w-full p-2 border rounded"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#46332E] focus:border-transparent"
               required
             >
               {ageGroups.map((ag) => (
@@ -166,115 +183,130 @@ export default function NewProductPage() {
             </select>
           </div>
           <div>
-            <label className="block mb-1 font-medium" htmlFor="price">
-              Price
+            <label
+              className="block mb-1 font-medium text-[#46332E]"
+              htmlFor="price"
+            >
+              Regular Price
             </label>
             <input
               id="price"
               name="price"
               type="number"
-              placeholder="Price"
+              placeholder="Enter regular price"
               value={form.price}
               onChange={handleChange}
-              className="w-full p-2 border rounded"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#46332E] focus:border-transparent"
               required
               min={0}
+              step="0.01"
             />
           </div>
           <div>
-            <label className="block mb-1 font-medium" htmlFor="salePrice">
-              Sale Price
-            </label>
-            <input
-              id="salePrice"
-              name="salePrice"
-              type="number"
-              placeholder="Sale Price"
-              value={form.salePrice}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-              min={0}
-            />
-          </div>
-          <div>
-            <label className="block mb-1 font-medium" htmlFor="image">
-              Image URL
+            <label
+              className="block mb-1 font-medium text-[#46332E]"
+              htmlFor="image"
+            >
+              Product Image URL
             </label>
             <input
               id="image"
               name="image"
-              placeholder="Image URL"
+              placeholder="Enter image URL"
               value={form.image || ""}
               onChange={handleChange}
-              className="w-full p-2 border rounded"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#46332E] focus:border-transparent"
               required
             />
           </div>
           <div>
-            <label className="block mb-1 font-medium" htmlFor="hoverImage">
-              Hover Image URL
+            <label
+              className="block mb-1 font-medium text-[#46332E]"
+              htmlFor="hoverImage"
+            >
+              Hover Image URL (Optional)
             </label>
             <input
               id="hoverImage"
               name="hoverImage"
-              placeholder="Hover Image URL"
+              placeholder="Enter hover image URL"
               value={form.hoverImage || ""}
               onChange={handleChange}
-              className="w-full p-2 border rounded"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#46332E] focus:border-transparent"
             />
           </div>
           <div>
-            <label className="block mb-1 font-medium" htmlFor="description">
-              Description
+            <label
+              className="block mb-1 font-medium text-[#46332E]"
+              htmlFor="description"
+            >
+              Product Description
             </label>
             <textarea
               id="description"
               name="description"
-              placeholder="Description"
+              placeholder="Enter product description"
               value={form.description || ""}
               onChange={handleChange}
-              className="w-full p-2 border rounded"
+              rows={4}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#46332E] focus:border-transparent"
             />
           </div>
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <label htmlFor="isNew" className="block mb-1 font-medium">
-                New?
-              </label>
-              <select
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
                 id="isNew"
                 name="isNew"
-                value={form.isNew}
-                onChange={handleChange}
-                className="w-full p-2 border rounded"
+                checked={form.isNew === "true"}
+                onChange={(e) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    isNew: e.target.checked ? "true" : "false",
+                  }))
+                }
+                className="w-4 h-4 text-[#46332E] border-gray-300 rounded focus:ring-[#46332E]"
+              />
+              <label
+                htmlFor="isNew"
+                className="text-sm font-medium text-[#46332E]"
               >
-                <option value="false">No</option>
-                <option value="true">Yes</option>
-              </select>
-            </div>
-            <div className="flex-1">
-              <label htmlFor="isFeatured" className="block mb-1 font-medium">
-                Featured?
+                Mark as New
               </label>
-              <select
+            </div>
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
                 id="isFeatured"
                 name="isFeatured"
-                value={form.isFeatured}
-                onChange={handleChange}
-                className="w-full p-2 border rounded"
+                checked={form.isFeatured === "true"}
+                onChange={(e) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    isFeatured: e.target.checked ? "true" : "false",
+                  }))
+                }
+                className="w-4 h-4 text-[#46332E] border-gray-300 rounded focus:ring-[#46332E]"
+              />
+              <label
+                htmlFor="isFeatured"
+                className="text-sm font-medium text-[#46332E]"
               >
-                <option value="false">No</option>
-                <option value="true">Yes</option>
-              </select>
+                Mark as Featured
+              </label>
             </div>
           </div>
-          {error && <div className="text-red-600 text-sm mt-2">{error}</div>}
+          {error && (
+            <div className="text-red-600 text-sm p-3 bg-red-50 rounded-lg border border-red-200">
+              {error}
+            </div>
+          )}
           <Button
             type="submit"
-            className="w-full bg-green-600 hover:bg-green-700 text-white py-3 text-lg rounded-xl"
+            className="w-full bg-[#46332E] hover:bg-[#46332E]/90 text-white py-3 text-lg rounded-xl transition-all duration-300"
             disabled={loading}
           >
-            {loading ? "Adding..." : "Add Product"}
+            {loading ? "Adding Product..." : "Add Product"}
           </Button>
         </form>
       </div>

@@ -30,7 +30,7 @@ const steps = [
 
 export default function StepsSection() {
   return (
-    <section className="relative bg-[#1F1F1D] py-24 lg:py-32 overflow-hidden">
+    <section className="relative bg-[#1F1F1D] py-24 lg:py-32 overflow-hidden rounded-3xl">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute inset-0 bg-gradient-to-r from-[#46332E] to-[#1F1F1D]" />

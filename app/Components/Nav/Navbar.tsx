@@ -64,7 +64,7 @@ export default function Navbar() {
                 <li key={item.name}>
                   <Link
                     href={item.href}
-                    className={`relative py-2 text-[#5d4037] hover:text-[#8d6e63] transition-colors duration-200 ${
+                    className={`relative py-2 text-[#5d4037] hover:text-[#8d6e63] transition-colors duration-200 outline-none focus-visible:ring-0 ${
                       pathname === item.href ? "font-medium" : ""
                     }`}
                   >
@@ -81,7 +81,7 @@ export default function Navbar() {
           {/* User Actions */}
           <div className="flex items-center">
             <button
-              className="p-2 mr-2 text-[#5d4037] hover:text-[#8d6e63] transition-colors duration-200 rounded-full hover:bg-[#f5f5f5] relative"
+              className="p-2 mr-2 text-[#5d4037] hover:text-[#8d6e63] transition-colors duration-200 rounded-full hover:bg-[#f5f5f5] relative outline-none focus-visible:ring-0"
               aria-label="Shopping cart"
             >
               <Link href={"/cart"}>
@@ -98,7 +98,7 @@ export default function Navbar() {
 
             {/* Mobile menu button */}
             <button
-              className="md:hidden p-2 text-[#5d4037] hover:text-[#8d6e63] transition-colors duration-200 rounded-full hover:bg-[#f5f5f5]"
+              className="md:hidden p-2 text-[#5d4037] hover:text-[#8d6e63] transition-colors duration-200 rounded-full hover:bg-[#f5f5f5] outline-none focus-visible:ring-0"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-label={isMenuOpen ? "Close menu" : "Open menu"}
             >
@@ -122,7 +122,7 @@ export default function Navbar() {
                   <li key={item.name}>
                     <Link
                       href={item.href}
-                      className={`block py-2 px-3 rounded-md ${
+                      className={`block py-2 px-3 rounded-md outline-none focus-visible:ring-0 ${
                         pathname === item.href
                           ? "bg-[#f5f5f5] text-[#5d4037] font-medium"
                           : "text-[#5d4037] hover:bg-[#f5f5f5]"

@@ -9,6 +9,7 @@ import Image from "next/image";
 import { ArrowLeft, Star } from "lucide-react";
 import { useRouter } from "next/navigation";
 import AddToCartButton from "@/components/ui/AddToCartButton";
+import { useCart } from "@/components/ui/CartContext";
 
 type Product = {
   id: number;
@@ -32,6 +33,7 @@ export default function ProductDetailPage() {
   const [selectedImage, setSelectedImage] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     fetch(`/api/products/${params.id}`)
@@ -137,7 +139,22 @@ export default function ProductDetailPage() {
                 redirectToCart={true}
                 className="flex-1"
               />
-              <Button className="bg-[#46332E] text-white flex-1">
+              <Button
+                className="bg-[#46332E] text-white flex-1"
+                onClick={() => {
+                  addToCart({
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    salePrice: product.salePrice,
+                    image: product.image,
+                    category: product.category,
+                    subCategory: product.subCategory,
+                    quantity,
+                  });
+                  router.push("/checkOut");
+                }}
+              >
                 Buy Now
               </Button>
             </div>
