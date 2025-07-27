@@ -1,6 +1,15 @@
 // /scripts/seed.ts
 import { prisma } from "../lib/prisma";
 
+// Simple slugify function
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 async function main() {
   await prisma.product.deleteMany(); // clear existing
 
@@ -8,6 +17,7 @@ async function main() {
     data: [
       {
         name: "Traditional Agbada Set",
+        slug: slugify("Traditional Agbada Set"),
         category: "male",
         subCategory: "senator",
         ageGroup: "adult",
@@ -23,6 +33,7 @@ async function main() {
       },
       {
         name: "Ankara Shirt & Trousers",
+        slug: slugify("Ankara Shirt & Trousers"),
         category: "male",
         subCategory: "ankara",
         ageGroup: "adult",

@@ -13,13 +13,6 @@ const nextConfig: NextConfig = {
   },
   // Production optimizations
   output: "standalone",
-  experimental: {
-    outputFileTracingRoot: undefined,
-  },
-  // Ensure proper handling of environment variables
-  env: {
-    CUSTOM_KEY: process.env.CUSTOM_KEY,
-  },
 };
 
 export default nextConfig;
