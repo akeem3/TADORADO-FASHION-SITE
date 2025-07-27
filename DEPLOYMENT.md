@@ -21,7 +21,7 @@
 
 2. **Configure Build Settings:**
    - **Build Command:** `npm install && npx prisma generate && npm run build`
-   - **Start Command:** `node server.js`
+   - **Start Command:** `npm start`
    - **Environment:** `Node`
 
 ### 2. Environment Variables
