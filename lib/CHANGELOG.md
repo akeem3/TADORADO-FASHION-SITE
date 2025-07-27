@@ -299,3 +299,18 @@ GOOGLE_SHEET_FILENAME=Tadorado Export
 - [ ] Collection page (Styles details Update)
 - [ ] Home Page (improve steps section, buttons, Testimonials)
 - [ ] Node mailer (email sent to admin once an order is made)
+
+## [Unreleased] - Render Deployment Build Fix
+
+### Fixed
+
+- **Build Error Resolution:** Fixed TypeScript compilation error in `scripts/seed.ts` where `salePrice` field was being used but doesn't exist in the Product model schema
+- **Seed Script Cleanup:** Removed the `salePrice: 50` field from the "Ankara Shirt & Trousers" product in the seed data to match the current Prisma schema
+- **Deployment Compatibility:** This fix resolves the Render deployment build failure that was preventing successful deployment
+
+### Technical Details
+
+- **Error:** `Object literal may only specify known properties, and 'salePrice' does not exist in type 'ProductCreateManyInput'`
+- **Root Cause:** The seed script was still referencing the `salePrice` field which was removed from the Product model as part of the sale price concept removal
+- **Solution:** Removed the `salePrice` field from the product data in `scripts/seed.ts`
+- **Impact:** Build now passes TypeScript compilation and should deploy successfully on Render
