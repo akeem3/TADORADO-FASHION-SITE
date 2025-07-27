@@ -27,8 +27,6 @@ export default function NewProductPage() {
     subCategory: "senator",
     ageGroup: "adult",
     price: 0,
-    salePrice: "",
-    hasSalePrice: "no",
     isNew: "false",
     isFeatured: "false",
     image: "",
@@ -66,10 +64,6 @@ export default function NewProductPage() {
     const payload: Omit<Product, "id"> = {
       ...form,
       price: Number(form.price),
-      salePrice:
-        form.hasSalePrice === "yes" && form.salePrice !== ""
-          ? Number(form.salePrice)
-          : undefined,
       isNew: form.isNew === "true",
       isFeatured: form.isFeatured === "true",
     };

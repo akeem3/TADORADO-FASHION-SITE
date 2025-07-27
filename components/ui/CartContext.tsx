@@ -8,7 +8,6 @@ export type CartProduct = {
   id: number;
   name: string;
   price: number;
-  salePrice?: number;
   image: string;
   quantity: number;
   category: string;
@@ -96,8 +95,7 @@ const cartStoreCreator: StateCreator<
 
   getSubtotal: () => {
     return get().items.reduce((total: number, item: CartProduct) => {
-      const price = item.salePrice || item.price;
-      return total + price * item.quantity;
+      return total + item.price * item.quantity;
     }, 0);
   },
 

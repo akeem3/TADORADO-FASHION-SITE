@@ -99,15 +99,15 @@ const CartPage = () => {
                         {item.salePrice ? (
                           <div>
                             <span className="font-bold text-[#46332E]">
-                              ${item.salePrice}
+                              ₦{item.salePrice}
                             </span>
                             <span className="text-sm text-[#46332E]/60 line-through ml-2">
-                              ${item.price}
+                              ₦{item.price}
                             </span>
                           </div>
                         ) : (
                           <span className="font-bold text-[#46332E]">
-                            ${item.price}
+                            ₦{item.price}
                           </span>
                         )}
                       </div>
@@ -171,7 +171,7 @@ const CartPage = () => {
               <div className="space-y-3 mb-6">
                 <div className="flex justify-between">
                   <span className="text-[#46332E]/70">Subtotal</span>
-                  <span className="font-medium">${cartTotal.toFixed(2)}</span>
+                  <span className="font-medium">₦{cartTotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-[#46332E]/70">Shipping</span>
@@ -184,7 +184,7 @@ const CartPage = () => {
                 <div className="border-t pt-3 mt-3">
                   <div className="flex justify-between font-bold">
                     <span>Total</span>
-                    <span>${cartTotal.toFixed(2)}</span>
+                    <span>₦{cartTotal.toFixed(2)}</span>
                   </div>
                 </div>
               </div>

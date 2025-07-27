@@ -116,7 +116,7 @@ export default function Navbar() {
               <ul className="space-y-4 py-4">
                 {[
                   { name: "Home", href: "/" },
-                  { name: "Collections", href: "/collections" },
+                  { name: "Shop", href: "/collections" },
                   { name: "Contact", href: "/contact" },
                 ].map((item) => (
                   <li key={item.name}>

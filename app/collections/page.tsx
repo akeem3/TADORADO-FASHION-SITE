@@ -334,7 +334,7 @@ function ProductCard({ product }: { product: Product }) {
             {product.subCategory}
           </p>
           <div className="flex items-center gap-2">
-            <p className="font-bold text-[#46332E]">${product.price}</p>
+            <p className="font-bold text-[#46332E]">₦{product.price}</p>
           </div>
         </div>
       </Link>

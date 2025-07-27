@@ -7,7 +7,6 @@ export type Product = {
   subCategory: string;
   ageGroup: "adult" | "children" | "baby";
   price: number;
-  salePrice?: number;
   isNew?: boolean;
   isFeatured?: boolean;
   image: string;
@@ -60,7 +59,6 @@ export const products: Product[] = [
     subCategory: "ankara",
     ageGroup: "adult",
     price: 80,
-    salePrice: 50,
     image:
       "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/ankara%20shirt%20and%20trousers%20men.jpg?alt=media&token=e1af5267-98de-468c-8f82-a0c6fabaeb3d",
     hoverImage:
@@ -119,7 +117,6 @@ export const products: Product[] = [
     subCategory: "senator",
     ageGroup: "baby",
     price: 90,
-    salePrice: 75,
     image: "/placeholder.svg?height=400&width=300",
     hoverImage: "/placeholder.svg?height=400&width=300",
     description:

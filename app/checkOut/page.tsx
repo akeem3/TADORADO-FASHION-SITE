@@ -572,7 +572,7 @@ export default function CheckoutPage() {
                             Qty: {item.quantity}
                           </p>
                           <p className="font-medium">
-                            $
+                            ₦
                             {(
                               (item.salePrice || item.price) * item.quantity
                             ).toFixed(2)}
@@ -586,18 +586,18 @@ export default function CheckoutPage() {
                 <div className="space-y-3 border-t pt-4">
                   <div className="flex justify-between">
                     <span className="text-[#46332E]/70">Subtotal</span>
-                    <span className="font-medium">${cartTotal.toFixed(2)}</span>
+                    <span className="font-medium">₦{cartTotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#46332E]/70">Shipping</span>
                     <span className="font-medium">
-                      ${shippingCost.toFixed(2)}
+                      ₦{shippingCost.toFixed(2)}
                     </span>
                   </div>
                   <div className="border-t pt-3 mt-3">
                     <div className="flex justify-between font-bold">
                       <span>Total</span>
-                      <span>${orderTotal.toFixed(2)}</span>
+                      <span>₦{orderTotal.toFixed(2)}</span>
                     </div>
                   </div>
                 </div>
@@ -1466,10 +1466,10 @@ function DeliveryStep({
                 </span>
                 <span className="text-lg font-bold text-[#46332E]">
                   {selectedCountry === "US" || selectedCountry === "CA"
-                    ? "$8.00"
+                    ? "₦8.00"
                     : ["GB", "FR", "DE", "IT", "ES"].includes(selectedCountry)
-                    ? "$12.00"
-                    : "$15.00"}
+                    ? "₦12.00"
+                    : "₦15.00"}
                 </span>
               </div>
             </div>
@@ -1496,10 +1496,10 @@ function DeliveryStep({
                 </span>
                 <span className="text-lg font-bold text-[#46332E]">
                   {selectedCountry === "US" || selectedCountry === "CA"
-                    ? "$20.00"
+                    ? "₦20.00"
                     : ["GB", "FR", "DE", "IT", "ES"].includes(selectedCountry)
-                    ? "$30.00"
-                    : "$37.50"}
+                    ? "₦30.00"
+                    : "₦37.50"}
                 </span>
               </div>
             </div>
@@ -1590,7 +1590,7 @@ function PaymentStep({
                 </p>
               </div>
               <p className="font-bold text-[#46332E]">
-                ${((item.salePrice || item.price) * item.quantity).toFixed(2)}
+                ₦{((item.salePrice || item.price) * item.quantity).toFixed(2)}
               </p>
             </div>
           ))}
@@ -1598,19 +1598,19 @@ function PaymentStep({
           <div className="border-t border-gray-200 pt-4 mt-4">
             <div className="flex justify-between py-2">
               <span className="text-[#46332E]/70">Subtotal</span>
-              <span className="font-medium">${cartTotal.toFixed(2)}</span>
+              <span className="font-medium">₦{cartTotal.toFixed(2)}</span>
             </div>
             <div className="flex justify-between py-2">
               <span className="text-[#46332E]/70">
                 Shipping ({deliverySpeed === "express" ? "Express" : "Standard"}
                 )
               </span>
-              <span className="font-medium">${shippingCost.toFixed(2)}</span>
+              <span className="font-medium">₦{shippingCost.toFixed(2)}</span>
             </div>
             <div className="flex justify-between py-3 border-t border-gray-200 mt-2">
               <span className="text-lg font-bold text-[#46332E]">Total</span>
               <span className="text-lg font-bold text-[#46332E]">
-                ${totalAmount.toFixed(2)}
+                ₦{totalAmount.toFixed(2)}
               </span>
             </div>
           </div>

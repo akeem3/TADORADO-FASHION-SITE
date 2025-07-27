@@ -81,9 +81,6 @@ export default function ProductDetailPage() {
                 {product.isNew && (
                   <Badge className="bg-[#46332E] text-white">New</Badge>
                 )}
-                {product.salePrice && (
-                  <Badge className="bg-red-600 text-white">Sale</Badge>
-                )}
               </div>
             </div>
           </div>
@@ -104,18 +101,7 @@ export default function ProductDetailPage() {
                 (24 reviews)
               </span>
             </div>
-            <p className="text-lg font-bold text-[#46332E]">
-              {product.salePrice ? (
-                <>
-                  <span className="text-3xl">${product.salePrice}</span>
-                  <span className="text-lg line-through ml-2 text-[#46332E]/60">
-                    ${product.price}
-                  </span>
-                </>
-              ) : (
-                `$${product.price}`
-              )}
-            </p>
+            <p className="text-lg font-bold text-[#46332E]">₦{product.price}</p>
             <p className="text-base text-[#46332E]/80">{product.description}</p>
 
             <div className="pt-6 border-t border-gray-200 flex gap-4">
@@ -129,7 +115,6 @@ export default function ProductDetailPage() {
                   id: product.id,
                   name: product.name,
                   price: product.price,
-                  salePrice: product.salePrice,
                   image: product.image,
                   category: product.category,
                   subCategory: product.subCategory,
@@ -146,7 +131,6 @@ export default function ProductDetailPage() {
                     id: product.id,
                     name: product.name,
                     price: product.price,
-                    salePrice: product.salePrice,
                     image: product.image,
                     category: product.category,
                     subCategory: product.subCategory,

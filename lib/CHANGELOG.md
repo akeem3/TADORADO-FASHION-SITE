@@ -281,3 +281,21 @@ GOOGLE_SHEET_FILENAME=Tadorado Export
 - User can select payment method at checkout; backend verifies and records payment status
 - All payment flows are secure, PCI DSS compliant, and support both local and international customers
 - Best practices: multiple payment options, clear instructions, virtual accounts for transfer, robust error handling, and customer support
+
+## [Unreleased] - Minor Issues Before Payment Integration
+
+### Resolved
+
+- [x] Quantity of product bought check (confirmed: correct quantity is added to Google Sheet)
+- [x] Currency to Naira (all $ symbols replaced with ₦ in UI)
+- [x] Sale price field removed from Google Sheets export and backend logic
+- [x] Sale price concept fully removed from all calculations, UI, models, and data
+- [x] Contact Page completion (dedicated contact page with location, Google Maps integration, and updated contact details)
+
+### Remaining Issues
+
+- [ ] Contact Details update
+- [ ] Checkout form details correction
+- [ ] Collection page (Styles details Update)
+- [ ] Home Page (improve steps section, buttons, Testimonials)
+- [ ] Node mailer (email sent to admin once an order is made)

@@ -119,7 +119,6 @@ export async function appendOrderToSheet(orderData: Record<string, unknown>) {
       formatCell(orderData.productName), // product(s)
       formatCell(orderData.productQuantity), // quantity
       formatCell(orderData.productPrice), // price
-      formatCell(orderData.productSalePrice), // sale price
       formatCell(orderData.totalAmount), // total
       formatCell(orderData.shippingCost), // shipping
       formatCell(orderData.taxAmount), // tax

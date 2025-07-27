@@ -15,7 +15,6 @@ model Product {
   subCategory String   @db.VarChar(100)
   ageGroup    String   @db.VarChar(50) // "adult" | "children" | "baby"
   price       Decimal  @db.Decimal(10, 2)
-  salePrice   Decimal? @db.Decimal(10, 2)
   isNew       Boolean  @default(false)
   isFeatured  Boolean  @default(false)
   isActive    Boolean  @default(true)

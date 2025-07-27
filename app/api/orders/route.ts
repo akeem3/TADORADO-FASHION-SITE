@@ -19,9 +19,6 @@ export async function POST(req: Request) {
       productCategory: cartItems.map((item) => item.category).join("; "),
       productSubCategory: cartItems.map((item) => item.subCategory).join("; "),
       productPrice: cartItems.map((item) => item.price).join("; "),
-      productSalePrice: cartItems
-        .map((item) => item.salePrice || "")
-        .join("; "),
       productQuantity: cartItems.map((item) => item.quantity).join("; "),
       customerName: data.customerInfo?.fullName,
       customerEmail: data.customerInfo?.email,
