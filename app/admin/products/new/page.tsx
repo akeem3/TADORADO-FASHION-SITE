@@ -15,8 +15,6 @@ type ProductFormState = Omit<
 > & {
   isNew: "true" | "false";
   isFeatured: "true" | "false";
-  salePrice: string;
-  hasSalePrice: "yes" | "no";
 };
 
 export default function NewProductPage() {

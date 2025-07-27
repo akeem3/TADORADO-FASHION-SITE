@@ -23,14 +23,6 @@ function parseProductData(data: ProductInput) {
     subCategory: data.subCategory,
     ageGroup: data.ageGroup,
     price: Number(data.price),
-    salePrice:
-      typeof data.salePrice === "string"
-        ? data.salePrice !== ""
-          ? Number(data.salePrice)
-          : undefined
-        : typeof data.salePrice === "number"
-        ? data.salePrice
-        : undefined,
     isNew:
       (typeof data.isNew === "string" && data.isNew === "true") ||
       (typeof data.isNew === "boolean" && data.isNew),

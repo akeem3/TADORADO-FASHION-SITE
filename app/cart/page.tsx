@@ -96,20 +96,9 @@ const CartPage = () => {
                         </p>
                       </div>
                       <div className="mt-2 sm:mt-0 text-right">
-                        {item.salePrice ? (
-                          <div>
-                            <span className="font-bold text-[#46332E]">
-                              ₦{item.salePrice}
-                            </span>
-                            <span className="text-sm text-[#46332E]/60 line-through ml-2">
-                              ₦{item.price}
-                            </span>
-                          </div>
-                        ) : (
-                          <span className="font-bold text-[#46332E]">
-                            ₦{item.price}
-                          </span>
-                        )}
+                        <span className="font-bold text-[#46332E]">
+                          ₦{item.price}
+                        </span>
                       </div>
                     </div>
 

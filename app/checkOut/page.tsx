@@ -572,10 +572,7 @@ export default function CheckoutPage() {
                             Qty: {item.quantity}
                           </p>
                           <p className="font-medium">
-                            ₦
-                            {(
-                              (item.salePrice || item.price) * item.quantity
-                            ).toFixed(2)}
+                            ₦{(item.price * item.quantity).toFixed(2)}
                           </p>
                         </div>
                       </div>
@@ -1590,7 +1587,7 @@ function PaymentStep({
                 </p>
               </div>
               <p className="font-bold text-[#46332E]">
-                ₦{((item.salePrice || item.price) * item.quantity).toFixed(2)}
+                ₦{(item.price * item.quantity).toFixed(2)}
               </p>
             </div>
           ))}
