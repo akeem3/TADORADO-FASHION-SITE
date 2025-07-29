@@ -118,7 +118,6 @@ export default function ProductDetailPage() {
                 }}
                 quantity={quantity}
                 showQuantity={false}
-                redirectToCart={true}
                 className="flex-1 rounded-2xl hover:bg-[#46332E]/90 transition-colors duration-200"
               />
               <Button
