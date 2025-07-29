@@ -13,6 +13,60 @@ export async function POST(req: Request) {
     const timeStr = now.toLocaleTimeString("en-GB", { hour12: false }); // HH:MM:SS
     const orderDate = `Date: ${dateStr}\nTime: ${timeStr}`;
 
+    // Format measurements vertically for better readability
+    const formatMeasurements = (
+      measurements: Array<{
+        gender: "male" | "female";
+        height: string;
+        shoulder: string;
+        chest?: string;
+        bust?: string;
+        waist: string;
+        hip: string;
+        sleeve: string;
+        inseam?: string;
+        neck?: string;
+        extraNote?: string;
+        measurementUnit: "inches" | "cm";
+        label?: string;
+        outfitType: "shirt" | "pants" | "dress" | "jacket" | "skirt" | "blazer";
+      }>
+    ) => {
+      if (!measurements || measurements.length === 0) return "";
+
+      return measurements
+        .map((measurement, index) => {
+          const personLabel = measurement.label || `Person ${index + 1}`;
+          const gender = measurement.gender || "Not specified";
+          const unit = measurement.measurementUnit || "inches";
+
+          const measurementFields = [
+            `Height: ${measurement.height || "Not provided"}`,
+            `Shoulder: ${measurement.shoulder || "Not provided"}`,
+            measurement.gender === "male"
+              ? `Chest: ${measurement.chest || "Not provided"}`
+              : `Bust: ${measurement.bust || "Not provided"}`,
+            `Waist: ${measurement.waist || "Not provided"}`,
+            `Hip: ${measurement.hip || "Not provided"}`,
+            `Sleeve: ${measurement.sleeve || "Not provided"}`,
+            measurement.gender === "male"
+              ? `Inseam: ${measurement.inseam || "Not provided"}`
+              : "",
+            measurement.gender === "male"
+              ? `Neck: ${measurement.neck || "Not provided"}`
+              : "",
+            measurement.extraNote ? `Notes: ${measurement.extraNote}` : "",
+          ].filter((field) => field !== ""); // Remove empty fields
+
+          return [
+            `--- ${personLabel} (${gender}) ---`,
+            `Unit: ${unit}`,
+            ...measurementFields,
+          ].join("\n");
+        })
+        .join("\n\n");
+    };
+
     const orderRow = {
       orderNumber:
         data.orderNumber || `TD-${Math.floor(100000 + Math.random() * 900000)}`,
@@ -35,7 +89,7 @@ export async function POST(req: Request) {
       deliveryState: data.customerInfo?.state,
       deliveryZipCode: data.customerInfo?.postalCode,
       deliveryCountry: data.customerInfo?.country,
-      measurements: JSON.stringify(data.measurements),
+      measurements: formatMeasurements(data.measurements),
       notes: data.notes || "",
     };
     const result = await appendOrderToSheet(orderRow);

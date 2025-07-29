@@ -362,16 +362,20 @@ export default function CheckoutPage() {
     let isValid = true;
 
     if (currentStep === 1) {
-      // Validate measurements step fields
-      const result = await methods.trigger([
-        `measurements.${activeMeasurementIndex}.height`,
-        `measurements.${activeMeasurementIndex}.shoulder`,
-        `measurements.${activeMeasurementIndex}.waist`,
-        `measurements.${activeMeasurementIndex}.hip`,
-        `measurements.${activeMeasurementIndex}.sleeve`,
-        `measurements.${activeMeasurementIndex}.outfitType`,
-      ]);
-      isValid = result;
+      // Validate ALL measurements step fields for ALL people
+      const validationPromises = measurements.map((_, index) =>
+        methods.trigger([
+          `measurements.${index}.height`,
+          `measurements.${index}.shoulder`,
+          `measurements.${index}.waist`,
+          `measurements.${index}.hip`,
+          `measurements.${index}.sleeve`,
+          `measurements.${index}.outfitType`,
+        ])
+      );
+
+      const results = await Promise.all(validationPromises);
+      isValid = results.every((result) => result);
     } else if (currentStep === 2) {
       // Validate delivery step fields
       const result = await methods.trigger([
@@ -526,10 +530,36 @@ export default function CheckoutPage() {
                           setStep(step + 1);
                           window.scrollTo({ top: 0, behavior: "smooth" });
                         } else {
-                          // Show a message about validation errors
-                          alert(
-                            "Please fill in all required fields before proceeding."
+                          // Show a more specific message about validation errors
+                          const incompleteMeasurements = measurements.filter(
+                            (_, index) => {
+                              const measurement = watch(
+                                `measurements.${index}`
+                              );
+                              return (
+                                !measurement?.height ||
+                                !measurement?.shoulder ||
+                                !measurement?.waist ||
+                                !measurement?.hip ||
+                                !measurement?.sleeve ||
+                                !measurement?.outfitType
+                              );
+                            }
                           );
+
+                          if (incompleteMeasurements.length > 0) {
+                            alert(
+                              `Please complete measurements for all ${
+                                measurements.length
+                              } person${
+                                measurements.length > 1 ? "s" : ""
+                              } before proceeding.`
+                            );
+                          } else {
+                            alert(
+                              "Please fill in all required fields before proceeding."
+                            );
+                          }
                         }
                       }
                     }}
@@ -799,10 +829,11 @@ function MeasurementsStep({
           ))}
 
           <button
+            type="button"
             onClick={() => {
-              setMeasurements([
-                ...measurements,
-                {
+              try {
+                // Add a new measurement entry with proper typing
+                const newMeasurement: CheckoutFormData["measurements"][0] = {
                   gender: "male",
                   height: "",
                   shoulder: "",
@@ -817,9 +848,20 @@ function MeasurementsStep({
                   measurementUnit: "inches",
                   label: "",
                   outfitType: "shirt",
-                },
-              ]);
-              setActiveMeasurementIndex(measurements.length);
+                };
+
+                setMeasurements((prev) => {
+                  const newMeasurements = [...prev, newMeasurement];
+                  // Set the active index to the new measurement (last index)
+                  setActiveMeasurementIndex(newMeasurements.length - 1);
+                  return newMeasurements;
+                });
+              } catch (error) {
+                console.error("Error adding new person:", error);
+                alert(
+                  "There was an error adding a new person. Please try again."
+                );
+              }
             }}
             className="px-4 py-2 rounded-lg text-sm font-medium bg-[#F5F3F0] text-[#46332E] hover:bg-[#E8E4E0] transition-all duration-200 flex items-center gap-2 border border-[#E5D3C6]"
           >
@@ -857,14 +899,22 @@ function MeasurementsStep({
         {measurements.length > 1 && (
           <div className="mb-6">
             <button
+              type="button"
               onClick={() => {
-                const newMeasurements = measurements.filter(
-                  (_, idx) => idx !== activeMeasurementIndex
-                );
-                setMeasurements(newMeasurements);
-                setActiveMeasurementIndex(
-                  Math.max(0, activeMeasurementIndex - 1)
-                );
+                try {
+                  const newMeasurements = measurements.filter(
+                    (_, idx) => idx !== activeMeasurementIndex
+                  );
+                  setMeasurements(newMeasurements);
+                  setActiveMeasurementIndex(
+                    Math.max(0, activeMeasurementIndex - 1)
+                  );
+                } catch (error) {
+                  console.error("Error removing person:", error);
+                  alert(
+                    "There was an error removing this person. Please try again."
+                  );
+                }
               }}
               className="px-4 py-2 rounded-lg text-sm font-medium bg-red-50 text-red-600 hover:bg-red-100 transition-all duration-200 flex items-center gap-2 border border-red-200"
             >

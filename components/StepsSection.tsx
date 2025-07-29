@@ -11,21 +11,21 @@ const steps = [
     title: "CHOOSE YOUR STYLE",
     description:
       "Select from our curated collection of designs or customize your own unique piece.",
-    icon: Ruler,
+    icon: Shirt,
   },
   {
     number: "02",
     title: "TAKE YOUR MEASUREMENTS",
     description:
       "Get precise measurements using our detailed guide. Every inch matters for the perfect fit.",
-    icon: Tape,
+    icon: Ruler,
   },
   {
     number: "03",
     title: "PERFECT FIT GUARANTEE",
     description:
       "We ensure your garment fits perfectly with our expert tailoring process.",
-    icon: Shirt,
+    icon: Tape,
   },
 ];
 

@@ -1,5 +1,39 @@
 # Changelog
 
+## [Unreleased] - Multiple Measurement System Fix
+
+### Multiple Measurement System Issues Fixed
+
+- **Add Another Person Button:** Fixed issue where adding a new measurement would not switch to the new measurement form
+- **Active Measurement Index:** Corrected the logic to properly set the active measurement index to the newly added measurement
+- **Form Navigation:** Ensured clicking on measurement tabs correctly switches between different measurement forms without advancing the checkout step
+- **State Management:** Improved the state update logic to use the new measurements array length instead of the old one
+
+### Technical Details
+
+- **Root Cause:** `setActiveMeasurementIndex(measurements.length)` was using the old array length before the new measurement was added
+- **Solution:** Moved the `setActiveMeasurementIndex` call inside the `setMeasurements` callback to ensure it uses the updated array
+- **Code Change:**
+
+  ```typescript
+  // Before (incorrect)
+  setMeasurements((prev) => [...prev, newMeasurement]);
+  setActiveMeasurementIndex(measurements.length);
+
+  // After (correct)
+  setMeasurements((prev) => {
+    const newMeasurements = [...prev, newMeasurement];
+    setActiveMeasurementIndex(newMeasurements.length - 1);
+    return newMeasurements;
+  });
+  ```
+
+### User Experience Improvements
+
+- **Fresh Forms:** New measurements now show empty forms instead of displaying previous measurement data
+- **Proper Navigation:** Users can now click between measurement tabs to edit different people's measurements
+- **Intuitive Flow:** The form stays on the measurement step when adding/removing people as expected
+
 ## [Unreleased] - Render Deployment Migration
 
 ### Migration from Vercel to Render
