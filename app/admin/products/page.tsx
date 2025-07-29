@@ -56,7 +56,7 @@ export default function AdminProductsPage() {
                     <td className="p-3">{product.id}</td>
                     <td className="p-3">{product.name}</td>
                     <td className="p-3">{product.category}</td>
-                    <td className="p-3">${product.price}</td>
+                    <td className="p-3">₦{product.price}</td>
                     <td className="p-3 flex gap-2">
                       <Link href={`/admin/products/edit/${product.id}`}>
                         <Button size="sm" variant="outline">

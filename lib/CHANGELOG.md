@@ -292,10 +292,11 @@ GOOGLE_SHEET_FILENAME=Tadorado Export
 - [x] Sale price concept fully removed from all calculations, UI, models, and data
 - [x] Contact Page completion (dedicated contact page with location, Google Maps integration, and updated contact details)
 - [x] Contact Details update (location, phone, email, business hours updated and Google Maps loading issue fixed)
+- [x] Product page styling (removed review stars, enhanced buttons with rounded-2xl styling)
 
 ### Remaining Issues
 
-- [ ] Checkout form details correction
+- [ ] Checkout form details correction (some details need updating and fixing)
 - [ ] Collection page (Styles details Update)
 - [ ] Home Page (improve steps section, buttons, Testimonials)
 - [ ] Node mailer (email sent to admin once an order is made)
@@ -314,3 +315,97 @@ GOOGLE_SHEET_FILENAME=Tadorado Export
 - **Root Cause:** The seed script was still referencing the `salePrice` field which was removed from the Product model as part of the sale price concept removal
 - **Solution:** Removed the `salePrice` field from the product data in `scripts/seed.ts`
 - **Impact:** Build now passes TypeScript compilation and should deploy successfully on Render
+
+## [Unreleased] - Product Page UI Improvements
+
+### Fixed
+
+- **Review Stars Removal:** Removed the hardcoded 5-star review display and "(24 reviews)" text from the product detail page
+- **Button Styling Enhancement:** Applied consistent `rounded-2xl` styling to all buttons on the product page
+- **Hover Effects:** Added smooth hover transitions with `transition-colors duration-200` for better user experience
+- **Button Consistency:** Styled quantity controls (-/+) with subtle gray hover effects
+- **Primary Buttons:** Enhanced "Add to Cart" and "Buy Now" buttons with brand color hover effects (`hover:bg-[#46332E]/90`)
+- **Component Consistency:** Updated AddToCartButton component to match the rounded-2xl styling and smooth transitions
+
+### Technical Details
+
+- **Files Modified:**
+  - `app/collections/product/[id]/page.tsx` - Product page styling
+  - `components/ui/AddToCartButton.tsx` - Component button styling consistency
+- **Removed:** Star icon import and review stars section
+- **Added:** Rounded corners, hover effects, and smooth transitions to all interactive elements
+- **Maintained:** Existing functionality while improving visual consistency and user experience
+
+## [Unreleased] - Collection Page & Admin Style Options Update
+
+### Completed
+
+- The style (subcategory) dropdowns for both Male and Female outfits in the admin forms are now fully controlled by `data/products.ts`.
+- The Collection page style dropdowns are dynamically populated from the database, reflecting all styles present in the product data.
+- Adding a new style via the admin panel automatically updates the available options everywhere, ensuring consistency and reducing manual updates.
+- The system is now robust and future-proof: updating styles in the admin or database is immediately reflected in all relevant dropdowns.
+
+### No further action required for style/subcategory dropdown consistency.
+
+## [Unreleased] - Buy Now Button Direct Checkout
+
+### Fixed
+
+- The Buy Now button on the product page now takes the user directly to checkout with only the selected product and quantity.
+- The checkout flow is completely isolated from the cart: previous cart items are not included, and the cart remains unchanged.
+- The checkout page automatically detects when a Buy Now purchase is in progress and displays only the selected product for the order summary and payment.
+- This provides a true single-product, instant checkout experience, while preserving the user's cart for later.
+
+## [Unreleased] - Checkout Form Details Correction
+
+### Completed
+
+- Removed the "Outfit Type" select box from the measurement form in checkout.
+- Outfit type is now automatically determined from the product(s) being checked out:
+  - For Buy Now: Uses the single product's type directly.
+  - For Cart checkout: Uses the outfit type from each cart item.
+- The user is no longer asked to select outfit type in the measurement form.
+- The outfit type is still saved to Google Sheets, but is sourced from the product data, not user input.
+- This approach supports both Buy Now (direct checkout) and Cart checkout flows.
+
+## [Unreleased] - Google Sheets Multiple Products Formatting Improvement
+
+### Completed
+
+- **Improved Google Sheets formatting for multiple products in orders:**
+  - Product images now display as multi-line text in a single cell (each image URL on its own line)
+  - Product categories now display as multi-line text in a single cell (each category on its own line)
+  - Product subcategories now display as multi-line text in a single cell (each subcategory on its own line)
+- **Technical changes:**
+  - Changed join separator from `; ` to `\n` (newline) for productImage, productCategory, and productSubCategory fields
+  - This prevents text overflow into adjacent cells and makes the spreadsheet more readable
+  - Each product's image/category/subcategory now appears on its own line within the same cell
+- **Files modified:**
+  - `app/api/orders/route.ts` - Updated join separators for better Google Sheets formatting
+
+## [Unreleased] - Google Sheets Product(s) and Date/Time Formatting Improvements
+
+### Completed
+
+- **Product(s) cell:** Now displays each product name on a new line within a single cell for multi-product orders
+- **Date and time cell:** Now displays as 'Date: YYYY-MM-DD' and 'Time: HH:MM:SS' on separate lines within the same cell
+- **Product images:** Reverted to simple newline-separated URLs (removed HYPERLINK formula)
+- **Technical changes:**
+  - Updated join logic and formatting in `app/api/orders/route.ts` for productName and orderDate fields
+  - Product images remain as simple URLs separated by newlines
+- **Files modified:**
+  - `app/api/orders/route.ts` - Improved formatting for Google Sheets export
+
+## [Unreleased] - Home Page Improvements
+
+### Completed
+
+- **About Section:**
+  - Displays a short summary by default
+  - 'Read More' button opens a modal with extended, scrollable about text
+- **Steps Section:**
+  - 'Get Started' button now navigates to the collections page (`/collections`)
+  - Step order updated: 1 is now 'Choose your style', 2 is 'Take your measurements', 3 is 'Perfect fit guarantee'
+- **Files modified:**
+  - `components/AboutSection.tsx`
+  - `components/StepsSection.tsx`

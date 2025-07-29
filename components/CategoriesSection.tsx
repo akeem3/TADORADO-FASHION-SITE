@@ -10,19 +10,19 @@ const categories = [
     name: "Female Outfit",
     image:
       "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/download%20(4).jpg?alt=media&token=eebb77a1-7744-408b-8923-ddb6d1b78958",
-    link: "/collections?tab=female",
+    link: "/collections?tab=female#collections-section",
   },
   {
     name: "Male Outfit",
     image:
       "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/male%20outfit.jpeg?alt=media&token=a808db44-ba9f-4e9c-9372-2a65a466caa6",
-    link: "/collections?tab=male",
+    link: "/collections?tab=male#collections-section",
   },
   {
     name: "Kid's Outfit",
     image:
       "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/kids%20ankara.jpeg?alt=media&token=bddd7dbf-b599-4d73-9f02-ddbdcca83f95",
-    link: "/collections?tab=male&ageGroup=children",
+    link: "/collections?tab=female&ageGroup=children#collections-section",
   },
 ];
 
@@ -54,7 +54,8 @@ export default function CategoriesSection() {
               transition={{ duration: 0.6, delay: 0.4 }}
               viewport={{ once: true, margin: "-100px" }}
             >
-              Explore a variety of styles crafted to perfection. Find the perfect fit for every occasion.
+              Explore a variety of styles crafted to perfection. Find the
+              perfect fit for every occasion.
             </motion.p>
           </motion.div>
 

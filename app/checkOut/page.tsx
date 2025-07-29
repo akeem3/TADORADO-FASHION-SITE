@@ -38,12 +38,12 @@ import type {
 
 // Update the CartProduct type to match what's in your CartContext
 import { useCart, type CartProduct } from "@/components/ui/CartContext";
+import { usePathname } from "next/navigation";
 
 // Define form data type
 interface CheckoutFormData {
   measurements: Array<{
     gender: "male" | "female";
-    outfitType: string;
     height: string;
     shoulder: string;
     chest?: string;
@@ -56,6 +56,7 @@ interface CheckoutFormData {
     extraNote?: string;
     measurementUnit: "inches" | "cm";
     label?: string; // For user to label each set (e.g. "For Dad", "For Me")
+    outfitType: "shirt" | "pants" | "dress" | "jacket" | "skirt" | "blazer";
   }>;
   delivery: {
     fullName: string;
@@ -90,15 +91,13 @@ const countriesList = [
   // Add more countries as needed
 ];
 
-// Dummy data for outfit types
-const outfitTypes = {
-  male: ["Suit", "Shirt", "Trousers", "Jacket"],
-  female: ["Dress", "Blouse", "Skirt", "Pants"],
-};
-
 export default function CheckoutPage() {
   const [step, setStep] = useState(1);
   const { cartItems, cartTotal, clearCart } = useCart();
+  const [buyNowItem, setBuyNowItem] = useState<CartProduct | null>(null);
+  const [buyNowMode, setBuyNowMode] = useState(false);
+  const pathname = usePathname();
+
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -107,7 +106,6 @@ export default function CheckoutPage() {
   >([
     {
       gender: "male",
-      outfitType: "",
       height: "",
       shoulder: "",
       chest: "",
@@ -120,6 +118,7 @@ export default function CheckoutPage() {
       extraNote: "",
       measurementUnit: "inches",
       label: "",
+      outfitType: "shirt",
     },
   ]);
   const [activeMeasurementIndex, setActiveMeasurementIndex] = useState(0);
@@ -129,7 +128,6 @@ export default function CheckoutPage() {
       measurements: [
         {
           gender: "male",
-          outfitType: "",
           height: "",
           shoulder: "",
           chest: "",
@@ -142,6 +140,7 @@ export default function CheckoutPage() {
           extraNote: "",
           measurementUnit: "inches",
           label: "",
+          outfitType: "shirt",
         },
       ],
       delivery: {
@@ -179,7 +178,6 @@ export default function CheckoutPage() {
       if (step === 1) {
         // Validate measurements step
         if (
-          !data.measurements[activeMeasurementIndex].outfitType ||
           !data.measurements[activeMeasurementIndex].height ||
           !data.measurements[activeMeasurementIndex].shoulder ||
           !data.measurements[activeMeasurementIndex].waist ||
@@ -292,8 +290,33 @@ export default function CheckoutPage() {
     selectedDeliverySpeed
   );
 
-  // Calculate total with shipping
-  const orderTotal = cartTotal + shippingCost;
+  // Calculate buyNowTotal and orderTotal after buyNowItem and buyNowMode are defined
+  const buyNowTotal = buyNowItem ? buyNowItem.price * buyNowItem.quantity : 0;
+  const orderTotal = buyNowMode
+    ? buyNowTotal + shippingCost
+    : cartTotal + shippingCost;
+
+  // On mount, check for buyNowItem in sessionStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const item = window.sessionStorage.getItem("buyNowItem");
+      if (item) {
+        try {
+          setBuyNowItem(JSON.parse(item));
+          setBuyNowMode(true);
+        } catch {
+          setBuyNowItem(null);
+          setBuyNowMode(false);
+        }
+      }
+    }
+    // Clean up buyNowItem if user leaves checkout
+    return () => {
+      if (typeof window !== "undefined") {
+        window.sessionStorage.removeItem("buyNowItem");
+      }
+    };
+  }, [pathname]);
 
   // Add global styles for smooth scrolling
   useEffect(() => {
@@ -306,11 +329,10 @@ export default function CheckoutPage() {
     };
   }, []);
 
-  // If cart is empty, redirect to collections
-  if (cartItems.length === 0) {
+  // If not buyNowMode and cart is empty, redirect to collections
+  if (!buyNowMode && cartItems.length === 0) {
     return (
       <>
-        {/* <Banner title="CHECKOUT" description="Complete your purchase with our secure checkout process." /> */}
         <Container>
           <div className="py-16 text-center">
             <div className="max-w-md mx-auto">
@@ -342,12 +364,12 @@ export default function CheckoutPage() {
     if (currentStep === 1) {
       // Validate measurements step fields
       const result = await methods.trigger([
-        `measurements.${activeMeasurementIndex}.outfitType`,
         `measurements.${activeMeasurementIndex}.height`,
         `measurements.${activeMeasurementIndex}.shoulder`,
         `measurements.${activeMeasurementIndex}.waist`,
         `measurements.${activeMeasurementIndex}.hip`,
         `measurements.${activeMeasurementIndex}.sleeve`,
+        `measurements.${activeMeasurementIndex}.outfitType`,
       ]);
       isValid = result;
     } else if (currentStep === 2) {
@@ -456,10 +478,17 @@ export default function CheckoutPage() {
                       watch={watch}
                       setValue={setValue}
                       errors={errors}
-                      cartItems={cartItems}
-                      cartTotal={cartTotal}
+                      cartItems={
+                        buyNowMode && buyNowItem ? [buyNowItem] : cartItems
+                      }
+                      cartTotal={
+                        buyNowMode && buyNowItem ? buyNowTotal : cartTotal
+                      }
                       shippingCost={shippingCost}
                       register={register} // Add this line
+                      buyNowMode={buyNowMode}
+                      buyNowItem={buyNowItem}
+                      buyNowTotal={buyNowTotal}
                     />
                   )}
                 </AnimatePresence>
@@ -550,40 +579,48 @@ export default function CheckoutPage() {
                 </h2>
 
                 <div className="space-y-4 mb-6 max-h-[40vh] overflow-y-auto pr-2">
-                  {cartItems.map((item) => (
-                    <div
-                      key={item.id}
-                      className="flex gap-3 pb-3 border-b border-gray-100 last:border-0"
-                    >
-                      <div className="relative w-16 h-16 flex-shrink-0 rounded-md overflow-hidden">
-                        <Image
-                          src={item.image || "/placeholder.svg"}
-                          alt={item.name}
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="font-medium text-[#46332E] line-clamp-1">
-                          {item.name}
-                        </h3>
-                        <div className="flex justify-between">
-                          <p className="text-sm text-[#46332E]/70">
-                            Qty: {item.quantity}
-                          </p>
-                          <p className="font-medium">
-                            ₦{(item.price * item.quantity).toFixed(2)}
-                          </p>
+                  {(buyNowMode && buyNowItem ? [buyNowItem] : cartItems).map(
+                    (item) => (
+                      <div
+                        key={item.id}
+                        className="flex gap-3 pb-3 border-b border-gray-100 last:border-0"
+                      >
+                        <div className="relative w-16 h-16 flex-shrink-0 rounded-md overflow-hidden">
+                          <Image
+                            src={item.image || "/placeholder.svg"}
+                            alt={item.name}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-medium text-[#46332E] line-clamp-1">
+                            {item.name}
+                          </h3>
+                          <div className="flex justify-between">
+                            <p className="text-sm text-[#46332E]/70">
+                              Qty: {item.quantity}
+                            </p>
+                            <p className="font-medium">
+                              ₦{(item.price * item.quantity).toFixed(2)}
+                            </p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  )}
                 </div>
 
                 <div className="space-y-3 border-t pt-4">
                   <div className="flex justify-between">
                     <span className="text-[#46332E]/70">Subtotal</span>
-                    <span className="font-medium">₦{cartTotal.toFixed(2)}</span>
+                    <span className="font-medium">
+                      ₦
+                      {(buyNowMode && buyNowItem
+                        ? buyNowTotal
+                        : cartTotal
+                      ).toFixed(2)}
+                    </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#46332E]/70">Shipping</span>
@@ -767,7 +804,6 @@ function MeasurementsStep({
                 ...measurements,
                 {
                   gender: "male",
-                  outfitType: "",
                   height: "",
                   shoulder: "",
                   chest: "",
@@ -780,6 +816,7 @@ function MeasurementsStep({
                   extraNote: "",
                   measurementUnit: "inches",
                   label: "",
+                  outfitType: "shirt",
                 },
               ]);
               setActiveMeasurementIndex(measurements.length);
@@ -926,49 +963,46 @@ function MeasurementsStep({
             </RadioGroup>
           </div>
 
-          {/* Outfit Type */}
+          {/* Outfit Type Selection */}
           <div className="bg-gray-50 p-4 rounded-lg">
-            <Label
-              htmlFor="outfitType"
-              className="text-base font-medium text-[#46332E]"
-            >
+            <Label className="text-base font-medium text-[#46332E]">
               Outfit Type
             </Label>
             <Select
               onValueChange={(value) =>
-                handleRadioChange(
+                setValue(
                   `measurements.${activeMeasurementIndex}.outfitType`,
-                  value
+                  value as
+                    | "shirt"
+                    | "pants"
+                    | "dress"
+                    | "jacket"
+                    | "skirt"
+                    | "blazer"
                 )
               }
               defaultValue={watch(
                 `measurements.${activeMeasurementIndex}.outfitType`
               )}
             >
-              <SelectTrigger className="rounded-xl w-full mt-3 bg-white focus:ring-2 focus:ring-[#E5D3C6] focus:border-[#E5D3C6]">
+              <SelectTrigger className="rounded-xl w-full mt-2 focus:ring-2 focus:ring-[#E5D3C6] focus:border-[#E5D3C6]">
                 <SelectValue placeholder="Select outfit type" />
               </SelectTrigger>
               <SelectContent className="bg-[#FDF7F2]">
-                {gender === "male"
-                  ? outfitTypes.male.map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {type}
-                      </SelectItem>
-                    ))
-                  : outfitTypes.female.map((type) => (
-                      <SelectItem key={type} value={type}>
-                        {type}
-                      </SelectItem>
-                    ))}
+                <SelectItem value="shirt">Shirt</SelectItem>
+                <SelectItem value="pants">Pants</SelectItem>
+                <SelectItem value="dress">Dress</SelectItem>
+                <SelectItem value="jacket">Jacket</SelectItem>
+                <SelectItem value="skirt">Skirt</SelectItem>
+                <SelectItem value="blazer">Blazer</SelectItem>
               </SelectContent>
             </Select>
-            {typeof errors.measurements === "object" &&
-            errors.measurements &&
-            errors.measurements[activeMeasurementIndex]?.outfitType ? (
-              <p className="text-red-500 text-sm mt-2">
-                Please select an outfit type
-              </p>
-            ) : null}
+            {errors.measurements &&
+              errors.measurements[activeMeasurementIndex]?.outfitType && (
+                <p className="text-red-500 text-sm mt-2">
+                  Outfit type is required
+                </p>
+              )}
           </div>
 
           {/* Common Measurements */}
@@ -1511,12 +1545,15 @@ function DeliveryStep({
 // In the PaymentStep component, update the PaymentStepProps interface:
 interface PaymentStepProps {
   watch: UseFormWatch<CheckoutFormData>;
-  setValue: UseFormSetValue<CheckoutFormData>;
+  setValue: UseFormSetValue<CheckoutFormData>; // ensure required
   errors: FieldErrors<CheckoutFormData>;
   cartItems: CartProduct[];
   cartTotal: number;
   shippingCost: number;
-  register: UseFormRegister<CheckoutFormData>; // Add this line
+  register: UseFormRegister<CheckoutFormData>;
+  buyNowMode?: boolean;
+  buyNowItem?: CartProduct | null;
+  buyNowTotal?: number;
 }
 
 // Then update the PaymentStep component function signature to include register:
@@ -1528,6 +1565,9 @@ function PaymentStep({
   cartTotal,
   shippingCost,
   register,
+  buyNowMode,
+  buyNowItem,
+  buyNowTotal,
 }: PaymentStepProps) {
   const deliverySpeed = watch("delivery.deliverySpeed");
   const totalAmount = cartTotal + shippingCost;
@@ -1575,7 +1615,7 @@ function PaymentStep({
         </h3>
 
         <div className="space-y-4">
-          {cartItems.map((item) => (
+          {(buyNowMode && buyNowItem ? [buyNowItem] : cartItems).map((item) => (
             <div
               key={item.id}
               className="flex justify-between items-center py-3 border-b border-gray-100 last:border-0"
@@ -1595,19 +1635,29 @@ function PaymentStep({
           <div className="border-t border-gray-200 pt-4 mt-4">
             <div className="flex justify-between py-2">
               <span className="text-[#46332E]/70">Subtotal</span>
-              <span className="font-medium">₦{cartTotal.toFixed(2)}</span>
+              <span className="font-medium">
+                ₦
+                {(buyNowMode && buyNowItem
+                  ? buyNowTotal ?? 0
+                  : cartTotal ?? 0
+                ).toFixed(2)}
+              </span>
             </div>
+
             <div className="flex justify-between py-2">
               <span className="text-[#46332E]/70">
                 Shipping ({deliverySpeed === "express" ? "Express" : "Standard"}
                 )
               </span>
-              <span className="font-medium">₦{shippingCost.toFixed(2)}</span>
+              <span className="font-medium">
+                ₦{(shippingCost ?? 0).toFixed(2)}
+              </span>
             </div>
+
             <div className="flex justify-between py-3 border-t border-gray-200 mt-2">
               <span className="text-lg font-bold text-[#46332E]">Total</span>
               <span className="text-lg font-bold text-[#46332E]">
-                ₦{totalAmount.toFixed(2)}
+                ₦{(totalAmount ?? 0).toFixed(2)}
               </span>
             </div>
           </div>

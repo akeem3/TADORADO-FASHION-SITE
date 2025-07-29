@@ -6,18 +6,25 @@ export async function POST(req: Request) {
     const data = await req.json();
     // Map incoming data to the 23-column schema
     const cartItems = (data.cartItems ?? []) as Array<Record<string, unknown>>;
+
+    // Format date and time
+    const now = new Date();
+    const dateStr = now.toLocaleDateString("en-CA"); // YYYY-MM-DD
+    const timeStr = now.toLocaleTimeString("en-GB", { hour12: false }); // HH:MM:SS
+    const orderDate = `Date: ${dateStr}\nTime: ${timeStr}`;
+
     const orderRow = {
       orderNumber:
         data.orderNumber || `TD-${Math.floor(100000 + Math.random() * 900000)}`,
-      orderDate: new Date().toISOString(),
+      orderDate,
       orderStatus: "pending",
       totalAmount: data.totalAmount,
       shippingCost: data.shippingCost,
       taxAmount: data.taxAmount,
-      productName: cartItems.map((item) => item.name).join("; "),
-      productImage: cartItems.map((item) => item.image).join("; "),
-      productCategory: cartItems.map((item) => item.category).join("; "),
-      productSubCategory: cartItems.map((item) => item.subCategory).join("; "),
+      productName: cartItems.map((item) => item.name).join("\n"),
+      productImage: cartItems.map((item) => item.image).join("\n"),
+      productCategory: cartItems.map((item) => item.category).join("\n"),
+      productSubCategory: cartItems.map((item) => item.subCategory).join("\n"),
       productPrice: cartItems.map((item) => item.price).join("; "),
       productQuantity: cartItems.map((item) => item.quantity).join("; "),
       customerName: data.customerInfo?.fullName,

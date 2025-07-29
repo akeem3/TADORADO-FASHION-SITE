@@ -6,10 +6,10 @@ import Container from "@/app/Components/Container";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { ArrowLeft, Star } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import AddToCartButton from "@/components/ui/AddToCartButton";
-import { useCart } from "@/components/ui/CartContext";
+// import { useCart } from "@/components/ui/CartContext";
 
 type Product = {
   id: number;
@@ -33,7 +33,7 @@ export default function ProductDetailPage() {
   const [selectedImage, setSelectedImage] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
-  const { addToCart } = useCart();
+  // const { addToCart } = useCart();
 
   useEffect(() => {
     fetch(`/api/products/${params.id}`)
@@ -90,26 +90,23 @@ export default function ProductDetailPage() {
             <h1 className="text-4xl font-bold text-[#46332E]">
               {product.name}
             </h1>
-            <div className="flex items-center gap-1">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  className="h-5 w-5 text-yellow-400 fill-yellow-400"
-                />
-              ))}
-              <span className="text-sm ml-2 text-[#46332E]/70">
-                (24 reviews)
-              </span>
-            </div>
             <p className="text-lg font-bold text-[#46332E]">₦{product.price}</p>
             <p className="text-base text-[#46332E]/80">{product.description}</p>
 
             <div className="pt-6 border-t border-gray-200 flex gap-4">
-              <Button onClick={() => setQuantity(Math.max(1, quantity - 1))}>
+              <Button
+                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                className="rounded-2xl hover:bg-gray-100 transition-colors duration-200"
+              >
                 -
               </Button>
               <span className="text-xl px-4">{quantity}</span>
-              <Button onClick={() => setQuantity(quantity + 1)}>+</Button>
+              <Button
+                onClick={() => setQuantity(quantity + 1)}
+                className="rounded-2xl hover:bg-gray-100 transition-colors duration-200"
+              >
+                +
+              </Button>
               <AddToCartButton
                 product={{
                   id: product.id,
@@ -122,20 +119,25 @@ export default function ProductDetailPage() {
                 quantity={quantity}
                 showQuantity={false}
                 redirectToCart={true}
-                className="flex-1"
+                className="flex-1 rounded-2xl hover:bg-[#46332E]/90 transition-colors duration-200"
               />
               <Button
-                className="bg-[#46332E] text-white flex-1"
+                className="bg-[#46332E] text-white flex-1 rounded-2xl hover:bg-[#46332E]/90 transition-colors duration-200"
                 onClick={() => {
-                  addToCart({
-                    id: product.id,
-                    name: product.name,
-                    price: product.price,
-                    image: product.image,
-                    category: product.category,
-                    subCategory: product.subCategory,
-                    quantity,
-                  });
+                  if (typeof window !== "undefined") {
+                    window.sessionStorage.setItem(
+                      "buyNowItem",
+                      JSON.stringify({
+                        id: product.id,
+                        name: product.name,
+                        price: product.price,
+                        image: product.image,
+                        category: product.category,
+                        subCategory: product.subCategory,
+                        quantity,
+                      })
+                    );
+                  }
                   router.push("/checkOut");
                 }}
               >

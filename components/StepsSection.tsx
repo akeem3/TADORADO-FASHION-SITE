@@ -3,21 +3,22 @@
 import { motion } from "framer-motion";
 import { Ruler, CassetteTapeIcon as Tape, Shirt } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 const steps = [
   {
     number: "01",
-    title: "TAKE YOUR MEASUREMENTS",
-    description:
-      "Get precise measurements using our detailed guide. Every inch matters for the perfect fit.",
-    icon: Tape,
-  },
-  {
-    number: "02",
     title: "CHOOSE YOUR STYLE",
     description:
       "Select from our curated collection of designs or customize your own unique piece.",
     icon: Ruler,
+  },
+  {
+    number: "02",
+    title: "TAKE YOUR MEASUREMENTS",
+    description:
+      "Get precise measurements using our detailed guide. Every inch matters for the perfect fit.",
+    icon: Tape,
   },
   {
     number: "03",
@@ -29,6 +30,8 @@ const steps = [
 ];
 
 export default function StepsSection() {
+  const router = useRouter();
+
   return (
     <section className="relative bg-[#1F1F1D] py-24 lg:py-32 overflow-hidden rounded-3xl">
       {/* Background Pattern */}
@@ -100,6 +103,7 @@ export default function StepsSection() {
             className="bg-transparent hover:bg-white text-white hover:text-[#1F1F1D] 
             border-2 border-white px-8 py-6 rounded-2xl text-lg transition-all duration-300 
             ease-in-out transform hover:scale-105"
+            onClick={() => router.push("/collections")}
           >
             Get Started
           </Button>
