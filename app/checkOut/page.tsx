@@ -56,7 +56,7 @@ interface CheckoutFormData {
     extraNote?: string;
     measurementUnit: "inches" | "cm";
     label?: string; // For user to label each set (e.g. "For Dad", "For Me")
-    outfitType: "shirt" | "pants" | "dress" | "jacket" | "skirt" | "blazer";
+    outfitType: string;
   }>;
   delivery: {
     fullName: string;
@@ -98,8 +98,46 @@ export default function CheckoutPage() {
   const [buyNowMode, setBuyNowMode] = useState(false);
   const pathname = usePathname();
 
+  // Add filters state for dynamic style dropdown
+  const [filters, setFilters] = useState<{
+    male: { ageGroups: string[]; subCategories: string[] };
+    female: { ageGroups: string[]; subCategories: string[] };
+  }>({
+    male: { ageGroups: [], subCategories: [] },
+    female: { ageGroups: [], subCategories: [] },
+  });
+
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Fetch filters for dynamic style dropdown
+  useEffect(() => {
+    const fetchFilters = async () => {
+      try {
+        const response = await fetch(
+          `${
+            process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+          }/api/products/filters`,
+          {
+            cache: "no-store",
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setFilters(
+            data || {
+              male: { ageGroups: [], subCategories: [] },
+              female: { ageGroups: [], subCategories: [] },
+            }
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching filters:", error);
+      }
+    };
+
+    fetchFilters();
+  }, []);
 
   const [measurements, setMeasurements] = useState<
     CheckoutFormData["measurements"]
@@ -118,7 +156,7 @@ export default function CheckoutPage() {
       extraNote: "",
       measurementUnit: "inches",
       label: "",
-      outfitType: "shirt",
+      outfitType: "",
     },
   ]);
   const [activeMeasurementIndex, setActiveMeasurementIndex] = useState(0);
@@ -140,7 +178,7 @@ export default function CheckoutPage() {
           extraNote: "",
           measurementUnit: "inches",
           label: "",
-          outfitType: "shirt",
+          outfitType: "",
         },
       ],
       delivery: {
@@ -226,6 +264,10 @@ export default function CheckoutPage() {
     // Final submission
     setIsSubmitting(true);
     try {
+      // Determine which items to send based on buy now mode
+      const itemsToSend = buyNowMode && buyNowItem ? [buyNowItem] : cartItems;
+      const totalAmountToSend = buyNowMode ? buyNowTotal : cartTotal;
+
       // Call the backend order API to trigger the Excel export
       const response = await fetch("/api/orders", {
         method: "POST",
@@ -238,8 +280,8 @@ export default function CheckoutPage() {
             method: data.payment.paymentMethod,
             status: "paid",
           },
-          cartItems,
-          totalAmount: cartTotal,
+          cartItems: itemsToSend,
+          totalAmount: totalAmountToSend,
           shippingCost,
           taxAmount: 0,
           notes: "",
@@ -248,7 +290,10 @@ export default function CheckoutPage() {
       const result = await response.json();
       if (result.success) {
         router.push("/checkOut/success");
-        setTimeout(() => clearCart(), 500);
+        // Clear cart only if not in buy now mode
+        if (!buyNowMode) {
+          setTimeout(() => clearCart(), 500);
+        }
       } else {
         alert("Order failed: " + (result.error || "Unknown error"));
         setIsSubmitting(false);
@@ -464,6 +509,7 @@ export default function CheckoutPage() {
                       watch={watch}
                       setValue={setValue}
                       errors={errors}
+                      filters={filters}
                     />
                   )}
                   {step === 2 && (
@@ -714,6 +760,10 @@ interface MeasurementsStepProps {
   watch: UseFormWatch<CheckoutFormData>;
   setValue: UseFormSetValue<CheckoutFormData>;
   errors: FieldErrors<CheckoutFormData>;
+  filters: {
+    male: { ageGroups: string[]; subCategories: string[] };
+    female: { ageGroups: string[]; subCategories: string[] };
+  };
 }
 
 function MeasurementsStep({
@@ -725,6 +775,7 @@ function MeasurementsStep({
   watch,
   setValue,
   errors,
+  filters,
 }: MeasurementsStepProps) {
   const gender = watch(`measurements.${activeMeasurementIndex}.gender`);
   const measurementUnit = watch(
@@ -847,7 +898,7 @@ function MeasurementsStep({
                   extraNote: "",
                   measurementUnit: "inches",
                   label: "",
-                  outfitType: "shirt",
+                  outfitType: "",
                 };
 
                 setMeasurements((prev) => {
@@ -1022,13 +1073,7 @@ function MeasurementsStep({
               onValueChange={(value) =>
                 setValue(
                   `measurements.${activeMeasurementIndex}.outfitType`,
-                  value as
-                    | "shirt"
-                    | "pants"
-                    | "dress"
-                    | "jacket"
-                    | "skirt"
-                    | "blazer"
+                  value
                 )
               }
               defaultValue={watch(
@@ -1039,12 +1084,17 @@ function MeasurementsStep({
                 <SelectValue placeholder="Select outfit type" />
               </SelectTrigger>
               <SelectContent className="bg-[#FDF7F2]">
-                <SelectItem value="shirt">Shirt</SelectItem>
-                <SelectItem value="pants">Pants</SelectItem>
-                <SelectItem value="dress">Dress</SelectItem>
-                <SelectItem value="jacket">Jacket</SelectItem>
-                <SelectItem value="skirt">Skirt</SelectItem>
-                <SelectItem value="blazer">Blazer</SelectItem>
+                {gender === "male"
+                  ? filters.male.subCategories.map((style) => (
+                      <SelectItem key={style} value={style}>
+                        {style.charAt(0).toUpperCase() + style.slice(1)}
+                      </SelectItem>
+                    ))
+                  : filters.female.subCategories.map((style) => (
+                      <SelectItem key={style} value={style}>
+                        {style.charAt(0).toUpperCase() + style.slice(1)}
+                      </SelectItem>
+                    ))}
               </SelectContent>
             </Select>
             {errors.measurements &&

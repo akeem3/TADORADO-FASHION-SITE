@@ -1,5 +1,48 @@
 # Changelog
 
+## [Unreleased] - Direct Buy Data Storage Issue Investigation
+
+### Issue Identified: Direct Buy Product Data Not Stored in Google Sheets
+
+**Problem:** When using "Buy Now" functionality, product category, sub-category, and image data are not being stored in the Google Sheet, unlike cart checkouts which work correctly.
+
+**Root Cause Analysis:**
+
+- **Checkout Flow Issue:** In `app/checkOut/page.tsx`, the `onSubmit` function always sends `cartItems` to the API, even in "buy now" mode
+- **Data Source Problem:** When in "buy now" mode, `cartItems` is empty, so no product data gets processed by the API
+- **API Processing:** The `/api/orders/route.ts` correctly processes `cartItems` for category, sub-category, and image data, but receives empty array for direct buys
+
+**Technical Details:**
+
+- **Buy Now Flow:** Product data is stored in `buyNowItem` state and `sessionStorage`
+- **API Call:** Always sends `cartItems` instead of checking for `buyNowMode` and sending `buyNowItem`
+- **Data Mapping:** API maps `cartItems.map((item) => item.category)` etc., but `cartItems` is empty for direct buys
+
+**Files Affected:**
+
+- `app/checkOut/page.tsx` - `onSubmit` function needs to handle buy now mode
+- `app/api/orders/route.ts` - May need to handle both cart and buy now data formats
+
+**Expected Behavior:**
+
+- Cart checkouts: ✅ Product data stored correctly
+- Direct buy single product: ❌ Product data missing
+- Direct buy multiple quantities: ❌ Product data missing
+
+## [Unreleased] - Remaining Critical Issues
+
+### High Priority Issues
+
+- [ ] **Payment Integration** - Essential for functional e-commerce (Paystack/Flutterwave for Nigeria & international payments)
+- [ ] **Node Mailer** - Email notifications to admin when orders are placed
+- [ ] **Render Cold Start Downtime** - Need to implement a pinger to keep the app warm
+
+### Completed Issues
+
+- [x] **Checkout Measurement Step** - Style dropdown now dynamically populates from database (like collection page does)
+
+### Previous Issues
+
 ## [Unreleased] - Multiple Measurement System Fix
 
 ### Multiple Measurement System Issues Fixed
@@ -330,10 +373,10 @@ GOOGLE_SHEET_FILENAME=Tadorado Export
 
 ### Remaining Issues
 
-- [ ] Checkout form details correction (some details need updating and fixing)
-- [ ] Collection page (Styles details Update)
-- [ ] Home Page (improve steps section, buttons, Testimonials)
-- [ ] Node mailer (email sent to admin once an order is made)
+- [ ] **Payment Integration** - Essential for functional e-commerce (Paystack/Flutterwave for Nigeria & international payments)
+- [ ] **Node Mailer** - Email notifications to admin when orders are placed
+- [x] **Checkout Measurement Step** - Style dropdown now dynamically populates from database (like collection page does)
+- [ ] **Render Cold Start Downtime** - Need to implement a pinger to keep the app warm
 
 ## [Unreleased] - Render Deployment Build Fix
 
