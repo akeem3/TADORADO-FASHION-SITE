@@ -17,7 +17,4 @@ services:
         sync: false
       - key: GOOGLE_SHEET_FILENAME
         sync: false
-      - key: BASE_URL
-        sync: false
-    healthCheckPath: /api/health
     autoDeploy: true
