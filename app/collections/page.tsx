@@ -41,16 +41,15 @@ export default async function CollectionsPage() {
   };
 
   try {
-    const baseUrl = process.env.BASE_URL || "http://localhost:3000";
-    console.log("🔍 Fetching products from:", `${baseUrl}/api/products`);
+    console.log("🔍 Fetching products from relative URL: /api/products");
 
-    const productRes = await fetch(`${baseUrl}/api/products`, {
+    const productRes = await fetch("/api/products", {
       cache: "no-store",
     });
 
     console.log("📊 Products API response status:", productRes.status);
 
-    const filterRes = await fetch(`${baseUrl}/api/products/filters`, {
+    const filterRes = await fetch("/api/products/filters", {
       cache: "no-store",
     });
 

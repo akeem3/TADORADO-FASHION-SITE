@@ -114,14 +114,9 @@ export default function CheckoutPage() {
   useEffect(() => {
     const fetchFilters = async () => {
       try {
-        const response = await fetch(
-          `${
-            process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
-          }/api/products/filters`,
-          {
-            cache: "no-store",
-          }
-        );
+        const response = await fetch("/api/products/filters", {
+          cache: "no-store",
+        });
         if (response.ok) {
           const data = await response.json();
           setFilters(
