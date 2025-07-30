@@ -27,8 +27,12 @@ const ContactSection = () => {
 
         <div className="grid md:grid-cols-3 gap-8 mb-12">
           {[
-            { icon: Phone, text: "+234 907 313 2616", label: "Whatsapp / Call us" },
-            { icon: Mail, text: "info@tadorado.com", label: "Email us" },
+            {
+              icon: Phone,
+              text: "+234 907 313 2616",
+              label: "Whatsapp / Call us",
+            },
+            { icon: Mail, text: "tadorado247@gmail.com", label: "Email us" },
             {
               icon: MapPin,
               text: "Shop B24, Awolowo Shopping Complex Mushin Lagos.",

@@ -29,6 +29,35 @@
 - Direct buy single product: ❌ Product data missing
 - Direct buy multiple quantities: ❌ Product data missing
 
+**Solution Implemented:**
+
+- **Modified `onSubmit` function in `app/checkOut/page.tsx`:**
+  - Added conditional logic to send `buyNowItem` when in "buy now" mode
+  - Added conditional logic to send correct `totalAmount` based on mode
+  - Added conditional cart clearing (only clear cart if not in buy now mode)
+- **Technical Changes:**
+
+  ```typescript
+  // Determine which items to send based on buy now mode
+  const itemsToSend = buyNowMode && buyNowItem ? [buyNowItem] : cartItems;
+  const totalAmountToSend = buyNowMode ? buyNowTotal : cartTotal;
+
+  // Send correct data to API
+  cartItems: itemsToSend,
+  totalAmount: totalAmountToSend,
+
+  // Clear cart only if not in buy now mode
+  if (!buyNowMode) {
+    setTimeout(() => clearCart(), 500);
+  }
+  ```
+
+**Result:**
+
+- Cart checkouts: ✅ Product data stored correctly
+- Direct buy single product: ✅ Product data now stored correctly
+- Direct buy multiple quantities: ✅ Product data now stored correctly
+
 ## [Unreleased] - Remaining Critical Issues
 
 ### High Priority Issues
@@ -40,6 +69,7 @@
 ### Completed Issues
 
 - [x] **Checkout Measurement Step** - Style dropdown now dynamically populates from database (like collection page does)
+- [x] **Direct Buy Data Storage Issue** - Product category, sub-category, and image data now correctly stored in Google Sheets for direct purchases
 
 ### Previous Issues
 
