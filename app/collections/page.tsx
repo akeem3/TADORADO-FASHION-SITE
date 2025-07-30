@@ -41,32 +41,51 @@ export default async function CollectionsPage() {
   };
 
   try {
-    const productRes = await fetch(
-      `${process.env.BASE_URL || "http://localhost:3000"}/api/products`,
-      {
-        cache: "no-store",
-      }
-    );
-    const filterRes = await fetch(
-      `${process.env.BASE_URL || "http://localhost:3000"}/api/products/filters`,
-      {
-        cache: "no-store",
-      }
-    );
+    const baseUrl = process.env.BASE_URL || "http://localhost:3000";
+    console.log("🔍 Fetching products from:", `${baseUrl}/api/products`);
+
+    const productRes = await fetch(`${baseUrl}/api/products`, {
+      cache: "no-store",
+    });
+
+    console.log("📊 Products API response status:", productRes.status);
+
+    const filterRes = await fetch(`${baseUrl}/api/products/filters`, {
+      cache: "no-store",
+    });
+
+    console.log("🔍 Filters API response status:", filterRes.status);
 
     if (productRes.ok) {
       const data = await productRes.json();
       products = Array.isArray(data) ? data : [];
+      console.log(`✅ Loaded ${products.length} products`);
+    } else {
+      console.error(
+        "❌ Products API failed:",
+        productRes.status,
+        productRes.statusText
+      );
+      const errorText = await productRes.text();
+      console.error("Error details:", errorText);
     }
+
     if (filterRes.ok) {
       const data = await filterRes.json();
       filters = data || {
         male: { ageGroups: [], subCategories: [] },
         female: { ageGroups: [], subCategories: [] },
       };
+      console.log("✅ Loaded filters successfully");
+    } else {
+      console.error(
+        "❌ Filters API failed:",
+        filterRes.status,
+        filterRes.statusText
+      );
     }
   } catch (error) {
-    console.error("Error fetching products or filters:", error);
+    console.error("❌ Error fetching products or filters:", error);
   }
 
   // Validate data to prevent build crashes
