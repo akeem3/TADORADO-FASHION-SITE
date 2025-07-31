@@ -17,7 +17,7 @@ const ContactSection = () => {
           viewport={{ once: true }}
         >
           <h2 className="text-3xl sm:text-4xl font-bold text-[#46332E] mb-4">
-            Get in Touch
+            GET IN TOUCH
           </h2>
           <p className="text-lg text-[#46332E]/80 max-w-2xl mx-auto">
             Have questions about our products or services? We`&lsquo;`re here to
