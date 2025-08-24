@@ -93,55 +93,59 @@ export default function ProductDetailPage() {
             <p className="text-lg font-bold text-[#46332E]">₦{product.price}</p>
             <p className="text-base text-[#46332E]/80">{product.description}</p>
 
-            <div className="pt-6 border-t border-gray-200 flex gap-4">
-              <Button
-                onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                className="rounded-2xl hover:bg-gray-100 transition-colors duration-200"
-              >
-                -
-              </Button>
-              <span className="text-xl px-4">{quantity}</span>
-              <Button
-                onClick={() => setQuantity(quantity + 1)}
-                className="rounded-2xl hover:bg-gray-100 transition-colors duration-200"
-              >
-                +
-              </Button>
-              <AddToCartButton
-                product={{
-                  id: product.id,
-                  name: product.name,
-                  price: product.price,
-                  image: product.image,
-                  category: product.category,
-                  subCategory: product.subCategory,
-                }}
-                quantity={quantity}
-                showQuantity={false}
-                className="flex-1 rounded-2xl hover:bg-[#46332E]/90 transition-colors duration-200"
-              />
-              <Button
-                className="bg-[#46332E] text-white flex-1 rounded-2xl hover:bg-[#46332E]/90 transition-colors duration-200"
-                onClick={() => {
-                  if (typeof window !== "undefined") {
-                    window.sessionStorage.setItem(
-                      "buyNowItem",
-                      JSON.stringify({
-                        id: product.id,
-                        name: product.name,
-                        price: product.price,
-                        image: product.image,
-                        category: product.category,
-                        subCategory: product.subCategory,
-                        quantity,
-                      })
-                    );
-                  }
-                  router.push("/checkOut");
-                }}
-              >
-                Buy Now
-              </Button>
+            <div className="pt-6 border-t border-gray-200 flex flex-col sm:flex-row gap-4">
+              <div className="flex items-center justify-center sm:justify-start gap-4">
+                <Button
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  className="rounded-2xl hover:bg-gray-100 transition-colors duration-200 w-12 h-12"
+                >
+                  -
+                </Button>
+                <span className="text-xl px-4">{quantity}</span>
+                <Button
+                  onClick={() => setQuantity(quantity + 1)}
+                  className="rounded-2xl hover:bg-gray-100 transition-colors duration-200 w-12 h-12"
+                >
+                  +
+                </Button>
+              </div>
+              <div className="flex flex-col sm:flex-row gap-4 w-full">
+                <AddToCartButton
+                  product={{
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    image: product.image,
+                    category: product.category,
+                    subCategory: product.subCategory,
+                  }}
+                  quantity={quantity}
+                  showQuantity={false}
+                  className="flex-1 rounded-2xl hover:bg-[#46332E]/90 transition-colors duration-200 w-full"
+                />
+                <Button
+                  className="bg-[#46332E] text-white flex-1 rounded-2xl hover:bg-[#46332E]/90 transition-colors duration-200 w-full"
+                  onClick={() => {
+                    if (typeof window !== "undefined") {
+                      window.sessionStorage.setItem(
+                        "buyNowItem",
+                        JSON.stringify({
+                          id: product.id,
+                          name: product.name,
+                          price: product.price,
+                          image: product.image,
+                          category: product.category,
+                          subCategory: product.subCategory,
+                          quantity,
+                        })
+                      );
+                    }
+                    router.push("/checkOut");
+                  }}
+                >
+                  Buy Now
+                </Button>
+              </div>
             </div>
           </div>
         </div>
