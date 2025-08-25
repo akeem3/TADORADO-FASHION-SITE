@@ -1,5 +1,28 @@
 # Changelog
 
+## [Unreleased] - Product Page Mobile Responsiveness Fix
+
+### Fixed
+
+- **Mobile Layout Overflow**: Fixed issue where increment/decrement buttons, Add to Cart button, and Buy Now button were overflowing beyond the screen edge on mobile devices
+- **Responsive Layout**: Implemented responsive layout that stacks vertically on mobile and maintains horizontal layout on larger screens
+- **Touch Targets**: Improved touch targets for quantity controls with fixed width/height (w-12 h-12)
+- **Button Sizing**: Made action buttons full-width on mobile for better usability
+
+### Technical Details
+
+- **Layout Structure**: Changed from single horizontal row to responsive flex layout (`flex flex-col sm:flex-row`)
+- **Quantity Controls**: Wrapped in centered container with proper spacing and touch targets
+- **Action Buttons**: Stacked vertically on mobile with full-width, side-by-side on larger screens
+- **Files Modified**: `app/collections/product/[id]/page.tsx` - Product page mobile responsiveness
+
+### User Experience Improvements
+
+- **Mobile Users**: No more horizontal scrolling or buttons cut off screen edges
+- **Touch Interaction**: Larger, more accessible touch targets for quantity controls
+- **Visual Consistency**: Maintains design consistency across all screen sizes
+- **Accessibility**: Better usability on mobile devices with proper button sizing
+
 ## [Unreleased] - Direct Buy Data Storage Issue Investigation
 
 ### Issue Identified: Direct Buy Product Data Not Stored in Google Sheets
