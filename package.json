@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
+    "@paystack/inline-js": "^2.22.7",
     "@prisma/client": "^6.8.2",
     "@radix-ui/react-checkbox": "^1.1.5",
     "@radix-ui/react-label": "^2.1.3",
@@ -32,6 +33,8 @@
     "mongoose": "^8.13.2",
     "motion": "^12.4.7",
     "next": "^15.1.6",
+    "nodemailer": "^7.0.5",
+    "paystack-js": "^0.18.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.55.0",
@@ -44,6 +47,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@types/node": "^20",
+    "@types/nodemailer": "^7.0.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "autoprefixer": "^10.4.20",

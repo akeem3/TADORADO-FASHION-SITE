@@ -1651,7 +1651,7 @@ interface PaymentStepProps {
   buyNowTotal?: number;
 }
 
-// Then update the PaymentStep component function signature to include register:
+// Updated PaymentStep component with Paystack integration
 function PaymentStep({
   watch,
   setValue,
@@ -1666,12 +1666,95 @@ function PaymentStep({
 }: PaymentStepProps) {
   const deliverySpeed = watch("delivery.deliverySpeed");
   const totalAmount = cartTotal + shippingCost;
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
 
-  // In the PaymentStep component, update the handleRadioChange and handleCheckboxChange functions:
-  const handleRadioChange = (field: Path<CheckoutFormData>, value: string) => {
-    setValue(field, value);
+  // Handle Paystack payment
+  const handlePaystackPayment = async () => {
+    setIsProcessingPayment(true);
+    setPaymentError(null);
+
+    try {
+      // Get form data
+      const formData = watch();
+      const customerEmail = formData.delivery.email;
+      const customerName = formData.delivery.fullName;
+      const customerPhone = formData.delivery.phone;
+
+      // Prepare order items string
+      const orderItems = (buyNowMode && buyNowItem ? [buyNowItem] : cartItems)
+        .map((item) => `${item.name} (${item.quantity}x)`)
+        .join(", ");
+
+      // Prepare measurements string
+      const measurements = formData.measurements
+        .map(
+          (m, index) =>
+            `Person ${index + 1}: ${m.height}${m.measurementUnit}, ${
+              m.shoulder
+            }${m.measurementUnit}, ${m.waist}${m.measurementUnit}, ${m.hip}${
+              m.measurementUnit
+            }, ${m.sleeve}${m.measurementUnit}`
+        )
+        .join("; ");
+
+      // Prepare delivery address
+      const deliveryAddress = `${formData.delivery.address}, ${formData.delivery.city}, ${formData.delivery.state}, ${formData.delivery.country}`;
+
+      // Store order data in session storage for success page
+      const orderData = {
+        customerInfo: {
+          name: customerName,
+          email: customerEmail,
+          phone: customerPhone,
+          address: formData.delivery.address,
+          city: formData.delivery.city,
+          state: formData.delivery.state,
+          country: formData.delivery.country,
+        },
+        cartItems: buyNowMode && buyNowItem ? [buyNowItem] : cartItems,
+        totalAmount: totalAmount,
+        measurements: formData.measurements,
+        deliverySpeed: formData.delivery.deliverySpeed,
+        orderItems: orderItems,
+        deliveryAddress: deliveryAddress,
+      };
+
+      sessionStorage.setItem("pendingOrder", JSON.stringify(orderData));
+
+      // Initialize payment with Paystack
+      const paymentResponse = await fetch("/api/paystack/initialize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: customerEmail,
+          amount: totalAmount,
+          currency: "NGN",
+          customerName: customerName,
+          customerPhone: customerPhone,
+          orderItems: orderItems,
+          measurements: measurements,
+          deliveryAddress: deliveryAddress,
+        }),
+      });
+
+      const paymentData = await paymentResponse.json();
+
+      if (paymentData.success && paymentData.data.authorization_url) {
+        // Redirect to Paystack payment page
+        window.location.href = paymentData.data.authorization_url;
+      } else {
+        setPaymentError(paymentData.message || "Payment initialization failed");
+      }
+    } catch (error) {
+      console.error("Payment error:", error);
+      setPaymentError("An error occurred while processing payment");
+    } finally {
+      setIsProcessingPayment(false);
+    }
   };
 
+  // Handle checkbox changes
   const handleCheckboxChange = (
     field: Path<CheckoutFormData>,
     checked: boolean
@@ -1759,107 +1842,98 @@ function PaymentStep({
         </div>
       </div>
 
-      {/* Enhanced Payment Methods */}
+      {/* Paystack Payment Integration */}
       <div className="bg-white border border-gray-200 rounded-xl p-6 mb-6">
         <h3 className="text-lg font-semibold text-[#46332E] mb-4">
-          Payment Method
+          Secure Payment with Paystack
         </h3>
 
-        <RadioGroup
-          defaultValue={watch("payment.paymentMethod")}
-          className="space-y-4"
-          onValueChange={(value) =>
-            handleRadioChange("payment.paymentMethod", value)
-          }
-        >
-          <div className="flex items-start space-x-3 border-2 border-gray-200 p-4 rounded-lg hover:border-[#46332E]/30 transition-all duration-200 cursor-pointer">
-            <RadioGroupItem
-              value="card"
-              id="card"
-              className="mt-1 text-[#46332E]"
-            />
-            <div className="flex-1">
-              <Label
-                htmlFor="card"
-                className="font-semibold text-[#46332E] cursor-pointer text-base"
-              >
-                Credit / Debit Card
-              </Label>
-              <p className="text-sm text-[#46332E]/70 mt-1">
-                Secure payment via credit or debit card
-              </p>
-              <div className="flex gap-2 mt-3">
-                <div className="bg-gray-100 px-3 py-1 rounded-md">
-                  <span className="text-xs font-medium text-gray-600">
-                    Visa
-                  </span>
-                </div>
-                <div className="bg-gray-100 px-3 py-1 rounded-md">
-                  <span className="text-xs font-medium text-gray-600">
-                    Mastercard
-                  </span>
-                </div>
-                <div className="bg-gray-100 px-3 py-1 rounded-md">
-                  <span className="text-xs font-medium text-gray-600">
-                    Amex
-                  </span>
-                </div>
-              </div>
+        <div className="bg-gradient-to-r from-[#F5F3F0] to-[#E8E4E0] p-6 rounded-xl border border-[#46332E]/10 mb-6">
+          <div className="flex items-center mb-4">
+            <div className="bg-[#46332E] text-white rounded-full w-8 h-8 flex items-center justify-center mr-3">
+              <CreditCard className="w-4 h-4" />
             </div>
+            <h4 className="text-lg font-semibold text-[#46332E]">
+              Secure Payment Gateway
+            </h4>
           </div>
-
-          <div className="flex items-start space-x-3 border-2 border-gray-200 p-4 rounded-lg hover:border-[#46332E]/30 transition-all duration-200 cursor-pointer">
-            <RadioGroupItem
-              value="paypal"
-              id="paypal"
-              className="mt-1 text-[#46332E]"
-            />
-            <div className="flex-1">
-              <Label
-                htmlFor="paypal"
-                className="font-semibold text-[#46332E] cursor-pointer text-base"
-              >
-                PayPal
-              </Label>
-              <p className="text-sm text-[#46332E]/70 mt-1">
-                Fast and secure payment with PayPal
-              </p>
-              <div className="mt-3">
-                <div className="bg-[#F5F3F0] px-3 py-1 rounded-md inline-block">
-                  <span className="text-xs font-medium text-[#46332E]">
-                    PayPal
-                  </span>
-                </div>
-              </div>
+          <p className="text-[#46332E]/80 mb-4">
+            Your payment will be processed securely through Paystack, supporting
+            all major payment methods including:
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <div className="bg-white px-3 py-1 rounded-md border border-[#E5D3C6]">
+              <span className="text-xs font-medium text-[#46332E]">Visa</span>
             </div>
-          </div>
-
-          <div className="flex items-start space-x-3 border-2 border-gray-200 p-4 rounded-lg hover:border-[#46332E]/30 transition-all duration-200 cursor-pointer">
-            <RadioGroupItem
-              value="bank"
-              id="bank"
-              className="mt-1 text-[#46332E]"
-            />
-            <div className="flex-1">
-              <Label
-                htmlFor="bank"
-                className="font-semibold text-[#46332E] cursor-pointer text-base"
-              >
+            <div className="bg-white px-3 py-1 rounded-md border border-[#E5D3C6]">
+              <span className="text-xs font-medium text-[#46332E]">
+                Mastercard
+              </span>
+            </div>
+            <div className="bg-white px-3 py-1 rounded-md border border-[#E5D3C6]">
+              <span className="text-xs font-medium text-[#46332E]">Verve</span>
+            </div>
+            <div className="bg-white px-3 py-1 rounded-md border border-[#E5D3C6]">
+              <span className="text-xs font-medium text-[#46332E]">
                 Bank Transfer
-              </Label>
-              <p className="text-sm text-[#46332E]/70 mt-1">
-                Direct bank transfer (processing may take 1-2 business days)
-              </p>
-              <div className="mt-3">
-                <div className="bg-green-50 px-3 py-1 rounded-md inline-block">
-                  <span className="text-xs font-medium text-green-600">
-                    Bank Transfer
-                  </span>
-                </div>
-              </div>
+              </span>
             </div>
           </div>
-        </RadioGroup>
+        </div>
+
+        {/* Payment Error Display */}
+        {paymentError && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+            <div className="flex items-center">
+              <div className="text-red-500 mr-2">⚠️</div>
+              <p className="text-red-700 text-sm">{paymentError}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Pay with Paystack Button */}
+        <button
+          type="button"
+          onClick={handlePaystackPayment}
+          disabled={isProcessingPayment}
+          className="w-full bg-[#46332E] text-white py-4 px-6 rounded-xl font-semibold text-lg hover:bg-[#46332E]/90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+        >
+          {isProcessingPayment ? (
+            <>
+              <svg
+                className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              Processing Payment...
+            </>
+          ) : (
+            <>
+              <CreditCard className="w-5 h-5 mr-2" />
+              Pay ₦{totalAmount.toFixed(2)} with Paystack
+            </>
+          )}
+        </button>
+
+        <p className="text-xs text-[#46332E]/60 text-center mt-3">
+          Your payment information is encrypted and secure. We never store your
+          card details.
+        </p>
       </div>
 
       {/* Enhanced Terms and Conditions */}
