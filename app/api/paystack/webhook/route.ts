@@ -3,6 +3,29 @@ import crypto from "crypto";
 import { PAYSTACK_CONFIG, parseAmount } from "@/lib/paystack";
 import { createAdminOrderNotificationEmail, sendEmail } from "@/lib/email";
 
+// Paystack webhook payload types
+interface PaystackWebhookPayload {
+  event: string;
+  data: {
+    id?: number;
+    reference: string;
+    amount: number;
+    currency: string;
+    status: string;
+    customer?: {
+      email?: string;
+      first_name?: string;
+      phone?: string;
+    };
+    metadata?: {
+      custom_fields?: Array<{
+        variable_name?: string;
+        value?: string;
+      }>;
+    };
+  };
+}
+
 // Verify Paystack webhook signature using secret key
 function isValidSignature(rawBody: string, signature: string | null): boolean {
   try {
@@ -33,10 +56,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const payload = JSON.parse(rawBody) as {
-      event: string;
-      data: any; // Using any for Paystack payload shape variability
-    };
+    const payload = JSON.parse(rawBody) as PaystackWebhookPayload;
 
     // Only handle successful charge events
     if (payload.event !== "charge.success") {
@@ -53,7 +73,6 @@ export async function POST(request: NextRequest) {
 
     const reference: string = tx.reference;
     const amount: number = parseAmount(tx.amount, tx.currency);
-    const currency: string = tx.currency || "NGN";
     const customerEmail: string = tx.customer?.email || "";
 
     // Extract metadata custom fields we set during initialization
