@@ -10,7 +10,16 @@ export interface PaymentData {
   orderItems: string;
   measurements: string;
   deliveryAddress: string;
-  metadata?: any;
+  metadata?: PaystackMetadata;
+}
+
+export interface PaystackMetadata {
+  custom_fields: Array<{
+    display_name: string;
+    variable_name: string;
+    value: string;
+  }>;
+  [key: string]: unknown;
 }
 
 export interface PaymentResponse {

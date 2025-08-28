@@ -4,6 +4,18 @@ import { appendOrderToSheet } from "@/lib/googleSheets";
 export async function POST(req: Request) {
   try {
     const data = await req.json();
+
+    // ✅ Debug logging for order tracking
+    console.log("Orders API - Received order data:", {
+      hasCustomerInfo: !!data.customerInfo,
+      hasCartItems: !!data.cartItems,
+      cartItemsLength: data.cartItems?.length,
+      totalAmount: data.totalAmount,
+      buyNowMode: data.buyNowMode,
+      customerEmail: data.customerInfo?.email,
+      customerName: data.customerInfo?.fullName,
+    });
+
     // Map incoming data to the 23-column schema
     const cartItems = (data.cartItems ?? []) as Array<Record<string, unknown>>;
 
@@ -92,7 +104,24 @@ export async function POST(req: Request) {
       measurements: formatMeasurements(data.measurements),
       notes: data.notes || "",
     };
+
+    // ✅ Debug logging for Google Sheets export
+    console.log("Orders API - Attempting Google Sheets export:", {
+      orderNumber: orderRow.orderNumber,
+      customerName: orderRow.customerName,
+      productCount: cartItems.length,
+      totalAmount: orderRow.totalAmount,
+    });
+
     const result = await appendOrderToSheet(orderRow);
+
+    // ✅ Debug logging for export result
+    console.log("Orders API - Google Sheets export result:", {
+      success: result.success,
+      error: result.error,
+      orderNumber: orderRow.orderNumber,
+    });
+
     if (result.success) {
       return NextResponse.json({
         success: true,

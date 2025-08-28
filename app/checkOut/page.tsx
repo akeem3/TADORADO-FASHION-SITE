@@ -93,7 +93,7 @@ const countriesList = [
 
 export default function CheckoutPage() {
   const [step, setStep] = useState(1);
-  const { cartItems, cartTotal, clearCart } = useCart();
+  const { cartItems, cartTotal } = useCart();
   const [buyNowItem, setBuyNowItem] = useState<CartProduct | null>(null);
   const [buyNowMode, setBuyNowMode] = useState(false);
   const pathname = usePathname();
@@ -285,10 +285,7 @@ export default function CheckoutPage() {
       const result = await response.json();
       if (result.success) {
         router.push("/checkOut/success");
-        // Clear cart only if not in buy now mode
-        if (!buyNowMode) {
-          setTimeout(() => clearCart(), 500);
-        }
+        // Cart clearing is now handled in success page after confirmed processing
       } else {
         alert("Order failed: " + (result.error || "Unknown error"));
         setIsSubmitting(false);
@@ -330,11 +327,90 @@ export default function CheckoutPage() {
     selectedDeliverySpeed
   );
 
-  // Calculate buyNowTotal and orderTotal after buyNowItem and buyNowMode are defined
+  // Calculate buyNowTotal and order totals
   const buyNowTotal = buyNowItem ? buyNowItem.price * buyNowItem.quantity : 0;
-  const orderTotal = buyNowMode
-    ? buyNowTotal + shippingCost
-    : cartTotal + shippingCost;
+  const subtotal = buyNowMode ? buyNowTotal : cartTotal;
+  const orderTotal = subtotal + shippingCost;
+
+  // Payment processing state (single CTA flow)
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+
+  // Initiate Paystack payment from the parent (validated and gated)
+  const initiatePayment = async () => {
+    setIsProcessingPayment(true);
+    try {
+      const formData = methods.getValues();
+      const customerEmail = formData.delivery.email;
+      const customerName = formData.delivery.fullName;
+      const customerPhone = formData.delivery.phone;
+
+      const items = buyNowMode && buyNowItem ? [buyNowItem] : cartItems;
+      const orderItems = items
+        .map((item) => `${item.name} (${item.quantity}x)`)
+        .join(", ");
+
+      const measurementsText = formData.measurements
+        .map(
+          (m, index) =>
+            `Person ${index + 1}: ${m.height}${m.measurementUnit}, ${
+              m.shoulder
+            }${m.measurementUnit}, ${m.waist}${m.measurementUnit}, ${m.hip}${
+              m.measurementUnit
+            }, ${m.sleeve}${m.measurementUnit}`
+        )
+        .join("; ");
+
+      const deliveryAddress = `${formData.delivery.address}, ${formData.delivery.city}, ${formData.delivery.state}, ${formData.delivery.country}`;
+
+      const pendingOrder = {
+        customerInfo: {
+          fullName: customerName,
+          email: customerEmail,
+          phone: customerPhone,
+          address: formData.delivery.address,
+          city: formData.delivery.city,
+          state: formData.delivery.state,
+          country: formData.delivery.country,
+        },
+        cartItems: items,
+        totalAmount: subtotal,
+        shippingCost,
+        taxAmount: 0,
+        measurements: formData.measurements,
+        deliverySpeed: formData.delivery.deliverySpeed,
+        orderItems,
+        deliveryAddress,
+      };
+      sessionStorage.setItem("pendingOrder", JSON.stringify(pendingOrder));
+
+      const resp = await fetch("/api/paystack/initialize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: customerEmail,
+          amount: orderTotal,
+          currency: "NGN",
+          customerName,
+          customerPhone,
+          orderItems,
+          measurements: measurementsText,
+          deliveryAddress,
+        }),
+      });
+      const data = await resp.json();
+      if (data?.success && data?.data?.authorization_url) {
+        window.location.href = data.data.authorization_url;
+      } else {
+        alert(
+          data?.message || "Payment initialization failed. Please try again."
+        );
+        setIsProcessingPayment(false);
+      }
+    } catch {
+      alert("There was a problem starting the payment. Please try again.");
+      setIsProcessingPayment(false);
+    }
+  };
 
   // On mount, check for buyNowItem in sessionStorage
   useEffect(() => {
@@ -554,58 +630,31 @@ export default function CheckoutPage() {
                   </Button>
 
                   <Button
-                    type="button" // Changed from submit to button
+                    type="button"
                     className="rounded-xl bg-[#46332E] text-white hover:bg-[#46332E]/90 transition-all duration-300"
                     disabled={isSubmitting}
                     onClick={async () => {
-                      if (step === 3) {
-                        // For the final step, submit the form
-                        const isValid = await checkStepValidity(step);
-                        if (isValid) {
-                          handleSubmit(onSubmit)();
-                        }
-                      } else {
-                        // For other steps, validate and then proceed
-                        const isValid = await checkStepValidity(step);
-                        if (isValid) {
-                          setStep(step + 1);
-                          window.scrollTo({ top: 0, behavior: "smooth" });
-                        } else {
-                          // Show a more specific message about validation errors
-                          const incompleteMeasurements = measurements.filter(
-                            (_, index) => {
-                              const measurement = watch(
-                                `measurements.${index}`
-                              );
-                              return (
-                                !measurement?.height ||
-                                !measurement?.shoulder ||
-                                !measurement?.waist ||
-                                !measurement?.hip ||
-                                !measurement?.sleeve ||
-                                !measurement?.outfitType
-                              );
-                            }
-                          );
+                      const isValid = await checkStepValidity(step);
+                      if (!isValid) return;
 
-                          if (incompleteMeasurements.length > 0) {
-                            alert(
-                              `Please complete measurements for all ${
-                                measurements.length
-                              } person${
-                                measurements.length > 1 ? "s" : ""
-                              } before proceeding.`
-                            );
-                          } else {
-                            alert(
-                              "Please fill in all required fields before proceeding."
-                            );
-                          }
-                        }
+                      if (step < 3) {
+                        setStep(step + 1);
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                        return;
                       }
+
+                      // Step 3: must agree to terms, then initialize Paystack
+                      const formData = watch();
+                      if (!formData.payment.agreeToTerms) {
+                        alert("Please agree to the terms to continue.");
+                        return;
+                      }
+
+                      // Trigger Paystack payment init (single CTA)
+                      await initiatePayment();
                     }}
                   >
-                    {isSubmitting ? (
+                    {isSubmitting || isProcessingPayment ? (
                       <span className="flex items-center">
                         <svg
                           className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
@@ -630,7 +679,9 @@ export default function CheckoutPage() {
                         Processing...
                       </span>
                     ) : step === 3 ? (
-                      "Complete Order"
+                      <>
+                        Complete & Pay <ChevronRight className="ml-2 h-4 w-4" />
+                      </>
                     ) : (
                       <>
                         Continue
@@ -1666,93 +1717,9 @@ function PaymentStep({
 }: PaymentStepProps) {
   const deliverySpeed = watch("delivery.deliverySpeed");
   const totalAmount = cartTotal + shippingCost;
-  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
-  const [paymentError, setPaymentError] = useState<string | null>(null);
+  // This component is display-only; payment handling occurs via parent CTA
 
-  // Handle Paystack payment
-  const handlePaystackPayment = async () => {
-    setIsProcessingPayment(true);
-    setPaymentError(null);
-
-    try {
-      // Get form data
-      const formData = watch();
-      const customerEmail = formData.delivery.email;
-      const customerName = formData.delivery.fullName;
-      const customerPhone = formData.delivery.phone;
-
-      // Prepare order items string
-      const orderItems = (buyNowMode && buyNowItem ? [buyNowItem] : cartItems)
-        .map((item) => `${item.name} (${item.quantity}x)`)
-        .join(", ");
-
-      // Prepare measurements string
-      const measurements = formData.measurements
-        .map(
-          (m, index) =>
-            `Person ${index + 1}: ${m.height}${m.measurementUnit}, ${
-              m.shoulder
-            }${m.measurementUnit}, ${m.waist}${m.measurementUnit}, ${m.hip}${
-              m.measurementUnit
-            }, ${m.sleeve}${m.measurementUnit}`
-        )
-        .join("; ");
-
-      // Prepare delivery address
-      const deliveryAddress = `${formData.delivery.address}, ${formData.delivery.city}, ${formData.delivery.state}, ${formData.delivery.country}`;
-
-      // Store order data in session storage for success page
-      const orderData = {
-        customerInfo: {
-          name: customerName,
-          email: customerEmail,
-          phone: customerPhone,
-          address: formData.delivery.address,
-          city: formData.delivery.city,
-          state: formData.delivery.state,
-          country: formData.delivery.country,
-        },
-        cartItems: buyNowMode && buyNowItem ? [buyNowItem] : cartItems,
-        totalAmount: totalAmount,
-        measurements: formData.measurements,
-        deliverySpeed: formData.delivery.deliverySpeed,
-        orderItems: orderItems,
-        deliveryAddress: deliveryAddress,
-      };
-
-      sessionStorage.setItem("pendingOrder", JSON.stringify(orderData));
-
-      // Initialize payment with Paystack
-      const paymentResponse = await fetch("/api/paystack/initialize", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: customerEmail,
-          amount: totalAmount,
-          currency: "NGN",
-          customerName: customerName,
-          customerPhone: customerPhone,
-          orderItems: orderItems,
-          measurements: measurements,
-          deliveryAddress: deliveryAddress,
-        }),
-      });
-
-      const paymentData = await paymentResponse.json();
-
-      if (paymentData.success && paymentData.data.authorization_url) {
-        // Redirect to Paystack payment page
-        window.location.href = paymentData.data.authorization_url;
-      } else {
-        setPaymentError(paymentData.message || "Payment initialization failed");
-      }
-    } catch (error) {
-      console.error("Payment error:", error);
-      setPaymentError("An error occurred while processing payment");
-    } finally {
-      setIsProcessingPayment(false);
-    }
-  };
+  // Payment starts from the parent CTA; this component only displays info/errors
 
   // Handle checkbox changes
   const handleCheckboxChange = (
@@ -1880,55 +1847,6 @@ function PaymentStep({
             </div>
           </div>
         </div>
-
-        {/* Payment Error Display */}
-        {paymentError && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-            <div className="flex items-center">
-              <div className="text-red-500 mr-2">⚠️</div>
-              <p className="text-red-700 text-sm">{paymentError}</p>
-            </div>
-          </div>
-        )}
-
-        {/* Pay with Paystack Button */}
-        <button
-          type="button"
-          onClick={handlePaystackPayment}
-          disabled={isProcessingPayment}
-          className="w-full bg-[#46332E] text-white py-4 px-6 rounded-xl font-semibold text-lg hover:bg-[#46332E]/90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-        >
-          {isProcessingPayment ? (
-            <>
-              <svg
-                className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                ></path>
-              </svg>
-              Processing Payment...
-            </>
-          ) : (
-            <>
-              <CreditCard className="w-5 h-5 mr-2" />
-              Pay ₦{totalAmount.toFixed(2)} with Paystack
-            </>
-          )}
-        </button>
 
         <p className="text-xs text-[#46332E]/60 text-center mt-3">
           Your payment information is encrypted and secure. We never store your
