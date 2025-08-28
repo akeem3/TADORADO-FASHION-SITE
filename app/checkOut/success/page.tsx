@@ -390,26 +390,28 @@ function SuccessPageContent() {
           >
             Continue Shopping
           </button>
-                 </motion.div>
-       </div>
-     </Container>
-   );
- }
+        </motion.div>
+      </div>
+    </Container>
+  );
+}
 
 export default function SuccessPage() {
   return (
-    <Suspense fallback={
-      <Container>
-        <div className="py-16 text-center">
-          <div className="max-w-md mx-auto">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#46332E] mx-auto mb-4"></div>
-            <h2 className="text-2xl font-bold text-[#46332E] mb-4">
-              Loading...
-            </h2>
+    <Suspense
+      fallback={
+        <Container>
+          <div className="py-16 text-center">
+            <div className="max-w-md mx-auto">
+              <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#46332E] mx-auto mb-4"></div>
+              <h2 className="text-2xl font-bold text-[#46332E] mb-4">
+                Loading...
+              </h2>
+            </div>
           </div>
-        </div>
-      </Container>
-    }>
+        </Container>
+      }
+    >
       <SuccessPageContent />
     </Suspense>
   );
