@@ -77,18 +77,10 @@ interface CheckoutFormData {
 
 // Dummy data for countries
 const countriesList = [
-  { code: "US", name: "United States" },
-  { code: "CA", name: "Canada" },
-  { code: "GB", name: "United Kingdom" },
-  { code: "FR", name: "France" },
-  { code: "DE", name: "Germany" },
-  { code: "IT", name: "Italy" },
-  { code: "ES", name: "Spain" },
   { code: "NG", name: "Nigeria" },
-  { code: "GH", name: "Ghana" },
-  { code: "ZA", name: "South Africa" },
-  { code: "KE", name: "Kenya" },
-  // Add more countries as needed
+  { code: "US", name: "United States" },
+  { code: "GB", name: "United Kingdom" },
+  { code: "CA", name: "Canada" },
 ];
 
 export default function CheckoutPage() {
@@ -180,7 +172,7 @@ export default function CheckoutPage() {
         fullName: "",
         email: "",
         phone: "",
-        country: "US",
+        country: "NG",
         state: "",
         city: "",
         address: "",
@@ -298,23 +290,29 @@ export default function CheckoutPage() {
 
   // Calculate shipping cost based on country and delivery speed
   const calculateShippingCost = (country: string, deliverySpeed: string) => {
-    // Group countries by shipping zones
-    const zone1 = ["US", "CA"]; // North America
-    const zone2 = ["GB", "FR", "DE", "IT", "ES"]; // Europe
-    const zone3 = ["NG", "GH", "ZA", "KE"]; // Africa
+    // Country-specific base shipping rates in Naira
+    let baseRate = 0;
 
-    let baseRate = 10; // Default international rate
-
-    if (zone1.includes(country)) {
-      baseRate = 8;
-    } else if (zone2.includes(country)) {
-      baseRate = 12;
-    } else if (zone3.includes(country)) {
-      baseRate = 15;
+    switch (country) {
+      case "US":
+        baseRate = 15000; // ₦15,000 for US
+        break;
+      case "GB":
+        baseRate = 16000; // ₦16,000 for UK
+        break;
+      case "CA":
+        baseRate = 18000; // ₦18,000 for Canada
+        break;
+      case "NG":
+        baseRate = 5000; // ₦5,000 for Nigeria
+        break;
+      default:
+        baseRate = 15000; // Default to US rate for other countries
+        break;
     }
 
-    // Express delivery costs more
-    return deliverySpeed === "express" ? baseRate * 2.5 : baseRate;
+    // Express delivery costs 50% more
+    return deliverySpeed === "express" ? Math.round(baseRate * 1.5) : baseRate;
   };
 
   // Get the selected country and delivery speed
@@ -1642,11 +1640,15 @@ function DeliveryStep({
                   Perfect for most orders
                 </span>
                 <span className="text-lg font-bold text-[#46332E]">
-                  {selectedCountry === "US" || selectedCountry === "CA"
-                    ? "₦8.00"
-                    : ["GB", "FR", "DE", "IT", "ES"].includes(selectedCountry)
-                    ? "₦12.00"
-                    : "₦15.00"}
+                  {selectedCountry === "US"
+                    ? "₦15,000"
+                    : selectedCountry === "GB"
+                    ? "₦16,000"
+                    : selectedCountry === "CA"
+                    ? "₦18,000"
+                    : selectedCountry === "NG"
+                    ? "₦5,000"
+                    : "₦15,000"}
                 </span>
               </div>
             </div>
@@ -1672,11 +1674,15 @@ function DeliveryStep({
                   Priority handling & faster delivery
                 </span>
                 <span className="text-lg font-bold text-[#46332E]">
-                  {selectedCountry === "US" || selectedCountry === "CA"
-                    ? "₦20.00"
-                    : ["GB", "FR", "DE", "IT", "ES"].includes(selectedCountry)
-                    ? "₦30.00"
-                    : "₦37.50"}
+                  {selectedCountry === "US"
+                    ? "₦22,500"
+                    : selectedCountry === "GB"
+                    ? "₦24,000"
+                    : selectedCountry === "CA"
+                    ? "₦27,000"
+                    : selectedCountry === "NG"
+                    ? "₦7,500"
+                    : "₦22,500"}
                 </span>
               </div>
             </div>

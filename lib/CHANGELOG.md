@@ -751,6 +751,78 @@ GOOGLE_SHEET_FILENAME=Tadorado Export
   - `components/AboutSection.tsx`
   - `components/StepsSection.tsx`
 
+## [Unreleased] - Country-Based Shipping Prices Implementation ✅
+
+### Completed
+
+**Dynamic Shipping Price System:**
+
+- **Country-Specific Pricing**: Implemented robust shipping price calculation based on selected country
+- **Express Delivery Premium**: Express delivery costs 50% more than standard delivery
+- **Real-Time Price Updates**: Shipping prices update automatically when country or delivery speed changes
+
+**Shipping Rates by Country:**
+
+- **Nigeria**: Standard ₦5,000, Express ₦7,500
+- **United States**: Standard ₦15,000, Express ₦22,500
+- **United Kingdom**: Standard ₦16,000, Express ₦24,000
+- **Canada**: Standard ₦18,000, Express ₦27,000
+- **Other Countries**: Default to US rates (Standard ₦15,000, Express ₦22,500)
+
+**Technical Implementation:**
+
+- **Robust Calculation**: Updated `calculateShippingCost()` function with switch statement for precise country mapping
+- **UI Integration**: Delivery step now displays correct shipping prices based on selected country
+- **Error Prevention**: Default fallback pricing ensures no calculation errors
+- **Currency Formatting**: All prices displayed in proper Naira format (₦X,XXX)
+
+**Files Modified:**
+
+- ✅ `app/checkOut/page.tsx` - Updated shipping calculation logic and delivery step UI
+- ✅ Shipping prices now integrate seamlessly with existing Paystack payment flow
+- ✅ Order total calculation includes correct shipping costs for all countries
+
+**User Experience Improvements:**
+
+- **Transparent Pricing**: Users see exact shipping costs before proceeding to payment
+- **Country Selection**: Shipping prices update immediately when country is changed
+- **Delivery Options**: Clear pricing difference between standard and express delivery
+- **Consistent Formatting**: All prices displayed in consistent Naira format
+
+### Technical Details
+
+```typescript
+// Country-specific base shipping rates in Naira
+const calculateShippingCost = (country: string, deliverySpeed: string) => {
+  let baseRate = 0;
+  switch (country) {
+    case "US":
+      baseRate = 15000;
+      break;
+    case "GB":
+      baseRate = 16000;
+      break;
+    case "CA":
+      baseRate = 18000;
+      break;
+    case "NG":
+      baseRate = 5000;
+      break;
+    default:
+      baseRate = 15000;
+      break;
+  }
+  return deliverySpeed === "express" ? Math.round(baseRate * 1.5) : baseRate;
+};
+```
+
+**Integration Points:**
+
+- **Checkout Flow**: Shipping costs automatically added to order total
+- **Payment Processing**: Paystack receives correct total amount including shipping
+- **Order Export**: Google Sheets export includes accurate shipping costs
+- **Admin Notifications**: Email notifications show complete order breakdown
+
 ## [Unreleased] - Paystack Integration Critical Issues FIXED ✅
 
 ### Critical Issues RESOLVED ✅

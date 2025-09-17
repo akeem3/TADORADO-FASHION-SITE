@@ -124,7 +124,7 @@ export default function ProductDetailPage() {
                   className="flex-1 rounded-2xl hover:bg-[#46332E]/90 transition-colors duration-200 w-full"
                 />
                 <Button
-                  className="bg-[#46332E] text-white flex-1 rounded-2xl hover:bg-[#46332E]/90 transition-colors duration-200 w-full"
+                  className="bg-[#46332E] text-white flex-1 rounded-2xl hover:bg-[#46332E]/90 transition-colors duration-200 w-full mt-2"
                   onClick={() => {
                     if (typeof window !== "undefined") {
                       window.sessionStorage.setItem(
