@@ -1,5 +1,45 @@
 # Changelog
 
+## [Unreleased] - Database Seeding with Updated Product Prices
+
+### Completed
+
+**Product Database Seeding:**
+
+- **Updated Seed Script**: Modified `scripts/seed.ts` to import all products from `data/products.ts` instead of hardcoded entries
+- **Price Conversion**: All product prices converted to tens of thousands (multiplied by 1000)
+- **Database Population**: Successfully seeded database with all 8 products from the data file
+- **Automated Process**: Seed script now automatically processes all products with proper price scaling
+
+**Product Price Updates:**
+
+- Traditional Agbada Set: $50 → ₦50,000
+- Ankara Shirt & Trousers: $80 → ₦80,000
+- Owanbe Classical Gown: $20 → ₦20,000
+- Corset Dress: $80 → ₦80,000
+- Children's Ankara Set: $20 → ₦20,000
+- Baby Kaftan: $90 → ₦90,000
+- Elegant Iro and Buba: $20 → ₦20,000
+- Corporate Shirt & Trousers: $90 → ₦90,000
+
+**Technical Implementation:**
+
+- **Dynamic Import**: Seed script now imports products from `data/products.ts` for maintainability
+- **Price Scaling**: Automatic price conversion using `product.price * 1000` formula
+- **Data Mapping**: Proper mapping of all product fields including categories, images, and descriptions
+- **Slug Generation**: Automatic slug creation for all products using the existing `slugify` function
+
+**Files Modified:**
+
+- ✅ `scripts/seed.ts` - Updated to import and process all products from data file
+- ✅ Database successfully populated with 8 products at tens of thousands pricing
+
+**Result:**
+
+- ✅ All products now available in database with updated pricing structure
+- ✅ Seed script is now maintainable and automatically processes all products
+- ✅ Pricing structure updated to reflect realistic market values in Naira
+
 ## [Unreleased] - Paystack Payment Integration & Email System Implementation
 
 ### Completed Implementation
@@ -204,6 +244,35 @@ ADMIN_EMAIL=your_gmail@gmail.com
 - Verify admin email notifications are working
 - Confirm Google Sheets integration continues to work with payment status
 - Deploy to production when ready
+
+## [Unreleased] - Image Assets Localized (Firebase → Public Images) ✅
+
+### Completed
+
+- Replaced Firebase Storage image URLs with local assets under `public/images` for reliability and performance
+- Updated all components and product data to reference `/images/...` paths
+- Swapped favicon to local assets (`/logo.svg` with PNG fallback)
+
+### Files Updated
+
+- `components/AboutSection.tsx` → `/images/The besties.jpg`, `/images/sewing image.jpg`
+- `components/CategoriesSection.tsx` → `/images/female style.png`, `/images/male outfit.jpeg`, `/images/kids ankara.jpeg`
+- `components/BannerSection.tsx` → `/images/banner-image.png`
+- `components/TestimonialsSection.tsx` → `/images/review imag.jpeg`, `/images/male portrait.jpeg`, `/images/mulim female.jpeg`
+- `app/Components/Nav/Navbar.tsx` → `/images/Tado logo Final.png`
+- `data/products.ts` → product `image` and `hoverImage` fields switched to local files: `agbada.jpg`, `ankara shirt and trousers men.jpg`, `Owambe gown.png`, `corset dress.jpg`, `male children ankara set.jpg`, `iro and buba.jpg`
+- `app/layout.tsx` → favicon now uses `/logo.svg` and `/logo.png`
+
+### Notes
+
+- All referenced local files exist in `public/images` per repository contents
+- No runtime changes required; `next/image` serves from the `public` directory automatically
+
+### Follow-up Fixes ✅
+
+- Corrected About sewing image extension to `.jpeg`: `components/AboutSection.tsx`
+- Resized landing banner image with smaller max widths (420/520/600/680) and tuned sizes for better placement: `components/BannerSection.tsx`
+- Updated female category image to use product photo `iro and buba.jpg`: `components/CategoriesSection.tsx`
 
 **Optional Future Enhancements:**
 

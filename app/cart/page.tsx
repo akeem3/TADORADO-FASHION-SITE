@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import Container from "@/app/Components/Container";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/components/ui/CartContext";
+import { formatPrice } from "@/lib/utils";
 
 const CartPage = () => {
   const { cartItems, removeFromCart, updateQuantity, cartTotal, clearCart } =
@@ -97,7 +98,7 @@ const CartPage = () => {
                       </div>
                       <div className="mt-2 sm:mt-0 text-right">
                         <span className="font-bold text-[#46332E]">
-                          ₦{item.price}
+                          ₦{formatPrice(item.price)}
                         </span>
                       </div>
                     </div>
@@ -160,7 +161,7 @@ const CartPage = () => {
               <div className="space-y-3 mb-6">
                 <div className="flex justify-between">
                   <span className="text-[#46332E]/70">Subtotal</span>
-                  <span className="font-medium">₦{cartTotal.toFixed(2)}</span>
+                  <span className="font-medium">₦{formatPrice(cartTotal)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-[#46332E]/70">Shipping</span>
@@ -173,7 +174,7 @@ const CartPage = () => {
                 <div className="border-t pt-3 mt-3">
                   <div className="flex justify-between font-bold">
                     <span>Total</span>
-                    <span>₦{cartTotal.toFixed(2)}</span>
+                    <span>₦{formatPrice(cartTotal)}</span>
                   </div>
                 </div>
               </div>

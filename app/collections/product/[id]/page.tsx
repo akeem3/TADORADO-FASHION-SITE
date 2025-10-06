@@ -9,6 +9,7 @@ import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import AddToCartButton from "@/components/ui/AddToCartButton";
+import { formatPrice } from "@/lib/utils";
 // import { useCart } from "@/components/ui/CartContext";
 
 type Product = {
@@ -90,7 +91,9 @@ export default function ProductDetailPage() {
             <h1 className="text-4xl font-bold text-[#46332E]">
               {product.name}
             </h1>
-            <p className="text-lg font-bold text-[#46332E]">₦{product.price}</p>
+            <p className="text-lg font-bold text-[#46332E]">
+              ₦{formatPrice(product.price)}
+            </p>
             <p className="text-base text-[#46332E]/80">{product.description}</p>
 
             <div className="pt-6 border-t border-gray-200 flex flex-col sm:flex-row gap-4">

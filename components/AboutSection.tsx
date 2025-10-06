@@ -35,7 +35,7 @@ We are committed to ethical practices, supporting local communities, and promoti
           >
             <div className="h-full w-full flex items-center">
               <Image
-                src="https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/The%20besties.jpg?alt=media&token=6e218dd5-f398-410e-a4f05ff40b51"
+                src="/images/The besties.jpg"
                 alt="Traditional Fashion"
                 width={800}
                 height={1000}
@@ -84,7 +84,7 @@ We are committed to ethical practices, supporting local communities, and promoti
             >
               <div className="relative w-full max-w-sm mx-auto aspect-video">
                 <Image
-                  src="https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/sewing%20image.jpg?alt=media&token=0ca23b9a-dfe4-4b89-a32b-8ea93475a352"
+                  src="/images/sewing image.jpeg"
                   alt="Sewing"
                   width={300}
                   height={500}

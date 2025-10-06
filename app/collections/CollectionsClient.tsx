@@ -7,6 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowDown } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { formatPrice } from "@/lib/utils";
 
 type Product = {
   id: number;
@@ -292,7 +293,9 @@ function ProductCard({ product }: { product: Product }) {
             {product.subCategory}
           </p>
           <div className="flex items-center gap-2">
-            <p className="font-bold text-[#46332E]">₦{product.price}</p>
+            <p className="font-bold text-[#46332E]">
+              ₦{formatPrice(product.price)}
+            </p>
           </div>
         </div>
       </Link>

@@ -18,14 +18,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en"> 
+    <html lang="en">
       <head>
-        {/* Favicon using Firebase Storage Link */}
-        <link
-          rel="icon"
-          type="image/png"
-          href="https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/top%20site%20logo.png?alt=media&token=e20882bb-2c78-4d0a-bc2e-60983247da6e"
-        />
+        {/* Favicon moved to local asset */}
+        <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+        <link rel="alternate icon" type="image/png" href="/logo.png" />
       </head>
       <body className={`${poppins.className} text-slate-700`}>
         <CartProvider>
@@ -39,4 +36,3 @@ export default function RootLayout({
     </html>
   );
 }
-

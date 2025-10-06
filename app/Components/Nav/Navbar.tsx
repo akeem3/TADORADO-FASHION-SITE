@@ -43,7 +43,7 @@ export default function Navbar() {
           >
             <div className="relative w-10 h-10">
               <Image
-                src="https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/Tado%20logo%20Final.png?alt=media&token=2cac7d0f-db1e-4a38-88c0-58b79a4eb5c7"
+                src="/images/Tado logo Final.png"
                 alt="Tadorado Logo"
                 fill
                 className="object-contain"

@@ -27,6 +27,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import Container from "@/app/Components/Container";
 import Image from "next/image";
+import { formatPrice } from "@/lib/utils";
 // Import the Path type from react-hook-form to properly type the setValue calls
 import type {
   UseFormRegister,
@@ -722,7 +723,7 @@ export default function CheckoutPage() {
                               Qty: {item.quantity}
                             </p>
                             <p className="font-medium">
-                              ₦{(item.price * item.quantity).toFixed(2)}
+                              ₦{formatPrice(item.price * item.quantity)}
                             </p>
                           </div>
                         </div>
@@ -736,22 +737,21 @@ export default function CheckoutPage() {
                     <span className="text-[#46332E]/70">Subtotal</span>
                     <span className="font-medium">
                       ₦
-                      {(buyNowMode && buyNowItem
-                        ? buyNowTotal
-                        : cartTotal
-                      ).toFixed(2)}
+                      {formatPrice(
+                        buyNowMode && buyNowItem ? buyNowTotal : cartTotal
+                      )}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#46332E]/70">Shipping</span>
                     <span className="font-medium">
-                      ₦{shippingCost.toFixed(2)}
+                      ₦{formatPrice(shippingCost)}
                     </span>
                   </div>
                   <div className="border-t pt-3 mt-3">
                     <div className="flex justify-between font-bold">
                       <span>Total</span>
-                      <span>₦{orderTotal.toFixed(2)}</span>
+                      <span>₦{formatPrice(orderTotal)}</span>
                     </div>
                   </div>
                 </div>
@@ -1778,7 +1778,7 @@ function PaymentStep({
                 </p>
               </div>
               <p className="font-bold text-[#46332E]">
-                ₦{(item.price * item.quantity).toFixed(2)}
+                ₦{formatPrice(item.price * item.quantity)}
               </p>
             </div>
           ))}
@@ -1801,14 +1801,14 @@ function PaymentStep({
                 )
               </span>
               <span className="font-medium">
-                ₦{(shippingCost ?? 0).toFixed(2)}
+                ₦{formatPrice(shippingCost ?? 0)}
               </span>
             </div>
 
             <div className="flex justify-between py-3 border-t border-gray-200 mt-2">
               <span className="text-lg font-bold text-[#46332E]">Total</span>
               <span className="text-lg font-bold text-[#46332E]">
-                ₦{(totalAmount ?? 0).toFixed(2)}
+                ₦{formatPrice(totalAmount ?? 0)}
               </span>
             </div>
           </div>

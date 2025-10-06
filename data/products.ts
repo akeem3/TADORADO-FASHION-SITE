@@ -45,10 +45,8 @@ export const products: Product[] = [
     price: 50,
     isNew: true,
     isFeatured: true,
-    image:
-      "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/agbada.jpg?alt=media&token=fb644790-6e97-4820-b75c-088cb559223e",
-    hoverImage:
-      "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/agbada.jpg?alt=media&token=fb644790-6e97-4820-b75c-088cb559223e",
+    image: "/images/agbada.jpg",
+    hoverImage: "/images/agbada.jpg",
     description:
       "Elegant traditional Agbada set crafted with premium fabric. Perfect for special occasions and cultural celebrations. Features intricate embroidery and a comfortable fit.",
   },
@@ -59,10 +57,8 @@ export const products: Product[] = [
     subCategory: "ankara",
     ageGroup: "adult",
     price: 80,
-    image:
-      "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/ankara%20shirt%20and%20trousers%20men.jpg?alt=media&token=e1af5267-98de-468c-8f82-a0c6fabaeb3d",
-    hoverImage:
-      "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/ankara%20shirt%20and%20trousers%20men.jpg?alt=media&token=e1af5267-98de-468c-8f82-a0c6fabaeb3d",
+    image: "/images/ankara shirt and trousers men.jpg",
+    hoverImage: "/images/ankara shirt and trousers men.jpg",
     description:
       "Vibrant Ankara shirt and trousers set made from authentic African print fabric. Combines traditional patterns with modern styling for a bold, fashionable look.",
   },
@@ -74,10 +70,8 @@ export const products: Product[] = [
     ageGroup: "adult",
     price: 20,
     isFeatured: true,
-    image:
-      "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/Owambe%20gown.png?alt=media&token=c141d5fc-caaa-46c2-b733-5f15bc30bf93",
-    hoverImage:
-      "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/Owambe%20gown.png?alt=media&token=c141d5fc-caaa-46c2-b733-5f15bc30bf93",
+    image: "/images/Owambe gown.png",
+    hoverImage: "/images/Owambe gown.png",
     description:
       "Stunning Owanbe gown designed for celebrations and special events. Features luxurious fabric with elegant detailing that ensures you stand out at any gathering.",
   },
@@ -89,10 +83,8 @@ export const products: Product[] = [
     ageGroup: "adult",
     price: 80,
     isNew: true,
-    image:
-      "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/corset%20dress.jpg?alt=media&token=824940a7-4951-4ddc-ab6e-57119a830b18",
-    hoverImage:
-      "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/corset%20dress.jpg?alt=media&token=824940a7-4951-4ddc-ab6e-57119a830b18",
+    image: "/images/corset dress.jpg",
+    hoverImage: "/images/corset dress.jpg",
     description:
       "Sophisticated corset dress that accentuates your figure with its structured design. Perfect blend of traditional craftsmanship with contemporary fashion sensibilities.",
   },
@@ -103,10 +95,8 @@ export const products: Product[] = [
     subCategory: "ankara",
     ageGroup: "children",
     price: 20,
-    image:
-      "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/male%20children%20ankara%20set.jpg?alt=media&token=2d3c4f81-d1ba-4458-92d2-2963c573cf87",
-    hoverImage:
-      "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/male%20children%20ankara%20set.jpg?alt=media&token=2d3c4f81-d1ba-4458-92d2-2963c573cf87",
+    image: "/images/male children ankara set.jpg",
+    hoverImage: "/images/male children ankara set.jpg",
     description:
       "Colorful Ankara set designed specifically for children. Made with soft, comfortable fabric featuring playful patterns that kids will love wearing for special occasions.",
   },
@@ -130,10 +120,8 @@ export const products: Product[] = [
     ageGroup: "adult",
     price: 20,
     isFeatured: true,
-    image:
-      "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/iro%20and%20buba.jpg?alt=media&token=0565a811-03e8-4d42-8d2f-55dd6c5c59f8",
-    hoverImage:
-      "https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/iro%20and%20buba.jpg?alt=media&token=0565a811-03e8-4d42-8d2f-55dd6c5c59f8",
+    image: "/images/iro and buba.jpg",
+    hoverImage: "/images/iro and buba.jpg",
     description:
       "Traditional Iro and Buba ensemble crafted with attention to detail. Features classic styling with modern touches, perfect for cultural celebrations and formal events.",
   },

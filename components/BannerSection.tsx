@@ -39,19 +39,24 @@ export default function BannerSection() {
 
       {/* Image */}
       <motion.div
-        className="flex-1 flex justify-center lg:justify-end mt-6 lg:mt-0 relative"
+        className="relative mt-6 lg:mt-0 flex justify-center lg:justify-end flex-none mb-16"
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6, delay: 0.3 }}
       >
-        <Image
-          src="https://firebasestorage.googleapis.com/v0/b/tadorado-tailors.firebasestorage.app/o/fghdfhdhx.png?alt=media&token=8b763577-41c5-43d3-a6d1-f1123d938e76"
-          alt="Traditional Fashion"
-          width={700}
-          height={900}
-          className="object-cover w-full max-w-[700px] lg:max-w-[900px] h-auto"
-          priority
-        />
+        <div
+          className="mx-auto lg:mx-0 lg:-mr-12 xl:-mr-16"
+          style={{ width: "420px", maxWidth: "90%" }}
+        >
+          <Image
+            src="/images/banner-image.png"
+            alt="Traditional Fashion"
+            width={220}
+            height={220}
+            className="object-contain h-auto block"
+            priority
+          />
+        </div>
       </motion.div>
     </section>
   );
