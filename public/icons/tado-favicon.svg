@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <clipPath id="circleClip">
+      <circle cx="32" cy="32" r="30" />
+    </clipPath>
+  </defs>
+  <!-- White circular background -->
+  <circle cx="32" cy="32" r="30" fill="#ffffff"/>
+  <!-- Centered logo letter 'T' (placeholder) in brand color -->
+  <g clip-path="url(#circleClip)">
+    <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Poppins, Arial, sans-serif" font-size="36" font-weight="700" fill="#1F1F1D">T</text>
+  </g>
+</svg>
+
