@@ -107,8 +107,8 @@ export const products: Product[] = [
     subCategory: "senator",
     ageGroup: "baby",
     price: 90,
-    image: "/placeholder.svg?height=400&width=300",
-    hoverImage: "/placeholder.svg?height=400&width=300",
+    image: "/images/male portrait.jpeg",
+    hoverImage: "/images/male portrait.jpeg",
     description:
       "Adorable baby kaftan made from gentle, skin-friendly fabric. Perfect for celebrations and family gatherings, ensuring your little one looks stylish while staying comfortable.",
   },
@@ -132,8 +132,8 @@ export const products: Product[] = [
     subCategory: "corporate",
     ageGroup: "adult",
     price: 90,
-    image: "/placeholder.svg?height=400&width=300",
-    hoverImage: "/placeholder.svg?height=400&width=300",
+    image: "/images/male portrait.jpeg",
+    hoverImage: "/images/male portrait.jpeg",
     description:
       "Professional corporate attire tailored for the modern workplace. Combines sharp styling with comfortable fit, ensuring you look polished and feel confident throughout your day.",
   },
