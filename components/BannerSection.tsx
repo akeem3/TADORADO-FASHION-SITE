@@ -49,7 +49,7 @@ export default function BannerSection() {
           style={{ width: "420px", maxWidth: "90%" }}
         >
           <Image
-            src="/images/banner-image.png"
+            src="/images/bannerimage.png"
             alt="Traditional Fashion"
             width={220}
             height={220}
