@@ -76,7 +76,7 @@ We are committed to ethical practices, supporting local communities, and promoti
 
             {/* Bottom Image (smaller) */}
             <motion.div
-              className="relative mt-12 lg:mt-16"
+              className="relative mt-12 lg:mt-16 mr-4"
               initial={{ opacity: 0, x: 50 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}

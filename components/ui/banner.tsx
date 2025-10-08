@@ -14,7 +14,7 @@ export default function Banner({ title, description }: BannerProps) {
       <div className="absolute inset-0 bg-gradient-to-r from-[#1F1F1D]/85 to-transparent z-10"></div>
 
       {/* Image container - pushed toward center */}
-      <div className="absolute inset-0 flex justify-center items-center translate-x-[22%] sm:translate-x-[26%] lg:translate-x-[28%]">
+      <div className="absolute inset-0 flex justify-center items-center translate-x-[22%] sm:translate-x-[26%] lg:translate-x-[28%] mr-8">
         <Image
           src="/images/female style.png"
           alt="Banner"

@@ -51,8 +51,8 @@ export default function BannerSection() {
           <Image
             src="/images/bannerimage.png"
             alt="Traditional Fashion"
-            width={220}
-            height={220}
+            width={250}
+            height={250}
             className="object-contain h-auto block mx-auto lg:mx-0"
             priority
           />
