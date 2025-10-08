@@ -195,6 +195,12 @@ body {
   aspect-ratio: 16 / 9;
 }
 
+/* Prevent horizontal overflow */
+html,
+body {
+  overflow-x: hidden;
+}
+
 /* Dark mode support */
 /* @media (prefers-color-scheme: dark) {
   html {
