@@ -45,7 +45,7 @@ export default function BannerSection() {
         transition={{ duration: 0.6, delay: 0.3 }}
       >
         <div
-          className="mx-auto lg:mx-0 lg:-mr-12 xl:-mr-16 flex justify-center"
+          className="mx-auto lg:mx-0 lg:-mr-12 xl:-mr-16 flex justify-center mb-9"
           style={{ width: "420px", maxWidth: "90%" }}
         >
           <Image
