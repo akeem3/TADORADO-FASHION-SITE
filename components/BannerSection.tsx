@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 
 export default function BannerSection() {
   return (
-    <section className="max-w-7xl mx-auto min-h-[60vh] flex flex-col lg:flex-row items-center justify-between px-4 sm:px-6 lg:px-16 pt-4 pb-12 lg:pb-0">
+    <section className="max-w-7xl mx-auto min-h-[60vh] flex flex-col lg:flex-row items-center justify-center lg:justify-between px-4 sm:px-6 lg:px-16 pt-4 pb-12 lg:pb-0">
       {/* Text */}
       <motion.div
         className="flex-1 max-w-2xl text-center lg:text-left mb-8 lg:mb-0"
@@ -39,13 +39,13 @@ export default function BannerSection() {
 
       {/* Image */}
       <motion.div
-        className="relative mt-6 lg:mt-0 flex justify-center lg:justify-end flex-none mb-16"
+        className="relative mt-8 lg:mt-0 flex justify-center lg:justify-end flex-none"
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6, delay: 0.3 }}
       >
         <div
-          className="mx-auto lg:mx-0 lg:-mr-12 xl:-mr-16"
+          className="mx-auto lg:mx-0 lg:-mr-12 xl:-mr-16 flex justify-center"
           style={{ width: "420px", maxWidth: "90%" }}
         >
           <Image
@@ -53,7 +53,7 @@ export default function BannerSection() {
             alt="Traditional Fashion"
             width={220}
             height={220}
-            className="object-contain h-auto block"
+            className="object-contain h-auto block mx-auto lg:mx-0"
             priority
           />
         </div>
